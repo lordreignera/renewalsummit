@@ -14,7 +14,7 @@
                         {{ $done ? 'bg-green-500 text-white' : ($active ? 'bg-gold text-white' : 'bg-gray-200 text-gray-500') }}">
                 {{ $done ? '✓' : $num }}
             </div>
-            <span class="text-xs mt-1 font-medium {{ $active ? 'text-yellow-600' : ($done ? 'text-green-600' : 'text-gray-400') }}">
+            <span class="hidden sm:block text-xs mt-1 font-medium {{ $active ? 'text-yellow-600' : ($done ? 'text-green-600' : 'text-gray-400') }}">
                 {{ $label }}
             </span>
         </div>

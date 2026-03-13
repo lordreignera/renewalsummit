@@ -5,21 +5,21 @@
 
 {{-- ── HERO ──────────────────────────────────────────────────────── --}}
 <section class="relative bg-summit text-white overflow-hidden"
-         style="min-height:92vh; background-image: linear-gradient(to bottom right, #1a1a2e 60%, #16213e);">
+         style="min-height:70vh; background-image: linear-gradient(to bottom right, #1a1a2e 60%, #16213e);">
 
     {{-- Decorative gold bar --}}
     <div class="absolute inset-y-0 right-0 w-1/3 opacity-5"
          style="background: radial-gradient(circle, #D4A017 0%, transparent 70%)"></div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col-reverse lg:flex-row items-center justify-between
-                py-20 gap-12 relative z-10">
+                py-10 lg:py-20 gap-8 lg:gap-12 relative z-10">
 
         {{-- Text --}}
         <div class="lg:w-1/2 text-center lg:text-left">
             <p class="uppercase tracking-widest text-yellow-400 text-sm font-semibold mb-3">
                 International Conference
             </p>
-            <h1 class="text-5xl lg:text-7xl font-extrabold leading-tight mb-4">
+            <h1 class="text-4xl sm:text-5xl lg:text-7xl font-extrabold leading-tight mb-4">
                 RENEWAL<br>
                 <span class="gold">SUMMIT</span>
                 <span class="text-white">2</span><span class="text-yellow-400">0</span><span class="text-white">26</span>
@@ -40,12 +40,12 @@
                 <a href="{{ route('register.start') }}"
                    class="bg-gold hover:bg-yellow-600 text-white font-bold px-8 py-4 rounded-xl text-lg
                           transition shadow-xl inline-block text-center">
-                    📝 Register Now
+                    Get Tickets
                 </a>
                 <a href="{{ route('donate') }}"
                    class="border-2 border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-summit
                           font-bold px-8 py-4 rounded-xl text-lg transition inline-block text-center">
-                    🙏 Donate
+                    Donate
                 </a>
             </div>
 
@@ -57,21 +57,33 @@
                 <div class="flex items-center gap-2 bg-white/10 rounded-lg px-4 py-2 text-sm">
                     📍 <span class="font-semibold">Ggaba Community Church, Uganda</span>
                 </div>
+                <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=Renewal+Summit+2026&dates=20260817T000000Z/20260827T235959Z&details=International+Conference+%E2%80%93+Healthy+Church.+A+global+gathering+for+pastors+and+leaders+from+27+nations.&location=Ggaba+Community+Church%2C+Kampala%2C+Uganda&sf=true&output=xml"
+                   target="_blank" rel="noopener"
+                   class="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-yellow-400/40
+                          rounded-lg px-4 py-2 text-sm transition font-semibold text-yellow-300">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 4h-1V2h-2v2H8V2H6v2H5C3.9 4 3 4.9 3 6v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/>
+                    </svg>
+                    Add to Google Calendar
+                </a>
             </div>
         </div>
 
         {{-- Hero image area --}}
         <div class="lg:w-1/2 flex justify-center">
             <div class="relative">
-                <div class="w-80 h-96 lg:w-96 lg:h-[480px] rounded-2xl overflow-hidden shadow-2xl border-4 border-yellow-400/40">
+                <div class="w-64 h-72 sm:w-80 sm:h-96 lg:w-96 lg:h-[480px] rounded-2xl overflow-hidden shadow-2xl border-4 border-yellow-400/40">
                     <img src="{{ asset('images/together.jpg') }}" alt="Renewal Summit 2026"
                          class="w-full h-full object-cover">
                 </div>
                 {{-- Save the date badge --}}
-                <div class="absolute -top-4 -right-4 bg-gold text-white rounded-full w-20 h-20 flex flex-col
-                            items-center justify-center text-center shadow-xl font-bold text-xs">
+                <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=Renewal+Summit+2026&dates=20260817T000000Z/20260827T235959Z&details=International+Conference+%E2%80%93+Healthy+Church.+A+global+gathering+for+pastors+and+leaders+from+27+nations.+Register+at+renewalsummit.africarenewal.org&location=Ggaba+Community+Church%2C+Kampala%2C+Uganda&sf=true&output=xml"
+                   target="_blank" rel="noopener"
+                   class="absolute -top-4 -right-4 bg-gold hover:bg-yellow-600 text-white rounded-full w-20 h-20 flex flex-col
+                          items-center justify-center text-center shadow-xl font-bold text-xs transition"
+                   title="Save to Google Calendar">
                     SAVE THE<br>DATE
-                </div>
+                </a>
             </div>
         </div>
     </div>
@@ -84,42 +96,53 @@
 <section class="bg-summit py-14">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <p class="uppercase tracking-widest text-yellow-400 text-xs font-bold mb-2">Event Starts In</p>
-        <h2 class="text-white font-extrabold text-2xl mb-10">August 17, 2026 · Ggaba Community Church, Uganda</h2>
-        <div class="flex flex-wrap justify-center gap-4" id="countdown">
+        <h2 class="text-white font-extrabold text-lg sm:text-2xl mb-8 px-2">August 17, 2026 · Ggaba Community Church, Uganda</h2>
+        <div class="grid grid-cols-3 sm:grid-cols-5 gap-3 max-w-lg sm:max-w-2xl mx-auto" id="countdown">
             @foreach(['weeks','days','hours','minutes','seconds'] as $unit)
-            <div class="flex flex-col items-center gap-3">
-                <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl bg-white/10 border border-white/20 shadow-xl
+            <div class="flex flex-col items-center gap-2">
+                <div class="w-full aspect-square rounded-2xl bg-white/10 border border-white/20 shadow-xl
                             flex items-center justify-center">
-                    <span class="text-4xl sm:text-5xl font-extrabold text-white tabular-nums"
+                    <span class="text-3xl sm:text-5xl font-extrabold text-white tabular-nums"
                           id="cd-{{ $unit }}">00</span>
                 </div>
                 <span class="text-xs font-bold uppercase tracking-widest text-yellow-400">{{ $unit }}</span>
             </div>
             @endforeach
         </div>
+
+        <div class="mt-10">
+            <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=Renewal+Summit+2026&dates=20260817T000000Z/20260827T235959Z&details=International+Conference+%E2%80%93+Healthy+Church.+A+global+gathering+for+pastors+and+leaders+from+27+nations.+Register+at+renewalsummit.africarenewal.org&location=Ggaba+Community+Church%2C+Kampala%2C+Uganda&sf=true&output=xml"
+               target="_blank" rel="noopener"
+               class="inline-flex items-center gap-3 bg-white text-summit font-bold px-7 py-3.5 rounded-xl
+                      shadow-lg hover:bg-yellow-50 transition text-sm">
+                <img src="https://www.gstatic.com/calendar/images/dynamiclogo_2020q4/calendar_31_2x.png"
+                     alt="Google Calendar" class="w-6 h-6 rounded">
+                Save the Date in Google Calendar
+            </a>
+        </div>
     </div>
 </section>
 
 {{-- ── STATS BAR ─────────────────────────────────────────────────── --}}
 <div class="bg-gold text-white" id="stats-bar">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-wrap justify-center gap-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-wrap justify-center gap-8">
         <div class="flex flex-col items-center gap-3">
-            <div class="w-32 h-32 rounded-full border-4 border-white/40 bg-white/10 flex items-center justify-center shadow-lg">
-                <span class="text-4xl font-extrabold" data-countup="1500" data-suffix="+">0</span>
+            <div class="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-white/40 bg-white/10 flex items-center justify-center shadow-lg">
+                <span class="text-3xl sm:text-4xl font-extrabold" data-countup="1500" data-suffix="+">0</span>
             </div>
-            <div class="text-sm font-semibold uppercase tracking-widest opacity-90">Leaders</div>
+            <div class="text-xs sm:text-sm font-semibold uppercase tracking-widest opacity-90">Leaders</div>
         </div>
         <div class="flex flex-col items-center gap-3">
-            <div class="w-32 h-32 rounded-full border-4 border-white/40 bg-white/10 flex items-center justify-center shadow-lg">
-                <span class="text-4xl font-extrabold" data-countup="27">0</span>
+            <div class="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-white/40 bg-white/10 flex items-center justify-center shadow-lg">
+                <span class="text-3xl sm:text-4xl font-extrabold" data-countup="27">0</span>
             </div>
-            <div class="text-sm font-semibold uppercase tracking-widest opacity-90">Nations</div>
+            <div class="text-xs sm:text-sm font-semibold uppercase tracking-widest opacity-90">Nations</div>
         </div>
         <div class="flex flex-col items-center gap-3">
-            <div class="w-32 h-32 rounded-full border-4 border-white/40 bg-white/10 flex items-center justify-center shadow-lg">
-                <span class="text-4xl font-extrabold" data-countup="5">0</span>
+            <div class="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-white/40 bg-white/10 flex items-center justify-center shadow-lg">
+                <span class="text-3xl sm:text-4xl font-extrabold" data-countup="5">0</span>
             </div>
-            <div class="text-sm font-semibold uppercase tracking-widest opacity-90">Days</div>
+            <div class="text-xs sm:text-sm font-semibold uppercase tracking-widest opacity-90">Days</div>
         </div>
     </div>
 </div>
@@ -129,7 +152,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-14">
             <span class="bg-gold/10 text-yellow-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">About</span>
-            <h2 class="text-4xl font-extrabold text-summit mt-4">About Renewal Summit 2026</h2>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-summit mt-4">About Renewal Summit 2026</h2>
         </div>
         <div class="grid md:grid-cols-2 gap-12 items-center">
             <div class="space-y-5 text-gray-700 leading-relaxed">
@@ -197,7 +220,7 @@
 <section class="py-20 bg-gray-50">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12">
-            <h2 class="text-4xl font-extrabold text-summit">Programme Schedule</h2>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-summit">Programme Schedule</h2>
             <p class="text-gray-500 mt-2">August 17–27, 2026</p>
         </div>
         <div class="space-y-4">
@@ -208,9 +231,9 @@
                 ['Thu Aug 20', 'Missional Markers',           'Keynotes, outreach activation, prayer sessions'],
                 ['Fri Aug 21', 'Commissioning & Closing',     'Final session, commissioning service, departure'],
             ] as [$day, $title, $desc])
-                <div class="flex gap-4 bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition">
-                    <div class="min-w-[100px] text-center">
-                        <div class="bg-summit text-white text-xs font-bold px-2 py-1 rounded">{{ $day }}</div>
+                <div class="flex flex-col sm:flex-row gap-2 sm:gap-4 bg-white rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-md transition">
+                    <div class="sm:min-w-[100px] text-left sm:text-center">
+                        <div class="inline-block bg-summit text-white text-xs font-bold px-2 py-1 rounded">{{ $day }}</div>
                     </div>
                     <div>
                         <h4 class="font-bold text-summit">{{ $title }}</h4>
@@ -225,7 +248,7 @@
 {{-- ── SPEAKERS PLACEHOLDER ──────────────────────────────────────── --}}
 <section id="speakers" class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="text-4xl font-extrabold text-summit mb-4">Featured Speakers</h2>
+        <h2 class="text-2xl sm:text-4xl font-extrabold text-summit mb-4">Featured Speakers</h2>
         <p class="text-gray-500 mb-12">International speakers and ministry leaders. Speaker lineup coming soon.</p>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
             @for($i = 1; $i <= 4; $i++)
@@ -244,7 +267,7 @@
     <div class="max-w-6xl mx-auto px-4">
         <div class="text-center mb-12">
             <span class="text-gold font-bold uppercase tracking-widest text-xs">Where To Stay</span>
-            <h2 class="text-3xl font-extrabold text-summit mt-2">Recommended Accommodation</h2>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-summit mt-2">Recommended Accommodation</h2>
             <p class="text-gray-500 mt-3 max-w-2xl mx-auto">
                 The summit is held at Gaba Community Church, Kampala. The hotels below are close to the venue —
                 please book directly with your preferred hotel.
@@ -332,7 +355,7 @@
 <section class="py-16 bg-summit text-white">
     <div class="max-w-3xl mx-auto px-4 text-center">
         <div class="text-5xl mb-4">🙏</div>
-        <h2 class="text-3xl font-extrabold mb-4">Support the Summit</h2>
+        <h2 class="text-2xl sm:text-3xl font-extrabold mb-4">Support the Summit</h2>
         <p class="text-gray-300 leading-relaxed mb-8">
             Your donation helps cover costs for delegates from underserved regions, event logistics,
             and the overall success of this global gathering.
@@ -347,7 +370,7 @@
 {{-- ── REGISTER CTA ──────────────────────────────────────────────── --}}
 <section class="py-16 bg-gradient-to-r from-yellow-50 to-white">
     <div class="max-w-3xl mx-auto px-4 text-center">
-        <h2 class="text-3xl font-extrabold text-summit mb-4">Ready to Join Us?</h2>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-summit mb-4">Ready to Join Us?</h2>
         <p class="text-gray-600 mb-8">
             Secure your spot at Renewal Summit 2026. Registration requires payment via
             Mobile Money (MTN/Airtel) or VISA card.

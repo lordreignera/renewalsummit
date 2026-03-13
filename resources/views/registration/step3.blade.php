@@ -6,7 +6,7 @@
 
     @include('registration.partials.steps', ['currentStep' => 3])
 
-    <div class="bg-white rounded-2xl shadow-lg p-8">
+    <div class="bg-white rounded-2xl shadow-lg p-5 sm:p-8">
         <h2 class="text-2xl font-extrabold text-summit mb-1">Step 3: Payment</h2>
         <p class="text-sm text-gray-500 mb-6">Complete payment to confirm your registration.</p>
 
@@ -23,12 +23,12 @@
         </div>
 
         {{-- Order summary --}}
-        <div class="bg-gray-50 border border-gray-200 rounded-xl p-5 mb-6 text-sm">
+        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 sm:p-5 mb-6 text-sm">
             <h3 class="font-bold text-summit mb-3">Registration Summary</h3>
             <div class="space-y-2">
-                <div class="flex justify-between">
-                    <span class="text-gray-600">Name</span>
-                    <span class="font-semibold">{{ $reg->full_name }}</span>
+                <div class="flex justify-between gap-2">
+                    <span class="text-gray-600 shrink-0">Name</span>
+                    <span class="font-semibold text-right">{{ $reg->full_name }}</span>
                 </div>
                 @php
                 $designationLabels = [
@@ -38,36 +38,36 @@
                     'corporate'           => 'Corporate / Organisation',
                 ];
                 @endphp
-                <div class="flex justify-between">
-                    <span class="text-gray-600">Designation</span>
-                    <span class="font-semibold">{{ $designationLabels[$reg->designation] ?? $reg->designation }}</span>
+                <div class="flex justify-between gap-2">
+                    <span class="text-gray-600 shrink-0">Designation</span>
+                    <span class="font-semibold text-right">{{ $designationLabels[$reg->designation] ?? $reg->designation }}</span>
                 </div>
-                <div class="flex justify-between">
-                    <span class="text-gray-600">Phone</span>
-                    <span class="font-semibold">{{ $reg->phone }}</span>
+                <div class="flex justify-between gap-2">
+                    <span class="text-gray-600 shrink-0">Phone</span>
+                    <span class="font-semibold text-right">{{ $reg->phone }}</span>
                 </div>
                 @if($reg->email)
-                <div class="flex justify-between">
-                    <span class="text-gray-600">Email</span>
-                    <span class="font-semibold">{{ $reg->email }}</span>
+                <div class="flex justify-between gap-2">
+                    <span class="text-gray-600 shrink-0">Email</span>
+                    <span class="font-semibold text-right break-all">{{ $reg->email }}</span>
                 </div>
                 @endif
-                <div class="flex justify-between">
-                    <span class="text-gray-600">Attendee Type</span>
-                    <span class="font-semibold capitalize">{{ $reg->country_type === 'local' ? 'Ugandan' : ($reg->country_type === 'africa' ? 'Rest of Africa' : 'International') }}</span>
+                <div class="flex justify-between gap-2">
+                    <span class="text-gray-600 shrink-0">Attendee Type</span>
+                    <span class="font-semibold text-right">{{ $reg->country_type === 'local' ? 'Ugandan' : ($reg->country_type === 'africa' ? 'Rest of Africa' : 'International') }}</span>
                 </div>
-                <div class="flex justify-between">
-                    <span class="text-gray-600">Affiliation</span>
-                    <span class="font-semibold uppercase">{{ $reg->affiliation === 'fcc' ? 'FCC Member' : 'Other / Guest' }}</span>
+                <div class="flex justify-between gap-2">
+                    <span class="text-gray-600 shrink-0">Affiliation</span>
+                    <span class="font-semibold uppercase text-right">{{ $reg->affiliation === 'fcc' ? 'FCC Member' : 'Other / Guest' }}</span>
                 </div>
                 @php
                 $feeDisplay = $reg->currency === 'USD'
                     ? '$' . number_format($reg->total_amount) . ' USD'
                     : 'UGX ' . number_format($reg->total_amount);
                 @endphp
-                <div class="border-t border-gray-300 pt-2 flex justify-between">
-                    <span class="font-bold text-summit text-base">Registration Fee</span>
-                    <span class="font-extrabold text-gold text-xl">{{ $feeDisplay }}</span>
+                <div class="border-t border-gray-300 pt-2 flex justify-between gap-2">
+                    <span class="font-bold text-summit text-base shrink-0">Registration Fee</span>
+                    <span class="font-extrabold text-gold text-xl text-right">{{ $feeDisplay }}</span>
                 </div>
             </div>
         </div>

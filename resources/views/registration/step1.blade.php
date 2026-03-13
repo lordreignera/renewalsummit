@@ -6,7 +6,7 @@
 
     @include('registration.partials.steps', ['currentStep' => 1])
 
-    <div class="bg-white rounded-2xl shadow-lg p-8">
+    <div class="bg-white rounded-2xl shadow-lg p-5 sm:p-8">
         <h2 class="text-2xl font-extrabold text-summit mb-1">Step 1: Personal Details</h2>
         <p class="text-sm text-gray-500 mb-6">Enter your personal information below.</p>
 
@@ -97,7 +97,7 @@
             {{-- Country Type --}}
             <div class="mb-5">
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Attendee Type <span class="text-red-500">*</span></label>
-                <div class="grid grid-cols-3 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     @php
                     $types = [
                         'local'         => ['flag' => '🇺🇬', 'label' => 'Ugandan',        'fee' => 'UGX 150,000'],

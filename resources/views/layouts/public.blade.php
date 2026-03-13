@@ -74,7 +74,7 @@
     @yield('content')
 
     <!-- Footer -->
-    <footer class="bg-summit text-gray-400 py-12 mt-16" id="contact">
+    <footer class="bg-summit text-gray-400 py-10 mt-8 sm:mt-16" id="contact">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-3 gap-8">
                 <div>
@@ -85,8 +85,8 @@
                 <div>
                     <h4 class="text-white font-bold mb-3">Event Details</h4>
                     <ul class="text-sm space-y-1">
-                        <li>📅 August 17–21, 2026</li>
-                        <li>📍 Gaba Community Church, Uganda</li>
+                        <li>📅 August 17–27, 2026</li>
+                        <li>📍 Ggaba Community Church, Uganda</li>
                         <li>🌍 1,500 Leaders · 27 Nations</li>
                         <li>🏷 Theme: Healthy Church</li>
                     </ul>
@@ -96,12 +96,12 @@
                     <ul class="text-sm space-y-1">
                         <li><a href="{{ route('register.start') }}" class="gold hover:text-yellow-300">Register</a></li>
                         <li><a href="{{ route('donate') }}"         class="hover:text-white">Donate</a></li>
-                        <li><a href="mailto:info@renewalsummit.ug" class="hover:text-white">info@renewalsummit.ug</a></li>
+                        <li><a href="mailto:renewalsummit@africarenewal.org" class="hover:text-white">renewalsummit@africarenewal.org</a></li>
                     </ul>
                 </div>
             </div>
             <div class="border-t border-gray-700 mt-8 pt-6 text-center text-xs">
-                © {{ date('Y') }} Renewal Summit 2026 – Gaba Community Church, Uganda.
+                © {{ date('Y') }} Renewal Summit 2026 – Ggaba Community Church, Uganda.
             </div>
         </div>
     </footer>

@@ -6,7 +6,7 @@
 
     @include('registration.partials.steps', ['currentStep' => 2])
 
-    <div class="bg-white rounded-2xl shadow-lg p-8">
+    <div class="bg-white rounded-2xl shadow-lg p-5 sm:p-8">
         <h2 class="text-2xl font-extrabold text-summit mb-1">Step 2: Church Affiliation</h2>
         <p class="text-sm text-gray-500 mb-6">Tell us about your church involvement.</p>
 
