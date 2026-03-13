@@ -1,0 +1,104 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Payment;
+use App\Models\Registration;
+use App\Services\QrCodeService;
+use App\Services\SwappPaymentService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
+class PaymentController extends Controller
+{
+    public function __construct(
+        protected SwappPaymentService $swapp,
+        protected QrCodeService $qrService,
+    ) {}
+
+    /**
+     * Swapp POST callback – called by the payment gateway when a
+     * transaction completes (success or failure).
+     */
+    public function callback(Request $request): JsonResponse
+    {
+        Log::info('Swapp Callback', $request->all());
+
+        $payload = $request->all();
+
+        // Signature verification (uncomment when you have SWAPP_SECRET_KEY)
+        // if (! $this->verifySignature($request)) {
+        //     return response()->json(['error' => 'Invalid signature'], 401);
+        // }
+
+        $handled = $this->swapp->handleCallback($payload);
+
+        if ($handled) {
+            // If payment succeeded, generate QR and send confirmation email
+            $transId = $payload['transaction_id'] ?? $payload['reference'] ?? null;
+            $payment = Payment::where('swapp_transaction_id', $transId)
+                ->orWhere('swapp_reference', $transId)
+                ->with('registration')
+                ->first();
+
+            if ($payment && $payment->isSuccessful()) {
+                $reg = $payment->registration;
+                if ($reg && $reg->email) {
+                    $this->qrService->generateAndDispatch($reg);
+                }
+            }
+        }
+
+        return response()->json(['status' => 'received']);
+    }
+
+    /**
+     * Donation POST callback.
+     */
+    public function donationCallback(Request $request): JsonResponse
+    {
+        Log::info('Swapp Donation Callback', $request->all());
+
+        $payload = $request->all();
+        $status  = strtolower($payload['status'] ?? '');
+        $txnId   = $payload['transaction_id'] ?? null;
+
+        if ($txnId) {
+            \App\Models\Donation::where('swapp_transaction_id', $txnId)
+                ->update([
+                    'status'  => in_array($status, ['success', 'successful', 'completed']) ? 'success' : 'failed',
+                    'paid_at' => in_array($status, ['success', 'successful', 'completed']) ? now() : null,
+                    'swapp_response' => $payload,
+                ]);
+        }
+
+        return response()->json(['status' => 'received']);
+    }
+
+    /**
+     * Polling endpoint – front-end polls this every few seconds on the
+     * pending page to know when the MM payment is confirmed.
+     */
+    public function status(string $reference): JsonResponse
+    {
+        $reg = Registration::where('reference', $reference)->firstOrFail();
+
+        return response()->json([
+            'status'    => $reg->status,
+            'paid'      => $reg->isPaid(),
+            'reference' => $reg->reference,
+        ]);
+    }
+
+    /**
+     * Verify Swapp signature header.
+     */
+    private function verifySignature(Request $request): bool
+    {
+        $secret    = config('services.swapp.secret_key', env('SWAPP_SECRET_KEY'));
+        $signature = $request->header('X-Swapp-Signature');
+        $expected  = hash_hmac('sha256', $request->getContent(), $secret);
+        return hash_equals($expected, $signature ?? '');
+    }
+}
