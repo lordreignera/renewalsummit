@@ -63,7 +63,8 @@ class QrCodeService
 
         $path = "qrcodes/{$registration->reference}.png";
 
-        Storage::disk('public')->put($path, $result->getString());
+        $disk = config('filesystems.qr_disk', 'r2');
+        Storage::disk($disk)->put($path, $result->getString(), 'public');
 
         return $path;
     }
@@ -77,7 +78,7 @@ class QrCodeService
             return null;
         }
 
-        return Storage::disk('public')->url($registration->qr_code_path);
+        return Storage::disk(config('filesystems.qr_disk', 'r2'))->url($registration->qr_code_path);
     }
 
     /**

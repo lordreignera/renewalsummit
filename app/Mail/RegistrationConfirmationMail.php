@@ -35,7 +35,7 @@ class RegistrationConfirmationMail extends Mailable
             with: [
                 'registration' => $this->registration,
                 'qrUrl'        => $this->registration->qr_code_path
-                    ? Storage::disk('public')->url($this->registration->qr_code_path)
+                    ? Storage::disk(config('filesystems.qr_disk', 'r2'))->url($this->registration->qr_code_path)
                     : null,
             ],
         );
@@ -47,9 +47,9 @@ class RegistrationConfirmationMail extends Mailable
     public function attachments(): array
     {
         if ($this->registration->qr_code_path &&
-            Storage::disk('public')->exists($this->registration->qr_code_path)) {
+            Storage::disk(config('filesystems.qr_disk', 'r2'))->exists($this->registration->qr_code_path)) {
             return [
-                Attachment::fromStorageDisk('public', $this->registration->qr_code_path)
+                Attachment::fromStorageDisk(config('filesystems.qr_disk', 'r2'), $this->registration->qr_code_path)
                     ->as('RS2026-QRCode-' . $this->registration->reference . '.png')
                     ->withMime('image/png'),
             ];
