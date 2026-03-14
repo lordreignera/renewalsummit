@@ -4,92 +4,120 @@
 @section('content')
 
 {{-- ── HERO ──────────────────────────────────────────────────────── --}}
-<section class="relative bg-summit text-white overflow-hidden"
-         style="min-height:70vh; background-image: linear-gradient(to bottom right, #1a1a2e 60%, #16213e);">
+<style>
+@keyframes heroFadeUp   { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
+@keyframes heroScrollBob{ 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+@keyframes heroPulse    { 0%,100%{box-shadow:0 0 0 0 rgba(212,160,23,.5)}  70%{box-shadow:0 0 0 14px rgba(212,160,23,0)} }
+.hero-fadeup-1{ animation:heroFadeUp .9s ease both .1s }
+.hero-fadeup-2{ animation:heroFadeUp .9s ease both .35s }
+.hero-fadeup-3{ animation:heroFadeUp .9s ease both .55s }
+.hero-fadeup-4{ animation:heroFadeUp .9s ease both .75s }
+.hero-fadeup-5{ animation:heroFadeUp .9s ease both .95s }
+.hero-cta-primary{ display:inline-flex;align-items:center;gap:.7rem;background:#D4A017;color:#fff;font-weight:800;padding:1.1rem 2.8rem;border-radius:50px;text-decoration:none;font-size:1.15rem;letter-spacing:.04em;box-shadow:0 4px 24px rgba(212,160,23,.45);transition:background .2s,transform .2s,box-shadow .2s; animation:heroPulse 2.5s infinite .3s; }
+.hero-cta-primary:hover{ background:#b8880f;transform:translateY(-2px);box-shadow:0 8px 32px rgba(212,160,23,.55); }
+.hero-cta-secondary{ display:inline-flex;align-items:center;gap:.7rem;background:transparent;color:#fff;font-weight:700;padding:1.1rem 2.8rem;border-radius:50px;text-decoration:none;font-size:1.15rem;border:2px solid rgba(255,255,255,.5);transition:background .2s,border-color .2s,transform .2s; }
+.hero-cta-secondary:hover{ background:rgba(255,255,255,.12);border-color:#D4A017;transform:translateY(-2px); }
+.hero-dot{ height:4px;border-radius:2px;border:none;cursor:pointer;transition:width .4s,background .4s;padding:0; }
+</style>
 
-    {{-- Decorative gold bar --}}
-    <div class="absolute inset-y-0 right-0 w-1/3 opacity-5"
-         style="background: radial-gradient(circle, #D4A017 0%, transparent 70%)"></div>
+<section id="hero-section" style="position:relative;min-height:100vh;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;">
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col-reverse lg:flex-row items-center justify-between
-                py-10 lg:py-20 gap-8 lg:gap-12 relative z-10">
+    {{-- Background slides (cross-fade) --}}
+    <div id="hero-bg-0" style="position:absolute;inset:0;background-image:url('{{ asset('images/together.jpg') }}');background-size:cover;background-position:center;opacity:1;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
+    <div id="hero-bg-1" style="position:absolute;inset:0;background-image:url('{{ asset('images/praise1.jpg') }}');background-size:cover;background-position:center;opacity:0;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
+    <div id="hero-bg-2" style="position:absolute;inset:0;background-image:url('{{ asset('images/performance1.jpg') }}');background-size:cover;background-position:center top;opacity:0;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
 
-        {{-- Text --}}
-        <div class="lg:w-1/2 text-center lg:text-left">
-            <p class="uppercase tracking-widest text-yellow-400 text-sm font-semibold mb-3">
-                International Conference
-            </p>
-            <h1 class="text-4xl sm:text-5xl lg:text-7xl font-extrabold leading-tight mb-4">
-                RENEWAL<br>
-                <span class="gold">SUMMIT</span>
-                <span class="text-white">2</span><span class="text-yellow-400">0</span><span class="text-white">26</span>
-            </h1>
+    {{-- Cinematic gradient overlay – lighter so photos show clearly --}}
+    <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(10,22,52,.72) 0%, rgba(10,22,52,.30) 35%, rgba(10,22,52,.30) 65%, rgba(10,22,52,.80) 100%);z-index:1;"></div>
 
-            <div class="flex items-center gap-3 justify-center lg:justify-start mb-6">
-                <span class="bg-gold text-white font-bold px-3 py-1 text-sm rounded">THEME</span>
-                <span class="text-xl font-bold text-white">Healthy Church</span>
-            </div>
+    {{-- Main content --}}
+    <div style="position:relative;z-index:2;max-width:820px;margin:0 auto;padding:6rem 1.5rem 7rem;">
 
-            <p class="text-gray-300 text-base leading-relaxed mb-8 max-w-lg mx-auto lg:mx-0">
-                A global gathering for pastors and leaders to examine the spiritual, relational,
-                and missional markers of a healthy church. <strong class="text-white">1,500 leaders
-                from 27 nations.</strong>
-            </p>
-
-            <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <a href="{{ route('register.start') }}"
-                   class="bg-gold hover:bg-yellow-600 text-white font-bold px-8 py-4 rounded-xl text-lg
-                          transition shadow-xl inline-block text-center">
-                    Get Tickets
-                </a>
-                <a href="{{ route('donate') }}"
-                   class="border-2 border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-summit
-                          font-bold px-8 py-4 rounded-xl text-lg transition inline-block text-center">
-                    Donate
-                </a>
-            </div>
-
-            {{-- Date & Venue badges --}}
-            <div class="flex flex-wrap gap-4 justify-center lg:justify-start mt-8">
-                <div class="flex items-center gap-2 bg-white/10 rounded-lg px-4 py-2 text-sm">
-                    📅 <span class="font-semibold">August 17–27, 2026</span>
-                </div>
-                <div class="flex items-center gap-2 bg-white/10 rounded-lg px-4 py-2 text-sm">
-                    📍 <span class="font-semibold">Ggaba Community Church, Uganda</span>
-                </div>
-                <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=Renewal+Summit+2026&dates=20260817T000000Z/20260827T235959Z&details=International+Conference+%E2%80%93+Healthy+Church.+A+global+gathering+for+pastors+and+leaders+from+27+nations.&location=Ggaba+Community+Church%2C+Kampala%2C+Uganda&sf=true&output=xml"
-                   target="_blank" rel="noopener"
-                   class="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-yellow-400/40
-                          rounded-lg px-4 py-2 text-sm transition font-semibold text-yellow-300">
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19 4h-1V2h-2v2H8V2H6v2H5C3.9 4 3 4.9 3 6v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/>
-                    </svg>
-                    Add to Google Calendar
-                </a>
-            </div>
+        {{-- Label with decorative lines --}}
+        <div class="hero-fadeup-1" style="display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:2.4rem;">
+            <div style="height:1px;width:70px;background:linear-gradient(to right,transparent,#D4A017);"></div>
+            <span style="color:#D4A017;font-size:1rem;font-weight:700;letter-spacing:.28em;text-transform:uppercase;">International Conference</span>
+            <div style="height:1px;width:70px;background:linear-gradient(to left,transparent,#D4A017);"></div>
         </div>
 
-        {{-- Hero image area --}}
-        <div class="lg:w-1/2 flex justify-center">
-            <div class="relative">
-                <div class="w-64 h-72 sm:w-80 sm:h-96 lg:w-96 lg:h-[480px] rounded-2xl overflow-hidden shadow-2xl border-4 border-yellow-400/40">
-                    <img src="{{ asset('images/together.jpg') }}" alt="Renewal Summit 2026"
-                         class="w-full h-full object-cover">
-                </div>
-                {{-- Save the date badge --}}
-                <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=Renewal+Summit+2026&dates=20260817T000000Z/20260827T235959Z&details=International+Conference+%E2%80%93+Healthy+Church.+A+global+gathering+for+pastors+and+leaders+from+27+nations.+Register+at+renewalsummit.africarenewal.org&location=Ggaba+Community+Church%2C+Kampala%2C+Uganda&sf=true&output=xml"
-                   target="_blank" rel="noopener"
-                   class="absolute -top-4 -right-4 bg-gold hover:bg-yellow-600 text-white rounded-full w-20 h-20 flex flex-col
-                          items-center justify-center text-center shadow-xl font-bold text-xs transition"
-                   title="Save to Google Calendar">
-                    SAVE THE<br>DATE
-                </a>
-            </div>
+        {{-- Logo – glow filter instead of white box --}}
+        <div class="hero-fadeup-2" style="margin-bottom:2.2rem;">
+            <img src="{{ asset('images/summit26.png') }}" alt="Renewal Summit 2026"
+                 style="height:300px;width:auto;object-fit:contain;display:inline-block;
+                        filter:drop-shadow(0 0 40px rgba(255,255,255,.95)) drop-shadow(0 0 20px rgba(212,160,23,.8)) drop-shadow(0 8px 32px rgba(0,0,0,.9));">
+        </div>
+
+        {{-- Theme pill --}}
+        <div class="hero-fadeup-3" style="margin-bottom:2rem;">
+            <span style="display:inline-flex;align-items:center;gap:.9rem;background:rgba(212,160,23,.22);border:1.5px solid rgba(212,160,23,.65);border-radius:100px;padding:.65rem 2rem;">
+                <span style="color:#D4A017;font-weight:800;font-size:.95rem;text-transform:uppercase;letter-spacing:.15em;">Theme</span>
+                <span style="width:1px;height:18px;background:rgba(212,160,23,.5);display:inline-block;"></span>
+                <span style="color:#fff;font-weight:800;font-size:1.25rem;">Healthy Church</span>
+            </span>
+        </div>
+
+        {{-- Description --}}
+        <p class="hero-fadeup-4" style="color:rgba(255,255,255,.88);font-size:1.2rem;line-height:1.8;max-width:640px;margin:0 auto 2.8rem;">
+            A global gathering for pastors &amp; leaders to examine the spiritual, relational and missional
+            markers of a healthy church.&nbsp;
+            <strong style="color:#fff;">1,500+ leaders from 27 nations.</strong>
+        </p>
+
+        {{-- CTAs --}}
+        <div class="hero-fadeup-4" style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:2.8rem;">
+            <a href="{{ route('register.start') }}" class="hero-cta-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 12v7a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                Register Now
+            </a>
+            <a href="{{ route('donate') }}" class="hero-cta-secondary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <span style="color:#D4A017;">Donate</span>
+            </a>
+        </div>
+
+        {{-- Date & venue --}}
+        <div class="hero-fadeup-5" style="display:flex;gap:1.8rem;justify-content:center;flex-wrap:wrap;">
+            <span style="display:flex;align-items:center;gap:.6rem;color:rgba(255,255,255,.85);font-size:1.05rem;font-weight:600;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                August 17–27, 2026
+            </span>
+            <span style="color:rgba(255,255,255,.35);">|</span>
+            <span style="display:flex;align-items:center;gap:.6rem;color:rgba(255,255,255,.85);font-size:1.05rem;font-weight:600;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Ggaba Community Church, Uganda
+            </span>
         </div>
     </div>
 
-    {{-- Scroll chevron --}}
-    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 animate-bounce text-gold text-2xl">⌵</div>
+    {{-- Slide indicator dots --}}
+    <div style="position:absolute;bottom:2.4rem;left:50%;transform:translateX(-50%);display:flex;gap:.5rem;z-index:3;align-items:center;">
+        <button id="dot-0" class="hero-dot" style="width:28px;background:#D4A017;" onclick="heroGoTo(0)"></button>
+        <button id="dot-1" class="hero-dot" style="width:10px;background:rgba(255,255,255,.35);" onclick="heroGoTo(1)"></button>
+        <button id="dot-2" class="hero-dot" style="width:10px;background:rgba(255,255,255,.35);" onclick="heroGoTo(2)"></button>
+    </div>
+
+    {{-- Scroll nudge --}}
+    <div style="position:absolute;bottom:5rem;left:50%;animation:heroScrollBob 2.2s ease-in-out infinite;z-index:3;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <span style="color:rgba(255,255,255,.38);font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;">Scroll</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.38)" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+
+    {{-- Slideshow + dot sync script --}}
+    <script>
+    (function(){
+        var bgs  = [document.getElementById('hero-bg-0'),document.getElementById('hero-bg-1'),document.getElementById('hero-bg-2')];
+        var dots = [document.getElementById('dot-0'),document.getElementById('dot-1'),document.getElementById('dot-2')];
+        var cur  = 0, timer;
+        function heroGoTo(n){
+            bgs[cur].style.opacity='0'; dots[cur].style.width='10px'; dots[cur].style.background='rgba(255,255,255,.35)';
+            cur=n;
+            bgs[cur].style.opacity='1'; dots[cur].style.width='28px'; dots[cur].style.background='#D4A017';
+        }
+        window.heroGoTo=heroGoTo;
+        function next(){ heroGoTo((cur+1)%bgs.length); }
+        timer=setInterval(next,5000);
+    })();
+    </script>
 </section>
 
 {{-- ── COUNTDOWN ────────────────────────────────────────────────── --}}

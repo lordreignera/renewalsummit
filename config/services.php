@@ -36,9 +36,10 @@ return [
     ],
 
     'swapp' => [
-        'base_url'     => env('SWAPP_BASE_URL', 'https://api.swapp.ug/v1'),
+        'base_url'     => env('SWAPP_BASE_URL', 'https://www.swapp.co.ug/apitest/mm'),
+        'client_id'    => env('SWAPP_CLIENT_ID'),
         'api_key'      => env('SWAPP_API_KEY'),
-        'secret_key'   => env('SWAPP_SECRET_KEY'),
+        'api_secret'   => env('SWAPP_API_SECRET'),
         'callback_url' => env('SWAPP_CALLBACK_URL'),
         'return_url'   => env('SWAPP_RETURN_URL'),
     ],

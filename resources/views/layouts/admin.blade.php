@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Admin') – Renewal Summit 2026</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/summit26.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/summit26.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -68,10 +70,11 @@
 
         {{-- Brand --}}
         <div class="sb-brand">
-            <a href="{{ route('admin.dashboard') }}" style="text-decoration:none;">
-                <div class="sb-brand-name">RENEWAL <span>SUMMIT</span><span class="sb-badge">2026</span></div>
+            <a href="{{ route('admin.dashboard') }}" style="text-decoration:none; display:block;">
+                <img src="{{ asset('images/summit26.png') }}" alt="Renewal Summit 2026"
+                     style="height:52px; width:auto; object-fit:contain; display:block;">
             </a>
-            <div class="sb-sub">Admin Panel</div>
+            <div class="sb-sub" style="margin-top:6px;">Admin Panel</div>
         </div>
 
         {{-- Navigation --}}

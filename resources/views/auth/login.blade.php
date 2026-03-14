@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login — Renewal Summit 2026</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/summit26.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/summit26.png') }}">
     @vite(['resources/css/app.css'])
 </head>
 <body style="min-height:100vh; display:flex; align-items:stretch; margin:0; background:#f3f4f6;">
