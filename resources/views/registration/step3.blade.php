@@ -139,9 +139,42 @@
                 </div>
             </div>
 
-            {{-- VISA info --}}
-            <div id="visa-info" class="hidden mb-5 bg-blue-50 border border-blue-200 text-blue-800 rounded-xl px-4 py-3 text-sm">
-                💳 You will be redirected to a secure payment page to complete your VISA card payment.
+            {{-- VISA card fields --}}
+            <div id="visa-fields" class="hidden mb-5">
+                <div class="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 mb-4 text-sm text-blue-800 flex items-center gap-2">
+                    <span>🔒</span> Your card details are processed securely.
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Cardholder Name <span class="text-red-500">*</span></label>
+                    <input type="text" name="card_name" value="{{ old('card_name', $reg->full_name) }}"
+                           placeholder="Name as on card"
+                           class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Card Number <span class="text-red-500">*</span></label>
+                    <input type="text" name="card_number" value="{{ old('card_number') }}"
+                           placeholder="1234 5678 9012 3456" maxlength="19" id="card-number-input"
+                           class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm font-mono tracking-widest focus:ring-2 focus:ring-yellow-400 outline-none transition">
+                </div>
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Expiry Date <span class="text-red-500">*</span></label>
+                        <input type="text" name="card_expiry" value="{{ old('card_expiry') }}"
+                               placeholder="MM/YY" maxlength="5" id="card-expiry-input"
+                               class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm font-mono focus:ring-2 focus:ring-yellow-400 outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">CVC <span class="text-red-500">*</span></label>
+                        <input type="text" name="card_cvc" value="{{ old('card_cvc') }}"
+                               placeholder="123" maxlength="4" id="card-cvc-input"
+                               class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm font-mono focus:ring-2 focus:ring-yellow-400 outline-none transition">
+                    </div>
+                </div>
+                {{-- Card brand logos --}}
+                <div class="flex gap-2 mb-2">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/120px-Visa_Inc._logo.svg.png" alt="Visa" class="h-6 opacity-60">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/120px-Mastercard-logo.svg.png" alt="Mastercard" class="h-6 opacity-60">
+                </div>
             </div>
 
             {{-- T&C --}}
@@ -170,18 +203,40 @@
 
 @push('scripts')
 <script>
+    // Toggle payment fields
     document.querySelectorAll('[name="payment_method"]').forEach(function(el) {
         el.addEventListener('change', function() {
             const isMM = this.value === 'mobile_money';
             document.getElementById('mm-fields').classList.toggle('hidden', !isMM);
-            document.getElementById('visa-info').classList.toggle('hidden', isMM);
+            document.getElementById('visa-fields').classList.toggle('hidden', isMM);
+            // Clear required attributes to avoid validation on hidden fields
+            document.querySelectorAll('#visa-fields input').forEach(i => i.required = !isMM);
+            document.querySelectorAll('#mm-fields input').forEach(i => i.required = isMM);
         });
+    });
+
+    // Card number auto-format: add space every 4 digits
+    document.getElementById('card-number-input').addEventListener('input', function() {
+        let v = this.value.replace(/\D/g,'').slice(0,16);
+        this.value = v.replace(/(\d{4})(?=\d)/g,'$1 ');
+    });
+
+    // Expiry auto-format: MM/YY
+    document.getElementById('card-expiry-input').addEventListener('input', function() {
+        let v = this.value.replace(/\D/g,'').slice(0,4);
+        if (v.length > 2) v = v.slice(0,2) + '/' + v.slice(2);
+        this.value = v;
+    });
+
+    // CVC: digits only
+    document.getElementById('card-cvc-input').addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g,'').slice(0,4);
     });
 
     document.getElementById('payment-form').addEventListener('submit', function() {
         const btn = document.getElementById('pay-btn');
         btn.disabled = true;
-        btn.textContent = 'Processing...';
+        btn.innerHTML = '<span style="display:inline-block;animation:spin 1s linear infinite;margin-right:.4rem;">⏳</span> Processing...';
     });
 </script>
 @endpush

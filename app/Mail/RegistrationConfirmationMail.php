@@ -6,6 +6,7 @@ use App\Models\Registration;
 use App\Services\QrCodeService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -19,20 +20,18 @@ class RegistrationConfirmationMail extends Mailable
 
     public function __construct(public Registration $registration) {}
 
-    /**
-     * Get the message envelope.
-     */
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '✅ Renewal Summit 2026 Registration Confirmed – ' . $this->registration->reference,
+            from: new Address('renewalsummit@africarenewal.org', 'Renewal Summit 2026'),
+            subject: '✅ Registration Confirmed – Renewal Summit 2026 | ' . $this->registration->reference,
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.registration-confirmation',
+            view: 'emails.registration-confirmation',
             with: [
                 'registration' => $this->registration,
                 'qrUrl'        => $this->registration->qr_code_path
@@ -59,18 +58,21 @@ class RegistrationConfirmationMail extends Mailable
     }
 
     /**
-     * Generate QR if needed, then queue the confirmation email.
+     * Generate QR if needed, then send the confirmation email synchronously.
      */
     public static function dispatchToRegistration(Registration $registration): void
     {
         if (! $registration->email) return;
 
         if (! $registration->qr_code_path) {
-            app(QrCodeService::class)->generateForRegistration($registration);
+            $path = app(QrCodeService::class)->generateForRegistration($registration);
+            $registration->update(['qr_code_path' => $path]);
             $registration->refresh();
         }
 
-        Mail::to($registration->email)->queue(new static($registration));
+        // send() is synchronous — no queue worker needed for demo/testing.
+        // Switch to ->queue() or ->later() when a real queue worker is running.
+        Mail::to($registration->email)->send(new static($registration));
         $registration->update(['qr_sent_at' => now()]);
     }
 }

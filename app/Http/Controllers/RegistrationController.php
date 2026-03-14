@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\RegistrationConfirmationMail;
 use App\Models\Registration;
+use App\Services\QrCodeService;
 use App\Services\SwappPaymentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class RegistrationController extends Controller
@@ -164,29 +167,56 @@ class RegistrationController extends Controller
 
         $data = $request->validate([
             'payment_method' => 'required|in:mobile_money,visa',
+            // Mobile Money
             'phone_number'   => 'required_if:payment_method,mobile_money|nullable|string|max:20',
-            'network'        => 'required_if:payment_method,mobile_money|nullable|in:MTN,AIRTEL',
+            // VISA card fields (demo — format checked only, no real charge)
+            'card_name'      => 'required_if:payment_method,visa|nullable|string|max:100',
+            'card_number'    => ['required_if:payment_method,visa', 'nullable', 'string',
+                                 'regex:/^\d{4}\s?\d{4}\s?\d{4}\s?\d{4}$/'],
+            'card_expiry'    => ['required_if:payment_method,visa', 'nullable',
+                                 'regex:/^(0[1-9]|1[0-2])\/\d{2}$/'],
+            'card_cvc'       => 'required_if:payment_method,visa|nullable|digits_between:3,4',
+        ], [
+            'card_number.regex'  => 'Please enter a valid 16-digit card number.',
+            'card_expiry.regex'  => 'Expiry must be in MM/YY format.',
         ]);
 
-        $reg->update(['status' => 'pending', 'current_step' => 3]);
+        // ── DEMO MODE ──────────────────────────────────────────────────────
+        // Both Mobile Money and VISA are accepted immediately without a real
+        // gateway call. Replace this block with live SwApp/gateway calls when
+        // ready to go live.
+        // ──────────────────────────────────────────────────────────────────
 
-        if ($data['payment_method'] === 'mobile_money') {
-            $result = $this->swapp->initiateMobileMoney($reg, $data['phone_number'], $data['network'] ?? 'MTN');
+        // Mark registration as paid
+        $reg->update([
+            'status'       => 'paid',
+            'current_step' => 3,
+        ]);
 
-            if ($result['success']) {
-                return redirect()->route('register.pending', $reg->reference)
-                    ->with('info', $result['message']);
-            }
-            return back()->with('error', $result['message']);
+        // Generate QR code
+        try {
+            $qrPath = app(QrCodeService::class)->generateForRegistration($reg);
+            $reg->update(['qr_code_path' => $qrPath]);
+            $reg->refresh();
+        } catch (\Throwable $e) {
+            Log::error('QR generation failed', ['error' => $e->getMessage(), 'reg' => $reg->id]);
         }
 
-        // VISA – redirect to hosted checkout
-        $result = $this->swapp->initiateVisa($reg);
-        if ($result['success'] && $result['redirect_url']) {
-            return redirect()->away($result['redirect_url']);
-        }
+        // Send confirmation email — temporarily disabled (SMTP not yet configured)
+        // Uncomment the block below once MAIL_PASSWORD is set in .env
+        // if ($reg->email) {
+        //     try {
+        //         RegistrationConfirmationMail::dispatchToRegistration($reg);
+        //     } catch (\Throwable $e) {
+        //         Log::error('Confirmation email failed', ['error' => $e->getMessage(), 'reg' => $reg->id]);
+        //     }
+        // }
 
-        return back()->with('error', $result['message']);
+        session()->forget('registration_id');
+        session(['completed_ref' => $reg->reference]);
+
+        return redirect()->route('register.complete')
+            ->with('success', 'Payment confirmed! You will receive a confirmation email shortly.');
     }
 
     /* ─────────────────────────────────────────────────────────────
@@ -199,15 +229,24 @@ class RegistrationController extends Controller
         return view('registration.pending', compact('reg'));
     }
 
-    public function complete(Request $request): View
+    public function complete(Request $request): View|RedirectResponse
     {
-        $reference = $request->query('ref') ?? session('registration_id');
-        $reg = Registration::where('reference', $reference)
-            ->orWhere('id', $reference)
-            ->where('status', 'paid')
-            ->firstOrFail();
+        $reference = session('completed_ref') ?? $request->query('ref');
 
-        session()->forget('registration_id');
+        if (! $reference) {
+            return redirect()->route('register.start')
+                ->with('info', 'Registration already completed or session expired.');
+        }
+
+        $reg = Registration::where('reference', $reference)
+            ->where('status', 'paid')
+            ->first();
+
+        if (! $reg) {
+            return redirect()->route('register.start')
+                ->with('error', 'Registration not found or not yet confirmed. Reference: ' . $reference);
+        }
+
         return view('registration.complete', compact('reg'));
     }
 

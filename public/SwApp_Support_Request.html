@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  body {
+    font-family: Calibri, Arial, sans-serif;
+    font-size: 11pt;
+    margin: 2.5cm 3cm;
+    color: #000;
+    line-height: 1.5;
+  }
+  h1 { font-size: 16pt; font-weight: bold; margin-bottom: 4px; }
+  h2 { font-size: 12pt; font-weight: bold; margin-top: 20px; margin-bottom: 4px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+  p  { margin: 6px 0; }
+  .from-block { margin-bottom: 24px; }
+  .date { margin-bottom: 20px; }
+  .salutation { margin-bottom: 14px; }
+  blockquote {
+    border-left: 3px solid #555;
+    margin: 8px 0 8px 20px;
+    padding: 4px 12px;
+    font-style: italic;
+    color: #333;
+  }
+  .closing { margin-top: 30px; }
+  .footer { margin-top: 50px; font-size: 9pt; color: #666; border-top: 1px solid #ccc; padding-top: 8px; }
+  ul { margin: 4px 0 8px 0; }
+  li { margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<div class="from-block">
+  <strong>From:</strong> GCC Media Group / Renewal Summit 2026<br>
+  <strong>To:</strong> SwApp Support Team<br>
+  <strong>Email:</strong> support@swapp.co.ug<br>
+  <strong>Re:</strong> Sandbox API Integration Support Request
+</div>
+
+<div class="date">14 March 2026</div>
+
+<div class="salutation">Dear SwApp Support Team,</div>
+
+<p>
+  We are currently integrating your Mobile Money API into our event registration platform for the
+  <strong>Renewal Summit 2026</strong>. We have successfully authenticated using our merchant
+  credentials (Client ID: <strong>38316</strong>) and are able to obtain a valid access token.
+  However, we are encountering issues at the validation and collection stages in the test environment.
+</p>
+
+<p>We kindly request assistance with the following:</p>
+
+<!-- 1 -->
+<h2>1. Sandbox Test Phone Numbers</h2>
+<blockquote>
+  Please provide test MSISDN numbers for both <strong>MTN</strong> and <strong>Airtel</strong>
+  that are registered and working in your <code>/apitest/mm/validate</code> and
+  <code>/apitest/mm/collection</code> endpoints.
+</blockquote>
+<p>
+  When we submit real Ugandan numbers (e.g. <code>256708356505</code>) to the validate endpoint,
+  we receive the error:
+  <br><em>"Unknown Network [account: 256708356505]"</em>
+  <br>This suggests the sandbox only accepts pre-registered test numbers.
+</p>
+
+<!-- 2 -->
+<h2>2. Correct Collection Endpoint Path</h2>
+<blockquote>
+  Is <code>POST /apitest/mm/collection</code> the correct endpoint for initiating a mobile money
+  collection request in your test environment?
+</blockquote>
+<p>
+  We have tried the following paths — all return <em>"Unkown endpoint"</em>:
+</p>
+<ul>
+  <li><code>POST /apitest/mm/collection</code></li>
+  <li><code>POST /apitest/mm/collections</code></li>
+  <li><code>POST /apitest/mm/requestpayment</code></li>
+  <li><code>POST /apitest/mm/payment</code></li>
+</ul>
+
+<!-- 3 -->
+<h2>3. Accepted Values for the "Network" Field</h2>
+<blockquote>
+  What are the accepted string values for the <code>Network</code> request field?
+</blockquote>
+<p>We have tried the following values — all return "Unknown Network":</p>
+<ul>
+  <li><code>MTN</code></li>
+  <li><code>Airtel</code></li>
+  <li><code>AIRTEL</code></li>
+  <li><code>AIRTELMONEY</code></li>
+</ul>
+
+<!-- 4 -->
+<h2>4. Production Base URL</h2>
+<blockquote>
+  What is the correct base URL when we switch to production?
+  Is it <code>https://www.swapp.co.ug/api/mm</code> (removing "apitest")?
+</blockquote>
+
+<!-- 5 -->
+<h2>5. Callback URL Whitelisting</h2>
+<blockquote>
+  Does our callback URL need to be whitelisted or registered on your side before going live?
+</blockquote>
+<p>
+  Our production callback URL will be:
+  <br><code>https://renewalsummit.africarenewal.org/payment/callback</code>
+</p>
+
+<div class="closing">
+  <p>We would greatly appreciate a prompt response as we are approaching our go-live date (August 2026) and need to complete integration testing as soon as possible.</p>
+  <p>Thank you for your support.</p>
+  <br>
+  <p>
+    <strong>Kind regards,</strong><br>
+    GCC Media Group<br>
+    Renewal Summit 2026 Technical Team<br>
+    gccmediagroup@gmail.com
+  </p>
+</div>
+
+<div class="footer">
+  Merchant Portal Account: gccmediagroup@gmail.com &nbsp;|&nbsp; Client ID: 38316 &nbsp;|&nbsp;
+  API Docs: https://documenter.getpostman.com/view/20677093/2s8Z72UB6X
+</div>
+
+</body>
+</html>

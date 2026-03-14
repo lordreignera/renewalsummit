@@ -101,34 +101,65 @@ class TestSwappPayment extends Command
         $this->line("Without Network:      {$validateResp2->status()} | " . $validateResp2->body());
         $this->newLine();
 
-        // ── STEP 3: Try collection with and without Network field ─────────
+        // ── STEP 3: Try collection — multiple endpoint + field combos ────────
         $this->line('<fg=yellow>STEP 3: Sending payment prompt...</>');
 
-        $requestId = (string) Str::uuid();
-        $this->line("RequestId: {$requestId}");
+        $callbackUrl = env('SWAPP_CALLBACK_URL', url('/payment/callback'));
+        $endpoints   = ['/collection', '/collections', '/requestpayment', '/payment'];
 
-        // Try 1: explicit network
-        $this->line("Attempt A — with Network={$network}:");
-        $respA = Http::timeout(20)->withoutVerifying()
-            ->withHeaders(['Swapp-Client-ID' => $clientId, 'Authorization' => "Bearer {$token}", 'Accept' => 'application/json', 'Content-Type' => 'application/json'])
-            ->post("{$baseUrl}/collection", ['RequestId' => $requestId, 'Account' => $msisdn, 'Network' => $network, 'Amount' => (string) $amount, 'Narration' => 'Renewal Summit 2026 - Test', 'CallbackUrl' => env('SWAPP_CALLBACK_URL', url('/payment/callback'))]);
-        $this->line("  {$respA->status()} | " . $respA->body());
+        foreach ($endpoints as $ep) {
+            $rid = (string) Str::uuid();
+            $this->line("  POST {$baseUrl}{$ep}  [Account={$msisdn}, Network={$network}]");
+            $r = Http::timeout(20)->withoutVerifying()
+                ->withHeaders(['Swapp-Client-ID' => $clientId, 'Authorization' => "Bearer {$token}", 'Accept' => 'application/json', 'Content-Type' => 'application/json'])
+                ->post("{$baseUrl}{$ep}", [
+                    'RequestId'   => $rid,
+                    'Account'     => $msisdn,
+                    'Network'     => $network,
+                    'Amount'      => (string) $amount,
+                    'Narration'   => 'Renewal Summit 2026 - Test',
+                    'CallbackUrl' => $callbackUrl,
+                ]);
+            $this->line("  → {$r->status()} | " . $r->body());
+            if ($r->successful() && ! isset($r->json()['message'])) {
+                $this->info("  ✅ This endpoint worked!");
+                break;
+            }
+        }
 
-        // Try 2: no Network field (auto-detect by MSISDN)
-        $requestId2 = (string) Str::uuid();
-        $this->line("Attempt B — without Network field:");
-        $respB = Http::timeout(20)->withoutVerifying()
+        // Try with local format (no country code)
+        $this->newLine();
+        $this->line('<fg=yellow>STEP 3b: Retry with local phone format (no 256 prefix)...</>');
+        $localMsisdn = '0' . substr($msisdn, 3); // 256708356505 → 0708356505
+        $rid2 = (string) Str::uuid();
+        $r2 = Http::timeout(20)->withoutVerifying()
             ->withHeaders(['Swapp-Client-ID' => $clientId, 'Authorization' => "Bearer {$token}", 'Accept' => 'application/json', 'Content-Type' => 'application/json'])
-            ->post("{$baseUrl}/collection", ['RequestId' => $requestId2, 'Account' => $msisdn, 'Amount' => (string) $amount, 'Narration' => 'Renewal Summit 2026 - Test', 'CallbackUrl' => env('SWAPP_CALLBACK_URL', url('/payment/callback'))]);
-        $this->line("  {$respB->status()} | " . $respB->body());
+            ->post("{$baseUrl}/collection", [
+                'RequestId'   => $rid2,
+                'Account'     => $localMsisdn,
+                'Network'     => $network,
+                'Amount'      => (string) $amount,
+                'Narration'   => 'Renewal Summit 2026 - Test',
+                'CallbackUrl' => $callbackUrl,
+            ]);
+        $this->line("  Local format {$localMsisdn}: {$r2->status()} | " . $r2->body());
 
-        // Try 3: lowercase field names
-        $requestId3 = (string) Str::uuid();
-        $this->line("Attempt C — lowercase field names:");
-        $respC = Http::timeout(20)->withoutVerifying()
+        // Try with an MTN number (sandbox may only support MTN)
+        $this->newLine();
+        $this->line('<fg=yellow>STEP 3c: Retry with a known MTN number (0772000000)...</>');
+        $mtnNum = '256772000000';
+        $rid3 = (string) Str::uuid();
+        $r3 = Http::timeout(20)->withoutVerifying()
             ->withHeaders(['Swapp-Client-ID' => $clientId, 'Authorization' => "Bearer {$token}", 'Accept' => 'application/json', 'Content-Type' => 'application/json'])
-            ->post("{$baseUrl}/collection", ['requestId' => $requestId3, 'account' => $msisdn, 'network' => strtolower($network), 'amount' => (string) $amount, 'narration' => 'Renewal Summit 2026 - Test', 'callbackUrl' => env('SWAPP_CALLBACK_URL', url('/payment/callback'))]);
-        $this->line("  {$respC->status()} | " . $respC->body());
+            ->post("{$baseUrl}/collection", [
+                'RequestId'   => $rid3,
+                'Account'     => $mtnNum,
+                'Network'     => 'MTN',
+                'Amount'      => (string) $amount,
+                'Narration'   => 'Renewal Summit 2026 - Test',
+                'CallbackUrl' => $callbackUrl,
+            ]);
+        $this->line("  MTN {$mtnNum}: {$r3->status()} | " . $r3->body());
 
         $this->newLine();
 
