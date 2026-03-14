@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\RegistrationController as AdminRegistration;
-use App\Http\Controllers\DonationController;
+// use App\Http\Controllers\DonationController; // DISABLED: awaiting PayPal approval
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RegistrationController;
 use Illuminate\Support\Facades\Route;
@@ -45,16 +45,17 @@ Route::get('/verify/{token}', [RegistrationController::class, 'verify'])->name('
  | Payment Callbacks (called by Swapp gateway, NOT by user)
  |────────────────────────────────────────────────────────────*/
 Route::post('/payment/callback',  [PaymentController::class, 'callback'])->name('payment.callback');
-Route::post('/donation/callback', [PaymentController::class, 'donationCallback'])->name('donation.callback');
+// Route::post('/donation/callback', [PaymentController::class, 'donationCallback'])->name('donation.callback'); // DISABLED: awaiting PayPal approval
 
 // Polling endpoint (AJAX)
 Route::get('/payment/status/{reference}', [PaymentController::class, 'status'])->name('payment.status');
 
 /* ─────────────────────────────────────────────────────────────
- | Donations
+ | Donations — DISABLED: awaiting PayPal approval
+ | Uncomment below once PayPal approves the account
  |────────────────────────────────────────────────────────────*/
-Route::get('/donate',  [DonationController::class, 'show'])->name('donate');
-Route::post('/donate', [DonationController::class, 'store'])->name('donate.store');
+// Route::get('/donate',  [DonationController::class, 'show'])->name('donate');
+// Route::post('/donate', [DonationController::class, 'store'])->name('donate.store');
 
 /* ─────────────────────────────────────────────────────────────
  | Admin – Protected

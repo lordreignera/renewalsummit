@@ -95,8 +95,8 @@ class SwappPaymentService
             $response = Http::timeout(20)
                 ->withHeaders($this->bearerHeaders())
                 ->post("{$this->baseUrl}/validate", [
-                    'msisdn'  => $this->normalisePhone($phone),
-                    'network' => strtoupper($network),
+                    'Account' => $this->normalisePhone($phone),
+                    'Network' => $network,
                 ]);
 
             $data = $response->json();
@@ -122,8 +122,27 @@ class SwappPaymentService
      *
      * @return array{success: bool, payment: Payment, request_id: string|null, message: string}
      */
-    public function initiateMobileMoney(Registration $registration, string $phone, string $network = 'MTN'): array
+    /**
+     * Detect MTN or AIRTEL from a Ugandan phone number prefix.
+     */
+    public static function detectNetwork(string $phone): string
     {
+        $digits = preg_replace('/\D/', '', $phone);
+        if (str_starts_with($digits, '256')) {
+            $digits = '0' . substr($digits, 3);
+        }
+        $prefix = substr($digits, 0, 3);
+        if (in_array($prefix, ['077', '078', '076', '039', '031'])) return 'MTN';
+        if (in_array($prefix, ['070', '075', '074', '020']))          return 'Airtel';
+        return 'MTN'; // default
+    }
+
+    public function initiateMobileMoney(Registration $registration, string $phone, string $network = ''): array
+    {
+        if (empty($network)) {
+            $network = self::detectNetwork($phone);
+        }
+        // preserve casing returned by detectNetwork (e.g. "Airtel", "MTN")
         $requestId = (string) Str::uuid();
 
         $payment = Payment::create([
@@ -142,9 +161,10 @@ class SwappPaymentService
                 ->withHeaders($this->bearerHeaders())
                 ->post("{$this->baseUrl}/collection", [
                     'RequestId'   => $requestId,
-                    'msisdn'      => $this->normalisePhone($phone),
-                    'amount'      => (string) $registration->total_amount,
-                    'narration'   => "Renewal Summit 2026 â€“ {$registration->reference}",
+                    'Account'     => $this->normalisePhone($phone),
+                    'Network'     => $network,
+                    'Amount'      => (string) $registration->total_amount,
+                    'Narration'   => "Renewal Summit 2026 – {$registration->reference}",
                     'CallbackUrl' => $this->callbackUrl,
                 ]);
 

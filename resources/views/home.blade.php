@@ -71,10 +71,12 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 12v7a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
                 Register Now
             </a>
+            {{-- DISABLED: awaiting PayPal approval
             <a href="{{ route('donate') }}" class="hero-cta-secondary">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                 <span style="color:#D4A017;">Donate</span>
             </a>
+            --}}
         </div>
 
         {{-- Date & venue --}}
@@ -675,45 +677,40 @@
     </div>
 </section>
 
-{{-- ── REGISTER & DONATE CTA ─────────────────────────────────────── --}}
+{{-- ── REGISTER CTA (Donate panel hidden — awaiting PayPal approval) ─── --}}
 <section class="py-20 bg-gray-100">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid md:grid-cols-2 rounded-3xl overflow-hidden shadow-2xl">
-
-            {{-- LEFT: Register --}}
-            <div class="bg-summit text-white px-10 py-16 flex flex-col items-center text-center">
-                <div class="text-5xl mb-5">🎟️</div>
-                <h2 class="text-2xl sm:text-3xl font-extrabold mb-3 text-white">Ready to Join Us?</h2>
-                <p class="text-gray-300 text-sm leading-relaxed mb-8 max-w-xs">
-                    Secure your spot at Renewal Summit 2026. Payment via Mobile Money (MTN/Airtel) or VISA card.
-                </p>
-                <a href="{{ route('register.start') }}"
-                   class="bg-gold hover:bg-yellow-500 text-white font-bold px-8 py-4 rounded-xl text-base
-                          transition shadow-xl inline-block w-full max-w-xs text-center">
-                    Start Registration →
-                </a>
-                <p class="mt-5 text-xs text-gray-400">
-                    Already started?
-                    <a href="{{ route('register.start') }}#resume" class="text-yellow-400 hover:underline font-semibold">Resume your registration</a>
-                </p>
-            </div>
-
-            {{-- RIGHT: Donate --}}
-            <div class="bg-gold text-white px-10 py-16 flex flex-col items-center text-center">
-                <div class="text-5xl mb-5">🙏</div>
-                <h2 class="text-2xl sm:text-3xl font-extrabold mb-3 text-white">Support the Summit</h2>
-                <p class="text-yellow-100 text-sm leading-relaxed mb-8 max-w-xs">
-                    Your donation helps cover costs for delegates from underserved regions, event logistics,
-                    and the overall success of this global gathering.
-                </p>
-                <a href="{{ route('donate') }}"
-                   class="bg-white hover:bg-gray-100 text-yellow-600 font-bold px-7 py-4 rounded-xl text-base
-                          transition shadow-xl inline-block w-full max-w-xs text-center">
-                    Donate Towards the Summit →
-                </a>
-            </div>
-
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-summit text-white px-10 py-16 flex flex-col items-center text-center rounded-3xl shadow-2xl">
+            <div class="text-5xl mb-5">🎟️</div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold mb-3 text-white">Ready to Join Us?</h2>
+            <p class="text-gray-300 text-sm leading-relaxed mb-8 max-w-xs">
+                Secure your spot at Renewal Summit 2026. Payment via Mobile Money (MTN/Airtel) or VISA card.
+            </p>
+            <a href="{{ route('register.start') }}"
+               class="bg-gold hover:bg-yellow-500 text-white font-bold px-8 py-4 rounded-xl text-base
+                      transition shadow-xl inline-block w-full max-w-xs text-center">
+                Start Registration →
+            </a>
+            <p class="mt-5 text-xs text-gray-400">
+                Already started?
+                <a href="{{ route('register.start') }}#resume" class="text-yellow-400 hover:underline font-semibold">Resume your registration</a>
+            </p>
         </div>
+        {{-- DISABLED: Donate panel hidden — awaiting PayPal approval. Restore by uncommenting:
+        <div class="bg-gold text-white px-10 py-16 flex flex-col items-center text-center">
+            <div class="text-5xl mb-5">🙏</div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold mb-3 text-white">Support the Summit</h2>
+            <p class="text-yellow-100 text-sm leading-relaxed mb-8 max-w-xs">
+                Your donation helps cover costs for delegates from underserved regions, event logistics,
+                and the overall success of this global gathering.
+            </p>
+            <a href="{{ route('donate') }}"
+               class="bg-white hover:bg-gray-100 text-yellow-600 font-bold px-7 py-4 rounded-xl text-base
+                      transition shadow-xl inline-block w-full max-w-xs text-center">
+                Donate Towards the Summit →
+            </a>
+        </div>
+        --}}
     </div>
 </section>
 

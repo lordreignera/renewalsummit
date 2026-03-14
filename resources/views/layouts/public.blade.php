@@ -40,7 +40,8 @@
                     <a href="{{ route('home') }}#gallery"  style="color:#1a2a4a;" onmouseover="this.style.color='#D4A017'" onmouseout="this.style.color='#1a2a4a'">Gallery</a>
                     <a href="{{ route('home') }}#speakers" style="color:#1a2a4a;" onmouseover="this.style.color='#D4A017'" onmouseout="this.style.color='#1a2a4a'">Speakers</a>
                     <a href="{{ route('home') }}#contact"  style="color:#1a2a4a;" onmouseover="this.style.color='#D4A017'" onmouseout="this.style.color='#1a2a4a'">Contact</a>
-                    <a href="{{ route('donate') }}"        style="color:#D4A017; font-weight:700;" onmouseover="this.style.color='#b38610'" onmouseout="this.style.color='#D4A017'">Donate</a>
+                    {{-- DISABLED: awaiting PayPal approval --}}
+                    {{-- <a href="{{ route('donate') }}"        style="color:#D4A017; font-weight:700;" onmouseover="this.style.color='#b38610'" onmouseout="this.style.color='#D4A017'">Donate</a> --}}
                     <a href="{{ route('register.start') }}"
                        style="background:#D4A017; color:#fff; font-weight:700; padding:0.5rem 1.1rem; border-radius:0.5rem; text-decoration:none;"
                        onmouseover="this.style.background='#0f1f3d'" onmouseout="this.style.background='#D4A017'">
@@ -60,7 +61,8 @@
             <a href="{{ route('home') }}#gallery"  style="display:block; color:#1a2a4a; padding:0.5rem 0; font-weight:600;">Gallery</a>
             <a href="{{ route('home') }}#speakers" style="display:block; color:#1a2a4a; padding:0.5rem 0; font-weight:600;">Speakers</a>
             <a href="{{ route('home') }}#contact"  style="display:block; color:#1a2a4a; padding:0.5rem 0; font-weight:600;">Contact</a>
-            <a href="{{ route('donate') }}"        style="display:block; color:#D4A017; padding:0.5rem 0; font-weight:700;">Donate</a>
+            {{-- DISABLED: awaiting PayPal approval --}}
+            {{-- <a href="{{ route('donate') }}"        style="display:block; color:#D4A017; padding:0.5rem 0; font-weight:700;">Donate</a> --}}
             <a href="{{ route('register.start') }}"
                style="display:block; background:#D4A017; color:#fff; text-align:center; font-weight:700; padding:0.6rem 1rem; border-radius:0.5rem; margin-top:0.5rem; text-decoration:none;">Register Now</a>
         </div>
@@ -130,7 +132,8 @@
                     <h4 style="color:#D4A017;font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.22em;margin-bottom:1.2rem;">Quick Links</h4>
                     <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.75rem;">
                         <li><a href="{{ route('register.start') }}" style="color:#D4A017;text-decoration:none;font-size:.92rem;font-weight:600;" onmouseover="this.style.color='#ffe082'" onmouseout="this.style.color='#D4A017'">→ Register Now</a></li>
-                        <li><a href="{{ route('donate') }}" style="color:rgba(255,255,255,.75);text-decoration:none;font-size:.92rem;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.75)'">→ Donate</a></li>
+                        {{-- DISABLED: awaiting PayPal approval --}}
+                        {{-- <li><a href="{{ route('donate') }}" style="color:rgba(255,255,255,.75);text-decoration:none;font-size:.92rem;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.75)'">→ Donate</a></li> --}}
                         <li><a href="mailto:renewalsummit@africarenewal.org" style="color:rgba(255,255,255,.75);text-decoration:none;font-size:.85rem;word-break:break-all;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.75)'">→ renewalsummit@africarenewal.org</a></li>
                     </ul>
                 </div>
