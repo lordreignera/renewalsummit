@@ -26,6 +26,8 @@
     <div id="hero-bg-0" style="position:absolute;inset:0;background-image:url('{{ asset('images/together.jpg') }}');background-size:cover;background-position:center;opacity:1;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
     <div id="hero-bg-1" style="position:absolute;inset:0;background-image:url('{{ asset('images/praise1.jpg') }}');background-size:cover;background-position:center;opacity:0;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
     <div id="hero-bg-2" style="position:absolute;inset:0;background-image:url('{{ asset('images/performance1.jpg') }}');background-size:cover;background-position:center top;opacity:0;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
+    <div id="hero-bg-3" style="position:absolute;inset:0;background-image:url('{{ asset('images/summit1.jpeg') }}');background-size:cover;background-position:center;opacity:0;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
+    <div id="hero-bg-4" style="position:absolute;inset:0;background-image:url('{{ asset('images/entertainment.jpg') }}');background-size:cover;background-position:center;opacity:0;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
 
     {{-- Cinematic gradient overlay – lighter so photos show clearly --}}
     <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(10,22,52,.72) 0%, rgba(10,22,52,.30) 35%, rgba(10,22,52,.30) 65%, rgba(10,22,52,.80) 100%);z-index:1;"></div>
@@ -94,6 +96,8 @@
         <button id="dot-0" class="hero-dot" style="width:28px;background:#D4A017;" onclick="heroGoTo(0)"></button>
         <button id="dot-1" class="hero-dot" style="width:10px;background:rgba(255,255,255,.35);" onclick="heroGoTo(1)"></button>
         <button id="dot-2" class="hero-dot" style="width:10px;background:rgba(255,255,255,.35);" onclick="heroGoTo(2)"></button>
+        <button id="dot-3" class="hero-dot" style="width:10px;background:rgba(255,255,255,.35);" onclick="heroGoTo(3)"></button>
+        <button id="dot-4" class="hero-dot" style="width:10px;background:rgba(255,255,255,.35);" onclick="heroGoTo(4)"></button>
     </div>
 
     {{-- Scroll nudge --}}
@@ -105,8 +109,8 @@
     {{-- Slideshow + dot sync script --}}
     <script>
     (function(){
-        var bgs  = [document.getElementById('hero-bg-0'),document.getElementById('hero-bg-1'),document.getElementById('hero-bg-2')];
-        var dots = [document.getElementById('dot-0'),document.getElementById('dot-1'),document.getElementById('dot-2')];
+        var bgs  = [document.getElementById('hero-bg-0'),document.getElementById('hero-bg-1'),document.getElementById('hero-bg-2'),document.getElementById('hero-bg-3'),document.getElementById('hero-bg-4')];
+        var dots = [document.getElementById('dot-0'),document.getElementById('dot-1'),document.getElementById('dot-2'),document.getElementById('dot-3'),document.getElementById('dot-4')];
         var cur  = 0, timer;
         function heroGoTo(n){
             bgs[cur].style.opacity='0'; dots[cur].style.width='10px'; dots[cur].style.background='rgba(255,255,255,.35)';
@@ -222,14 +226,14 @@
 
     <div class="text-center mb-10">
         <span class="bg-gold/10 text-yellow-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">Gallery</span>
-        <h2 class="text-3xl font-extrabold text-summit mt-3">A Taste of Renewal Summit</h2>
+        <h2 class="text-3xl font-extrabold text-summit mt-3">A Taste of the Renewal Summit</h2>
         <p class="text-gray-500 mt-2 text-sm">Moments from previous summits — worship, training, evenings and community.</p>
     </div>
 
     {{-- Tab filters --}}
     <div class="flex flex-wrap justify-center gap-2 mb-10">
         <button class="gtab active-tab px-5 py-2 rounded-full text-sm font-semibold border transition" data-panel="panel-all">All</button>
-        <button class="gtab px-5 py-2 rounded-full text-sm font-semibold border transition" data-panel="panel-worship">🙌 Worship</button>
+        <button class="gtab px-5 py-2 rounded-full text-sm font-semibold border transition" data-panel="panel-worship">🙌 Praise &amp; Worship</button>
         <button class="gtab px-5 py-2 rounded-full text-sm font-semibold border transition" data-panel="panel-training">📚 Training &amp; Sessions</button>
         <button class="gtab px-5 py-2 rounded-full text-sm font-semibold border transition" data-panel="panel-evenings">🌙 Evening Entertainment</button>
         <button class="gtab px-5 py-2 rounded-full text-sm font-semibold border transition" data-panel="panel-community">🤝 Community</button>
@@ -239,12 +243,15 @@
     $groups = [
         [
             'id'    => 'worship',
-            'label' => '🙌 Worship',
+            'label' => '🙌 Praise & Worship',
             'color' => 'bg-purple-700',
             'images'=> [
-                ['src' => 'praise1.jpg',      'caption' => 'Praise & Worship'],
-                ['src' => 'holycommunion.jpg', 'caption' => 'Holy Communion'],
-                ['src' => 'performance1.jpg',  'caption' => 'Worship Performance'],
+                ['src' => 'praise1.jpg',       'caption' => 'Praise & Worship'],
+                ['src' => 'holycommunion.jpg',  'caption' => 'Holy Communion'],
+                ['src' => 'performance1.jpg',   'caption' => 'Worship Performance'],
+                ['src' => 'performance2.jpg',   'caption' => 'Live Worship'],
+                ['src' => 'performance3.jpg',   'caption' => 'Worship Night'],
+                ['src' => 'summit1.jpeg',       'caption' => 'Summit Gathering'],
             ],
         ],
         [
@@ -252,10 +259,11 @@
             'label' => '📚 Training & Sessions',
             'color' => 'bg-blue-700',
             'images'=> [
-                ['src' => 'trainings.jpg',  'caption' => 'Training Sessions'],
-                ['src' => 'training2.jpg',  'caption' => 'Workshop'],
-                ['src' => 'training3.jpg',  'caption' => 'Breakout Session'],
-                ['src' => 'training4.jpg',  'caption' => 'Plenary Session'],
+                ['src' => 'trainings.jpg',    'caption' => 'Training Sessions'],
+                ['src' => 'training2.jpg',    'caption' => 'Workshop'],
+                ['src' => 'training3.jpg',    'caption' => 'Breakout Session'],
+                ['src' => 'training4.jpg',    'caption' => 'Plenary Session'],
+                ['src' => 'pannel_-24.jpg',   'caption' => 'Panel Discussion'],
             ],
         ],
         [
@@ -263,10 +271,12 @@
             'label' => '🌙 Evening Entertainment',
             'color' => 'bg-indigo-800',
             'images'=> [
-                ['src' => 'evening1.jpg',     'caption' => 'Evening Entertainment'],
-                ['src' => 'evening2.jpg',      'caption' => 'Evening Programme'],
-                ['src' => 'performance2.jpg',  'caption' => 'Live Performance'],
-                ['src' => 'performance3.jpg',  'caption' => 'Evening Show'],
+                ['src' => 'evening1.jpg',        'caption' => 'Evening Entertainment'],
+                ['src' => 'evening2.jpg',         'caption' => 'Evening Programme'],
+                ['src' => 'performance2.jpg',     'caption' => 'Live Performance'],
+                ['src' => 'performance3.jpg',     'caption' => 'Evening Show'],
+                ['src' => 'entertainment.jpg',    'caption' => 'Entertainment'],
+                ['src' => 'entertainment2.jpg',   'caption' => 'Evening Celebrations'],
             ],
         ],
         [
@@ -274,8 +284,9 @@
             'label' => '🤝 Community',
             'color' => 'bg-green-700',
             'images'=> [
-                ['src' => 'together.jpg',  'caption' => 'Together'],
-                ['src' => 'together1.jpeg',  'caption' => 'Summit Community'],
+                ['src' => 'together.jpg',   'caption' => 'Together'],
+                ['src' => 'together1.jpg',  'caption' => 'Summit Community'],
+                ['src' => 'together2.jpg',  'caption' => 'Nations Together'],
             ],
         ],
     ];

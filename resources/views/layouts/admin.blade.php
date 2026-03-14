@@ -16,8 +16,27 @@
 
         /* Layout */
         .admin-wrap  { display: flex; height: 100vh; overflow: hidden; }
-        .admin-aside { width: 240px; min-width: 240px; background: #0f1f3d; display: flex; flex-direction: column; overflow-y: auto; }
-        .admin-main  { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+        .admin-aside { width: 240px; min-width: 240px; background: #0f1f3d; display: flex; flex-direction: column; overflow-y: auto; transition: transform .28s ease; z-index: 40; }
+        .admin-main  { flex: 1; overflow-y: auto; display: flex; flex-direction: column; min-width: 0; }
+
+        /* Mobile overlay */
+        .sb-overlay  { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 39; }
+        .sb-overlay.show { display: block; }
+
+        /* Hamburger */
+        .sb-toggle   { display: none; background: none; border: none; cursor: pointer; padding: 4px 6px; border-radius: 6px; }
+        .sb-toggle:hover { background: #f1f5f9; }
+        .sb-toggle svg { display: block; }
+
+        @media (max-width: 768px) {
+            .admin-aside { position: fixed; top: 0; left: 0; height: 100%; transform: translateX(-260px); }
+            .admin-aside.open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,.35); }
+            .sb-toggle { display: flex; align-items: center; justify-content: center; }
+            .admin-content { padding: 16px; }
+            .admin-topbar { padding: 12px 16px; }
+            .flash-wrap { padding: 12px 16px 0 !important; }
+            .topbar-date { display: none; }
+        }
 
         /* Sidebar brand */
         .sb-brand    { padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,.08); }
@@ -65,8 +84,11 @@
 
 <div class="admin-wrap">
 
-    {{-- ── Sidebar ─────────────────────────────────────────────── --}}
-    <aside class="admin-aside">
+    {{-- Mobile sidebar overlay --}}
+    <div class="sb-overlay" id="sb-overlay" onclick="closeSidebar()"></div>
+
+    {{-- ── Sidebar ──────────────────────────────────────────── --}}
+    <aside class="admin-aside" id="admin-aside">
 
         {{-- Brand --}}
         <div class="sb-brand">
@@ -118,15 +140,22 @@
 
         {{-- Top bar --}}
         <div class="admin-topbar">
-            <h1>@yield('page-title', 'Dashboard')</h1>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <button class="sb-toggle" id="sb-toggle" onclick="openSidebar()" title="Menu">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0f1f3d" stroke-width="2.2">
+                        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+                    </svg>
+                </button>
+                <h1>@yield('page-title', 'Dashboard')</h1>
+            </div>
             <div class="topbar-meta">
-                <span>📅 {{ now()->format('D d M Y') }}</span>
+                <span class="topbar-date">📅 {{ now()->format('D d M Y') }}</span>
                 <span class="live-badge">● LIVE</span>
             </div>
         </div>
 
         {{-- Flash messages --}}
-        <div style="padding: 16px 32px 0;">
+        <div style="padding: 16px 32px 0;" class="flash-wrap">
             @if(session('success'))
                 <div class="flash-success">{{ session('success') }}</div>
             @endif
@@ -150,5 +179,19 @@
 </div>
 
 @stack('scripts')
+<script>
+function openSidebar(){
+    document.getElementById('admin-aside').classList.add('open');
+    document.getElementById('sb-overlay').classList.add('show');
+}
+function closeSidebar(){
+    document.getElementById('admin-aside').classList.remove('open');
+    document.getElementById('sb-overlay').classList.remove('show');
+}
+// Close sidebar on nav link click (mobile)
+document.querySelectorAll('.sb-link').forEach(function(el){
+    el.addEventListener('click', function(){ if(window.innerWidth<=768) closeSidebar(); });
+});
+</script>
 </body>
 </html>

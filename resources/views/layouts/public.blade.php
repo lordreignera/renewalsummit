@@ -37,6 +37,7 @@
                 </a>
                 <div class="hidden md:flex items-center" style="gap:1.5rem; font-size:0.9rem; font-weight:600;">
                     <a href="{{ route('home') }}#about"    style="color:#1a2a4a;" onmouseover="this.style.color='#D4A017'" onmouseout="this.style.color='#1a2a4a'">About</a>
+                    <a href="{{ route('home') }}#gallery"  style="color:#1a2a4a;" onmouseover="this.style.color='#D4A017'" onmouseout="this.style.color='#1a2a4a'">Gallery</a>
                     <a href="{{ route('home') }}#speakers" style="color:#1a2a4a;" onmouseover="this.style.color='#D4A017'" onmouseout="this.style.color='#1a2a4a'">Speakers</a>
                     <a href="{{ route('home') }}#contact"  style="color:#1a2a4a;" onmouseover="this.style.color='#D4A017'" onmouseout="this.style.color='#1a2a4a'">Contact</a>
                     <a href="{{ route('donate') }}"        style="color:#D4A017; font-weight:700;" onmouseover="this.style.color='#b38610'" onmouseout="this.style.color='#D4A017'">Donate</a>
@@ -56,6 +57,7 @@
         </div>
         <div id="mob-nav" class="hidden md:hidden" style="background:#fff; border-top:1px solid #e5e7eb; padding:0.5rem 1rem 1rem;">
             <a href="{{ route('home') }}#about"    style="display:block; color:#1a2a4a; padding:0.5rem 0; font-weight:600;">About</a>
+            <a href="{{ route('home') }}#gallery"  style="display:block; color:#1a2a4a; padding:0.5rem 0; font-weight:600;">Gallery</a>
             <a href="{{ route('home') }}#speakers" style="display:block; color:#1a2a4a; padding:0.5rem 0; font-weight:600;">Speakers</a>
             <a href="{{ route('home') }}#contact"  style="display:block; color:#1a2a4a; padding:0.5rem 0; font-weight:600;">Contact</a>
             <a href="{{ route('donate') }}"        style="display:block; color:#D4A017; padding:0.5rem 0; font-weight:700;">Donate</a>
