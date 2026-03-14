@@ -23,11 +23,12 @@
 <section id="hero-section" style="position:relative;min-height:100vh;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;">
 
     {{-- Background slides (cross-fade) --}}
-    <div id="hero-bg-0" style="position:absolute;inset:0;background-image:url('{{ asset('images/together1.jpg') }}');background-size:cover;background-position:center;opacity:1;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
+    <div id="hero-bg-0" style="position:absolute;inset:0;background-image:url('{{ asset('images/international.jpg') }}');background-size:cover;background-position:center;opacity:1;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
     <div id="hero-bg-1" style="position:absolute;inset:0;background-image:url('{{ asset('images/together2.jpg') }}');background-size:cover;background-position:center;opacity:0;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
     <div id="hero-bg-2" style="position:absolute;inset:0;background-image:url('{{ asset('images/pannel_-24.jpg') }}');background-size:cover;background-position:center top;opacity:0;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
     <div id="hero-bg-3" style="position:absolute;inset:0;background-image:url('{{ asset('images/holycommunion.jpg') }}');background-size:cover;background-position:center;opacity:0;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
     <div id="hero-bg-4" style="position:absolute;inset:0;background-image:url('{{ asset('images/trainings.jpg') }}');background-size:cover;background-position:center;opacity:0;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
+    <div id="hero-bg-5" style="position:absolute;inset:0;background-image:url('{{ asset('images/together1.jpg') }}');background-size:cover;background-position:center;opacity:0;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
 
     {{-- Cinematic gradient overlay – lighter so photos show clearly --}}
     <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(10,22,52,.72) 0%, rgba(10,22,52,.30) 35%, rgba(10,22,52,.30) 65%, rgba(10,22,52,.80) 100%);z-index:1;"></div>
@@ -100,6 +101,7 @@
         <button id="dot-2" class="hero-dot" style="width:10px;background:rgba(255,255,255,.35);" onclick="heroGoTo(2)"></button>
         <button id="dot-3" class="hero-dot" style="width:10px;background:rgba(255,255,255,.35);" onclick="heroGoTo(3)"></button>
         <button id="dot-4" class="hero-dot" style="width:10px;background:rgba(255,255,255,.35);" onclick="heroGoTo(4)"></button>
+        <button id="dot-5" class="hero-dot" style="width:10px;background:rgba(255,255,255,.35);" onclick="heroGoTo(5)"></button>
     </div>
 
     {{-- Scroll nudge --}}
@@ -111,8 +113,8 @@
     {{-- Slideshow + dot sync script --}}
     <script>
     (function(){
-        var bgs  = [document.getElementById('hero-bg-0'),document.getElementById('hero-bg-1'),document.getElementById('hero-bg-2'),document.getElementById('hero-bg-3'),document.getElementById('hero-bg-4')];
-        var dots = [document.getElementById('dot-0'),document.getElementById('dot-1'),document.getElementById('dot-2'),document.getElementById('dot-3'),document.getElementById('dot-4')];
+        var bgs  = [document.getElementById('hero-bg-0'),document.getElementById('hero-bg-1'),document.getElementById('hero-bg-2'),document.getElementById('hero-bg-3'),document.getElementById('hero-bg-4'),document.getElementById('hero-bg-5')];
+        var dots = [document.getElementById('dot-0'),document.getElementById('dot-1'),document.getElementById('dot-2'),document.getElementById('dot-3'),document.getElementById('dot-4'),document.getElementById('dot-5')];
         var cur  = 0, timer;
         function heroGoTo(n){
             bgs[cur].style.opacity='0'; dots[cur].style.width='10px'; dots[cur].style.background='rgba(255,255,255,.35)';
