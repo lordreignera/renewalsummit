@@ -32,9 +32,9 @@
                 <select name="country_type" id="country_type" required
                         class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm bg-white focus:ring-2 focus:ring-yellow-400 outline-none transition">
                     <option value="" disabled {{ $currentType === '' ? 'selected' : '' }}>— Select your location —</option>
-                    <option value="local"         {{ $currentType === 'local'         ? 'selected' : '' }}>🇺🇬 Uganda</option>
-                    <option value="africa"        {{ $currentType === 'africa'        ? 'selected' : '' }}>🌍 Rest of Africa</option>
-                    <option value="international" {{ $currentType === 'international' ? 'selected' : '' }}>✈️ International</option>
+                    <option value="local"         {{ $currentType === 'local'         ? 'selected' : '' }}>🇺🇬 Uganda Delegate </option>
+                    <option value="africa"        {{ $currentType === 'africa'        ? 'selected' : '' }}>🌍 Rest of Africa Delegate </option>
+                    <option value="international" {{ $currentType === 'international' ? 'selected' : '' }}>✈️ International Delegate </option>
                 </select>
                 {{-- Live fee badge --}}
                 <div id="fee-badge" class="mt-2 hidden">

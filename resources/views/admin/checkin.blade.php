@@ -299,23 +299,26 @@
         {{-- ── QR Scan Verification Panel ── --}}
         <div style="padding:20px 24px;border-bottom:1px solid #f0f0f0;">
             <div style="font-size:13px;font-weight:700;color:#1a2a4a;margin-bottom:4px;">📲 Scan Attendee's QR Code to Verify</div>
-            <div style="font-size:12px;color:#64748b;margin-bottom:12px;">Ask the attendee to show their QR code, then scan it below. The reference must match before check-in is allowed.</div>
+            <div style="font-size:12px;color:#64748b;margin-bottom:10px;">Point the camera at the attendee's QR code. Physical QR scanners (USB) are also accepted. Manual entry is not permitted.</div>
 
-            {{-- Scan input (USB scanner or typing) --}}
-            <div style="display:flex;gap:8px;margin-bottom:10px;">
-                <input type="text" id="modal-scan-input"
-                       autocomplete="off" placeholder="Scan QR code here or type reference..."
-                       oninput="onModalScanInput(this.value)"
-                       style="flex:1;border:2px solid #f5c518;border-radius:10px;padding:9px 14px;font-size:13px;font-family:monospace;outline:none;">
-                <button onclick="toggleModalCamera()"
-                        style="background:#1a2a4a;color:#f5c518;padding:9px 14px;border-radius:10px;font-size:12px;font-weight:700;border:none;cursor:pointer;white-space:nowrap;"
-                        id="modal-cam-btn">📷 Camera</button>
-            </div>
+            {{-- Hidden input for USB / hardware QR scanners.
+                 Invisible to the eye — hardware scanners type into it automatically.
+                 Admins cannot see or click it. --}}
+            <input type="text" id="modal-scan-input"
+                   autocomplete="off" tabindex="-1" aria-hidden="true"
+                   oninput="onModalScanInput(this.value)"
+                   style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;">
 
-            {{-- Camera viewer --}}
-            <div id="modal-camera-area" style="display:none;margin-bottom:10px;">
+            {{-- Camera viewer (shown by default, auto-starts with modal) --}}
+            <div id="modal-camera-area" style="margin-bottom:10px;">
                 <div id="modal-reader" style="border-radius:10px;overflow:hidden;border:2px solid #f5c518;"></div>
-                <p style="font-size:11px;color:#94a3b8;margin-top:6px;">Point the camera at the attendee's QR code.</p>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+                    <p style="font-size:11px;color:#94a3b8;margin:0;">Point camera at the attendee's QR code.</p>
+                    <button onclick="restartModalCamera()"
+                            style="background:#f1f5f9;color:#475569;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;border:1px solid #e2e8f0;cursor:pointer;">
+                        🔄 Restart
+                    </button>
+                </div>
             </div>
 
             {{-- Verification result --}}
@@ -477,16 +480,18 @@
         document.getElementById('modal-csrf').value          = data.csrf;
 
         // Reset scan panel
-        document.getElementById('modal-scan-input').value    = '';
+        document.getElementById('modal-scan-input').value = '';
         setVerifyResult('idle', '');
         stopModalCamera();
-        document.getElementById('modal-camera-area').style.display = 'none';
 
         document.getElementById('attendee-modal').style.display = 'block';
         document.body.style.overflow = 'hidden';
 
-        // Auto-focus the scan input
-        setTimeout(() => document.getElementById('modal-scan-input').focus(), 200);
+        // Auto-start camera and focus hidden input (for USB scanners)
+        setTimeout(() => {
+            startModalCamera();
+            document.getElementById('modal-scan-input').focus();
+        }, 300);
     }
 
     /* ── Close Modal ── */
@@ -539,30 +544,37 @@
         }
     }
 
-    /* ── Typed / USB-scanner input inside modal ── */
+    /* ── USB / hardware scanner input (hidden field) ──
+       Hardware QR scanners act like keyboards typing rapidly.
+       We debounce 80 ms — fast typing = scanner, slow = human (ignored). --*/
+    let lastInputTime = 0;
     function onModalScanInput(value) {
         clearTimeout(modalScanTimer);
+        const now = Date.now();
+        const timeSinceLast = now - lastInputTime;
+        lastInputTime = now;
+        // Scanners emit all chars in < 200 ms. Reset if gap is too long (human typing).
+        if (timeSinceLast > 200) {
+            document.getElementById('modal-scan-input').value = '';
+            return;
+        }
         modalScanTimer = setTimeout(() => {
-            const raw = value.trim();
-            if (raw) verifyAndCheckIn(raw);
+            const raw = document.getElementById('modal-scan-input').value.trim();
+            if (raw) {
+                document.getElementById('modal-scan-input').value = '';
+                verifyAndCheckIn(raw);
+            }
         }, 80);
     }
 
-    /* ── Camera inside modal ── */
-    function toggleModalCamera() {
-        const area = document.getElementById('modal-camera-area');
-        if (area.style.display === 'none') {
-            area.style.display = 'block';
-            startModalCamera();
-            document.getElementById('modal-cam-btn').textContent = '⏹ Stop';
-        } else {
-            area.style.display = 'none';
-            stopModalCamera();
-            document.getElementById('modal-cam-btn').textContent = '📷 Camera';
-        }
+    /* ── Restart camera button ── */
+    function restartModalCamera() {
+        stopModalCamera();
+        setTimeout(startModalCamera, 400);
     }
 
     function startModalCamera() {
+        if (modalScanner) return; // already running
         modalScanner = new Html5Qrcode('modal-reader');
         modalScanner.start(
             { facingMode: 'environment' },
@@ -570,12 +582,13 @@
             function(decodedText) {
                 // Stop camera immediately so it doesn't re-fire
                 stopModalCamera();
-                document.getElementById('modal-camera-area').style.display = 'none';
-                document.getElementById('modal-cam-btn').textContent = '📷 Camera';
                 verifyAndCheckIn(decodedText);
             },
-            function() { /* ignore individual scan errors */ }
-        ).catch(console.error);
+            function() { /* ignore per-frame scan errors */ }
+        ).catch(err => {
+            console.error('Camera error:', err);
+            setVerifyResult('error', '❌ Camera failed to start. Use a USB QR scanner instead.');
+        });
     }
 
     function stopModalCamera() {
