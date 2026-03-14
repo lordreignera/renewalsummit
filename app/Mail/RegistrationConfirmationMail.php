@@ -35,7 +35,7 @@ class RegistrationConfirmationMail extends Mailable
             with: [
                 'registration' => $this->registration,
                 'qrUrl'        => $this->registration->qr_code_path
-                    ? Storage::disk(config('filesystems.qr_disk', 'r2'))->url($this->registration->qr_code_path)
+                    ? route('qr.show', ['reference' => $this->registration->reference])
                     : null,
             ],
         );

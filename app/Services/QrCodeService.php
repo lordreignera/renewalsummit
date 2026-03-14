@@ -78,7 +78,7 @@ class QrCodeService
             return null;
         }
 
-        return Storage::disk(config('filesystems.qr_disk', 'r2'))->url($registration->qr_code_path);
+        return route('qr.show', ['reference' => $registration->reference]);
     }
 
     /**

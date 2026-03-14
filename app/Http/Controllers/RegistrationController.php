@@ -248,7 +248,7 @@ class RegistrationController extends Controller
         }
 
         $qrUrl = $reg->qr_code_path
-            ? \Illuminate\Support\Facades\Storage::disk(config('filesystems.qr_disk', 'r2'))->url($reg->qr_code_path)
+            ? route('qr.show', ['reference' => $reg->reference])
             : null;
 
         return view('registration.complete', compact('reg', 'qrUrl'));

@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\RegistrationController as AdminRegistration;
 // use App\Http\Controllers\DonationController; // DISABLED: awaiting PayPal approval
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\QrImageController;
 use App\Http\Controllers\RegistrationController;
 use Illuminate\Support\Facades\Route;
 
@@ -11,6 +12,11 @@ use Illuminate\Support\Facades\Route;
  | Public – Landing Page
  |────────────────────────────────────────────────────────────*/
 Route::get('/', fn() => view('home'))->name('home');
+
+/* ─────────────────────────────────────────────────────────────
+ | QR Code Image (proxy – works for both local & R2 storage)
+ |────────────────────────────────────────────────────────────*/
+Route::get('/qr/{reference}', [QrImageController::class, 'show'])->name('qr.show');
 
 /* ─────────────────────────────────────────────────────────────
  | Registration Flow (multi-step)
