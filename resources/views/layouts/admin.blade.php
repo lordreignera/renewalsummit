@@ -9,84 +9,140 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .bg-summit { background-color: #1a1a2e; }
-        .gold      { color: #D4A017; }
-        .bg-gold   { background-color: #D4A017; }
-        .sidebar-link { @apply flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 rounded-xl hover:bg-white/10 hover:text-white transition; }
-        .sidebar-link.active { @apply bg-gold text-white font-semibold; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: #f1f5f9; color: #1e293b; }
+
+        /* Layout */
+        .admin-wrap  { display: flex; height: 100vh; overflow: hidden; }
+        .admin-aside { width: 240px; min-width: 240px; background: #0f1f3d; display: flex; flex-direction: column; overflow-y: auto; }
+        .admin-main  { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+
+        /* Sidebar brand */
+        .sb-brand    { padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,.08); }
+        .sb-brand-name { color: #fff; font-weight: 800; font-size: 1.05rem; letter-spacing: .01em; }
+        .sb-brand-name span { color: #D4A017; }
+        .sb-badge    { display: inline-block; background: #D4A017; color: #fff; font-size: .65rem; font-weight: 700; padding: 1px 6px; border-radius: 4px; margin-left: 4px; vertical-align: middle; }
+        .sb-sub      { color: #64748b; font-size: .7rem; margin-top: 3px; }
+
+        /* Nav links */
+        .sb-nav      { flex: 1; padding: 16px 12px; }
+        .sb-link     { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 10px;
+                       color: #94a3b8; font-size: .85rem; font-weight: 500; text-decoration: none;
+                       transition: background .15s, color .15s; white-space: nowrap; }
+        .sb-link:hover  { background: rgba(255,255,255,.08); color: #fff; }
+        .sb-link.active { background: #D4A017; color: #fff; font-weight: 700; }
+        .sb-link .icon  { font-size: 1.1rem; width: 22px; text-align: center; flex-shrink: 0; }
+        .sb-divider  { border: none; border-top: 1px solid rgba(255,255,255,.08); margin: 10px 0; }
+
+        /* Sidebar footer */
+        .sb-foot     { padding: 14px 18px; border-top: 1px solid rgba(255,255,255,.08); }
+        .sb-user     { color: #64748b; font-size: .75rem; margin-bottom: 6px; }
+        .sb-logout   { background: none; border: none; color: #94a3b8; font-size: .8rem; cursor: pointer; transition: color .15s; padding: 0; font-family: inherit; }
+        .sb-logout:hover { color: #fff; }
+
+        /* Topbar */
+        .admin-topbar { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 14px 32px;
+                        display: flex; align-items: center; justify-content: space-between;
+                        position: sticky; top: 0; z-index: 10; }
+        .admin-topbar h1 { font-size: 1.2rem; font-weight: 800; color: #0f1f3d; }
+        .topbar-meta { display: flex; align-items: center; gap: 12px; font-size: .8rem; color: #64748b; }
+        .live-badge  { background: #dcfce7; color: #166534; font-size: .7rem; font-weight: 700;
+                       padding: 2px 10px; border-radius: 999px; }
+
+        /* Content */
+        .admin-content { padding: 28px 32px; flex: 1; }
+
+        /* Flash alerts */
+        .flash-success { background:#f0fdf4; border:1px solid #bbf7d0; color:#166534; border-radius:10px; padding:10px 16px; font-size:.85rem; margin-bottom:12px; }
+        .flash-error   { background:#fef2f2; border:1px solid #fecaca; color:#991b1b; border-radius:10px; padding:10px 16px; font-size:.85rem; margin-bottom:12px; }
+        .flash-info    { background:#eff6ff; border:1px solid #bfdbfe; color:#1e40af; border-radius:10px; padding:10px 16px; font-size:.85rem; margin-bottom:12px; }
+        .flash-warning { background:#fffbeb; border:1px solid #fde68a; color:#92400e; border-radius:10px; padding:10px 16px; font-size:.85rem; margin-bottom:12px; }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-900 antialiased">
+<body>
 
-<div class="flex h-screen overflow-hidden">
+<div class="admin-wrap">
 
-    {{-- ── Sidebar ────────────────────────────────────────────────── --}}
-    <aside class="bg-summit w-64 flex-shrink-0 flex flex-col overflow-y-auto">
-        <div class="px-6 py-5 border-b border-white/10">
-            <a href="{{ route('admin.dashboard') }}" class="block">
-                <span class="text-white font-extrabold text-lg">RENEWAL <span class="gold">SUMMIT</span></span>
-                <span class="ml-1 bg-gold text-white text-xs font-bold px-1.5 py-0.5 rounded">2026</span>
+    {{-- ── Sidebar ─────────────────────────────────────────────── --}}
+    <aside class="admin-aside">
+
+        {{-- Brand --}}
+        <div class="sb-brand">
+            <a href="{{ route('admin.dashboard') }}" style="text-decoration:none;">
+                <div class="sb-brand-name">RENEWAL <span>SUMMIT</span><span class="sb-badge">2026</span></div>
             </a>
-            <p class="text-xs text-gray-500 mt-0.5">Admin Panel</p>
+            <div class="sb-sub">Admin Panel</div>
         </div>
 
-        <nav class="flex-1 px-3 py-5 space-y-1">
+        {{-- Navigation --}}
+        <nav class="sb-nav">
             <a href="{{ route('admin.dashboard') }}"
-               class="sidebar-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                📊 Dashboard
+               class="sb-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                <span class="icon">📊</span> Dashboard
             </a>
             <a href="{{ route('admin.registrations.index') }}"
-               class="sidebar-link {{ request()->routeIs('admin.registrations.*') ? 'active' : '' }}">
-                📋 Registrations
+               class="sb-link {{ request()->routeIs('admin.registrations.*') ? 'active' : '' }}">
+                <span class="icon">📋</span> Registrations
             </a>
             <a href="{{ route('admin.checkin') }}"
-               class="sidebar-link {{ request()->routeIs('admin.checkin*') ? 'active' : '' }}">
-                📲 Check-In Scanner
+               class="sb-link {{ request()->routeIs('admin.checkin*') ? 'active' : '' }}">
+                <span class="icon">📲</span> Check-In Scanner
             </a>
-            <div class="border-t border-white/10 my-3"></div>
-            <a href="{{ route('home') }}" target="_blank"
-               class="sidebar-link">🌐 Public Site ↗</a>
-            <a href="{{ route('register.start') }}" target="_blank"
-               class="sidebar-link">📝 Register ↗</a>
+
+            <hr class="sb-divider">
+
+            <a href="{{ route('home') }}" target="_blank" class="sb-link">
+                <span class="icon">🌐</span> Public Site ↗
+            </a>
+            <a href="{{ route('register.start') }}" target="_blank" class="sb-link">
+                <span class="icon">📝</span> Register ↗
+            </a>
         </nav>
 
-        <div class="px-4 py-4 border-t border-white/10">
-            <p class="text-xs text-gray-500 mb-2">{{ auth()->user()->name }}</p>
+        {{-- Footer --}}
+        <div class="sb-foot">
+            <div class="sb-user">{{ auth()->user()->name }}</div>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button class="text-xs text-gray-400 hover:text-white transition">Sign Out →</button>
+                <button type="submit" class="sb-logout">Sign Out →</button>
             </form>
         </div>
+
     </aside>
 
-    {{-- ── Main ────────────────────────────────────────────────────── --}}
-    <main class="flex-1 overflow-y-auto">
+    {{-- ── Main ────────────────────────────────────────────────── --}}
+    <main class="admin-main">
 
         {{-- Top bar --}}
-        <div class="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between sticky top-0 z-10">
-            <h1 class="text-xl font-extrabold text-summit">@yield('page-title', 'Dashboard')</h1>
-            <div class="flex items-center gap-4 text-sm text-gray-500">
+        <div class="admin-topbar">
+            <h1>@yield('page-title', 'Dashboard')</h1>
+            <div class="topbar-meta">
                 <span>📅 {{ now()->format('D d M Y') }}</span>
-                <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full">● LIVE</span>
+                <span class="live-badge">● LIVE</span>
             </div>
         </div>
 
-        {{-- Flash --}}
-        <div class="px-8 pt-4">
-            @foreach(['success' => 'green', 'error' => 'red', 'info' => 'blue', 'warning' => 'yellow'] as $type => $color)
-                @if(session($type))
-                    <div class="bg-{{ $color }}-50 border border-{{ $color }}-200 text-{{ $color }}-800 rounded-xl px-4 py-3 text-sm mb-4">
-                        {{ session($type) }}
-                    </div>
-                @endif
-            @endforeach
+        {{-- Flash messages --}}
+        <div style="padding: 16px 32px 0;">
+            @if(session('success'))
+                <div class="flash-success">{{ session('success') }}</div>
+            @endif
+            @if(session('error'))
+                <div class="flash-error">{{ session('error') }}</div>
+            @endif
+            @if(session('info'))
+                <div class="flash-info">{{ session('info') }}</div>
+            @endif
+            @if(session('warning'))
+                <div class="flash-warning">{{ session('warning') }}</div>
+            @endif
         </div>
 
-        {{-- Content --}}
-        <div class="px-8 py-6">
+        {{-- Page content --}}
+        <div class="admin-content">
             @yield('content')
         </div>
+
     </main>
 </div>
 

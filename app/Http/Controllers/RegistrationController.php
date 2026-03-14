@@ -59,14 +59,20 @@ class RegistrationController extends Controller
     public function saveStep1(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'full_name'           => 'required|string|max:255',
-            'designation'         => 'required|in:fcc_regional_leader,senior_pastor,church_leader,corporate',
-            'designation_specify' => 'required_if:designation,church_leader|nullable|string|max:255',
-            'phone'               => 'required|string|max:20',
-            'email'               => 'nullable|email|max:255',
-            'address'             => 'nullable|string|max:500',
-            'country_type'        => 'required|in:local,africa,international',
-            'nationality'         => 'nullable|string|max:100',
+            'full_name'            => 'required|string|max:255',
+            'designation'          => 'required|in:fcc_regional_leader,senior_pastor,church_leader,corporate',
+            'designation_specify'  => 'required_if:designation,church_leader|nullable|string|max:255',
+            'phone'                => 'required|string|max:20',
+            'email'                => 'nullable|email|max:255',
+            'address'              => 'nullable|string|max:500',
+            'country_type'         => 'required|in:local,africa,international',
+            'nationality'          => 'nullable|string|max:100',
+            // FCC membership (captured here as question 2)
+            'affiliation'          => 'required|in:fcc,other',
+            'fcc_region'           => 'required_if:affiliation,fcc|nullable|string|max:200',
+            'fcc_regional_leader'  => 'required_if:affiliation,fcc|nullable|string|max:200',
+            'fcc_church'           => 'required_if:affiliation,fcc|nullable|string|max:200',
+            'fcc_pastor'           => 'nullable|string|max:200',
         ]);
 
         // Fee tiers: local=UGX 150k, africa=$50, international=$100
@@ -118,7 +124,7 @@ class RegistrationController extends Controller
     }
 
     /* ─────────────────────────────────────────────────────────────
-     | STEP 2 – Church affiliation
+     | STEP 2 – Review / confirmation (affiliation already saved in step 1)
      |────────────────────────────────────────────────────────────*/
 
     public function step2(): View|RedirectResponse
@@ -133,15 +139,9 @@ class RegistrationController extends Controller
         $reg = $this->currentReg();
         if (! $reg) return redirect()->route('register.start');
 
-        $data = $request->validate([
-            'affiliation'          => 'required|in:fcc,other',
-            'fcc_region'           => 'required_if:affiliation,fcc|nullable|string|max:200',
-            'fcc_regional_leader'  => 'required_if:affiliation,fcc|nullable|string|max:200',
-            'fcc_church'           => 'required_if:affiliation,fcc|nullable|string|max:200',
-            'fcc_pastor'           => 'nullable|string|max:200',
-        ]);
-
-        $reg->update(array_merge($data, ['current_step' => 3]));
+        // All affiliation data was already saved in saveStep1.
+        // Just advance the step.
+        $reg->update(['current_step' => 3]);
 
         return redirect()->route('register.step', 3);
     }

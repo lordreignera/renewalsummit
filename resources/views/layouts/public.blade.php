@@ -29,9 +29,9 @@
     <nav class="bg-summit shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <a href="{{ route('home') }}" class="flex items-center space-x-2">
-                    <span class="text-white font-extrabold text-xl tracking-tight">RENEWAL <span class="gold">SUMMIT</span></span>
-                    <span class="bg-gold text-white text-xs font-bold px-2 py-0.5 rounded">2026</span>
+                <a href="{{ route('home') }}" class="flex items-center">
+                    <img src="{{ asset('images/summit26.png') }}" alt="Renewal Summit 2026"
+                         class="h-16 w-auto object-contain">
                 </a>
                 <div class="hidden md:flex items-center space-x-6 text-sm font-medium">
                     <a href="{{ route('home') }}#about"    class="text-gray-300 hover:text-white transition">About</a>
@@ -76,7 +76,52 @@
     <!-- Footer -->
     <footer class="bg-summit text-gray-400 py-10 mt-8 sm:mt-16" id="contact">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Sponsors -->
+            <div class="border-t border-gray-700 mt-10 pt-10">
+                <p class="text-center text-xs font-bold uppercase tracking-widest text-gray-500 mb-8 letter-spacing">
+                    Hosted &amp; Supported By
+                </p>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-3xl mx-auto mb-10">
+
+                    {{-- Gaba Community Church --}}
+                    <div class="flex flex-col items-center gap-3">
+                        <div class="w-20 h-20 rounded-2xl bg-white flex items-center justify-center shadow-md p-2">
+                            <img src="{{ asset('images/gabba_log.jpeg') }}"
+                                 alt="Gaba Community Church"
+                                 class="w-full h-full object-contain">
+                        </div>
+                        <span class="text-xs text-gray-400 text-center leading-snug font-medium">Gaba Community Church</span>
+                    </div>
+
+                    {{-- Fellowship of Christian Churches --}}
+                    <div class="flex flex-col items-center gap-3">
+                        <div class="w-20 h-20 rounded-2xl bg-white flex items-center justify-center shadow-md p-2">
+                            <img src="{{ asset('images/fellowship_log.jpeg') }}"
+                                 alt="Fellowship of Christian Churches"
+                                 class="w-full h-full object-contain">
+                        </div>
+                        <span class="text-xs text-gray-400 text-center leading-snug font-medium">Fellowship of Christian Churches</span>
+                    </div>
+
+                    {{-- Maranatha Schools --}}
+                    <div class="flex flex-col items-center gap-3">
+                        <div class="w-20 h-20 rounded-2xl bg-white flex items-center justify-center shadow-md p-2">
+                            <img src="{{ asset('images/maranatha_log.jpeg') }}"
+                                 alt="Maranatha Schools"
+                                 class="w-full h-full object-contain">
+                        </div>
+                        <span class="text-xs text-gray-400 text-center leading-snug font-medium">Maranatha Schools</span>
+                    </div>
+
+                </div>
+
+                <div class="border-t border-gray-800 pt-6 text-center text-xs text-gray-600">
+                    © {{ date('Y') }} Renewal Summit 2026 – Ggaba Community Church, Uganda.
+                </div>
+            </div>
+
             <div class="grid md:grid-cols-3 gap-8">
+
                 <div>
                     <h4 class="text-white font-bold text-lg mb-3">Renewal Summit 2026</h4>
                     <p class="text-sm leading-relaxed">A global gathering of pastors and leaders to examine
@@ -100,9 +145,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-xs">
-                © {{ date('Y') }} Renewal Summit 2026 – Ggaba Community Church, Uganda.
-            </div>
+            
         </div>
     </footer>
 
