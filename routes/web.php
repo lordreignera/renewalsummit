@@ -76,8 +76,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         });
 
         // Check-in
-        Route::get('/checkin',          [AdminRegistration::class, 'checkInPage'])->name('checkin');
-        Route::get('/checkin/{token}',  [AdminRegistration::class, 'checkIn'])->name('checkin.process');
+        Route::get('/checkin',                              [AdminRegistration::class, 'checkInPage'])->name('checkin');
+        Route::get('/checkin/{token}',                      [AdminRegistration::class, 'checkIn'])->name('checkin.process');
+        Route::post('/checkin/{registration}/confirm',      [AdminRegistration::class, 'checkInById'])->name('checkin.confirm');
 
         // Redirect old /dashboard to admin dashboard
         Route::get('/jetstream-dashboard', fn() => redirect()->route('admin.dashboard'));

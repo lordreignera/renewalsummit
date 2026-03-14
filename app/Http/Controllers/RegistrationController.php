@@ -247,7 +247,11 @@ class RegistrationController extends Controller
                 ->with('error', 'Registration not found or not yet confirmed. Reference: ' . $reference);
         }
 
-        return view('registration.complete', compact('reg'));
+        $qrUrl = $reg->qr_code_path
+            ? \Illuminate\Support\Facades\Storage::disk('public')->url($reg->qr_code_path)
+            : null;
+
+        return view('registration.complete', compact('reg', 'qrUrl'));
     }
 
     /* ─────────────────────────────────────────────────────────────

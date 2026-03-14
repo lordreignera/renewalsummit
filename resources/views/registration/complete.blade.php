@@ -35,11 +35,12 @@
         </div>
 
         {{-- QR Code --}}
-        @if($reg->qr_code_path)
+        @if($qrUrl)
         <div class="mb-6">
             <p class="text-sm font-semibold text-gray-700 mb-3">📲 Your Entry QR Code</p>
-            <img src="{{ Storage::disk('public')->url($reg->qr_code_path) }}"
-                 alt="QR Code" class="w-48 h-48 mx-auto border-4 border-yellow-400 rounded-xl">
+            <img src="{{ $qrUrl }}" alt="QR Code"
+                 style="width:192px;height:192px;display:block;margin:0 auto;"
+                 class="border-4 border-yellow-400 rounded-xl">
             <p class="text-xs text-gray-400 mt-2">Present this QR code at the venue gate for check-in.</p>
         </div>
         @endif

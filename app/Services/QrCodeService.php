@@ -20,16 +20,43 @@ class QrCodeService
      */
     public function generateForRegistration(Registration $registration): string
     {
-        $verifyUrl = url("/verify/{$registration->qr_token}");
+        $typeLabel = match($registration->country_type) {
+            'local'         => 'Ugandan',
+            'africa'        => 'Rest of Africa',
+            'international' => 'International',
+            default         => ucfirst($registration->country_type ?? ''),
+        };
 
-        $qrCode = QrCode::create($verifyUrl)
-            ->setEncoding(new Encoding('UTF-8'))
-            ->setErrorCorrectionLevel(ErrorCorrectionLevel::High)
-            ->setSize(300)
-            ->setMargin(10)
-            ->setRoundBlockSizeMode(RoundBlockSizeMode::Margin)
-            ->setForegroundColor(new Color(0, 0, 0))
-            ->setBackgroundColor(new Color(255, 255, 255));
+        $desigLabel = match($registration->designation) {
+            'fcc_regional_leader' => 'FCC Regional Leader',
+            'senior_pastor'       => 'Senior Pastor',
+            'church_leader'       => 'Church Leader' . ($registration->designation_specify ? ' – ' . $registration->designation_specify : ''),
+            'corporate'           => 'Corporate / Organisation',
+            default               => ucfirst($registration->designation ?? ''),
+        };
+
+        $qrData = implode("\n", [
+            '=== RENEWAL SUMMIT 2026 ===',
+            'Ref: '         . $registration->reference,
+            'Name: '        . $registration->full_name,
+            'Designation: ' . $desigLabel,
+            'Type: '        . $typeLabel,
+            'Affiliation: ' . strtoupper($registration->affiliation ?? ''),
+            'Status: '      . strtoupper($registration->status ?? ''),
+            'Fee Paid: '    . $registration->formattedTotal,
+            'Phone: '       . $registration->phone,
+        ]);
+
+        $qrCode = new QrCode(
+            data:                 $qrData,
+            encoding:             new Encoding('UTF-8'),
+            errorCorrectionLevel: ErrorCorrectionLevel::Medium,
+            size:                 350,
+            margin:               10,
+            roundBlockSizeMode:   RoundBlockSizeMode::Margin,
+            foregroundColor:      new Color(0, 0, 0),
+            backgroundColor:      new Color(255, 255, 255),
+        );
 
         $writer = new PngWriter();
         $result = $writer->write($qrCode);
