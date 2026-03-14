@@ -23,11 +23,11 @@
 <section id="hero-section" style="position:relative;min-height:100vh;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;">
 
     {{-- Background slides (cross-fade) --}}
-    <div id="hero-bg-0" style="position:absolute;inset:0;background-image:url('{{ asset('images/together.jpg') }}');background-size:cover;background-position:center;opacity:1;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
-    <div id="hero-bg-1" style="position:absolute;inset:0;background-image:url('{{ asset('images/praise1.jpg') }}');background-size:cover;background-position:center;opacity:0;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
-    <div id="hero-bg-2" style="position:absolute;inset:0;background-image:url('{{ asset('images/performance1.jpg') }}');background-size:cover;background-position:center top;opacity:0;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
-    <div id="hero-bg-3" style="position:absolute;inset:0;background-image:url('{{ asset('images/summit1.jpeg') }}');background-size:cover;background-position:center;opacity:0;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
-    <div id="hero-bg-4" style="position:absolute;inset:0;background-image:url('{{ asset('images/entertainment.jpg') }}');background-size:cover;background-position:center;opacity:0;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
+    <div id="hero-bg-0" style="position:absolute;inset:0;background-image:url('{{ asset('images/together1.jpg') }}');background-size:cover;background-position:center;opacity:1;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
+    <div id="hero-bg-1" style="position:absolute;inset:0;background-image:url('{{ asset('images/together2.jpg') }}');background-size:cover;background-position:center;opacity:0;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
+    <div id="hero-bg-2" style="position:absolute;inset:0;background-image:url('{{ asset('images/pannel_-24.jpg') }}');background-size:cover;background-position:center top;opacity:0;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
+    <div id="hero-bg-3" style="position:absolute;inset:0;background-image:url('{{ asset('images/holycommunion.jpg') }}');background-size:cover;background-position:center;opacity:0;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
+    <div id="hero-bg-4" style="position:absolute;inset:0;background-image:url('{{ asset('images/trainings.jpg') }}');background-size:cover;background-position:center;opacity:0;transition:opacity 1.8s ease-in-out;z-index:0;"></div>
 
     {{-- Cinematic gradient overlay – lighter so photos show clearly --}}
     <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(10,22,52,.72) 0%, rgba(10,22,52,.30) 35%, rgba(10,22,52,.30) 65%, rgba(10,22,52,.80) 100%);z-index:1;"></div>
@@ -246,12 +246,9 @@
             'label' => '🙌 Praise & Worship',
             'color' => 'bg-purple-700',
             'images'=> [
-                ['src' => 'praise1.jpg',       'caption' => 'Praise & Worship'],
-                ['src' => 'holycommunion.jpg',  'caption' => 'Holy Communion'],
-                ['src' => 'performance1.jpg',   'caption' => 'Worship Performance'],
-                ['src' => 'performance2.jpg',   'caption' => 'Live Worship'],
-                ['src' => 'performance3.jpg',   'caption' => 'Worship Night'],
-                ['src' => 'summit1.jpeg',       'caption' => 'Summit Gathering'],
+                ['src' => 'praise1.jpg',   'caption' => 'Praise & Worship'],
+                ['src' => 'evening1.jpg',  'caption' => 'Evening Worship'],
+                ['src' => 'evening2.jpg',  'caption' => 'Worship Night'],
             ],
         ],
         [
