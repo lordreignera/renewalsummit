@@ -79,10 +79,47 @@ class PaymentController extends Controller
     /**
      * Polling endpoint – front-end polls this every few seconds on the
      * pending page to know when the MM payment is confirmed.
+     *
+     * On localhost the SwApp callback URL is unreachable, so this method
+     * actively polls SwApp's /getstatus and self-completes the payment.
      */
     public function status(string $reference): JsonResponse
     {
-        $reg = Registration::where('reference', $reference)->firstOrFail();
+        $reg = Registration::where('reference', $reference)
+            ->with('payments')
+            ->firstOrFail();
+
+        // Actively poll SwApp when payment is still pending
+        if (! $reg->isPaid()) {
+            $payment = $reg->payments()
+                ->whereNotNull('swapp_reference')
+                ->latest()
+                ->first();
+
+            if ($payment) {
+                try {
+                    $swappStatus = $this->swapp->checkStatus($payment->swapp_reference);
+
+                    if ($swappStatus['status'] === 'success') {
+                        $payment->update(['status' => 'success', 'paid_at' => now()]);
+                        $reg->update(['status' => 'paid']);
+                        $reg->refresh();
+
+                        // Generate QR + send confirmation email
+                        if ($reg->email) {
+                            $this->qrService->generateAndDispatch($reg);
+                        }
+                    } elseif (in_array($swappStatus['status'], ['failed', 'cancelled'])) {
+                        $payment->update([
+                            'status'         => $swappStatus['status'],
+                            'failure_reason' => $swappStatus['message'] ?? null,
+                        ]);
+                    }
+                } catch (\Throwable $e) {
+                    Log::warning('SwApp status poll failed', ['error' => $e->getMessage()]);
+                }
+            }
+        }
 
         return response()->json([
             'status'    => $reg->status,

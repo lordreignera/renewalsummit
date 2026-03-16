@@ -23,15 +23,19 @@ class RegistrationConfirmationMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('renewalsummit@africarenewal.org', 'Renewal Summit 2026'),
-            subject: '✅ Registration Confirmed – Renewal Summit 2026 | ' . $this->registration->reference,
+            from: new Address(config('mail.from.address', 'info.renewalsummit@gmail.com'), config('mail.from.name', 'Renewal Summit 2026')),
+            replyTo: [
+                new Address(config('mail.from.address', 'info.renewalsummit@gmail.com'), 'Renewal Summit 2026'),
+            ],
+            subject: 'Registration Confirmed - Renewal Summit 2026 | ' . $this->registration->reference,
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'emails.registration-confirmation',
+            view:     'emails.registration-confirmation',
+            text:     'emails.registration-confirmation-text',
             with: [
                 'registration' => $this->registration,
                 'qrUrl'        => $this->registration->qr_code_path

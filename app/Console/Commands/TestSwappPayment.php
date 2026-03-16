@@ -8,32 +8,31 @@ use Illuminate\Support\Str;
 
 class TestSwappPayment extends Command
 {
-    protected $signature   = 'swapp:test {phone=0708356505} {amount=500} {network=auto}';
-    protected $description = 'Send a test SwApp Mobile Money payment prompt (network auto-detected)';
+    protected $signature   = 'swapp:test {phone=0782743720} {amount=500}';
+    protected $description = 'Test SwApp Mobile Money API: token → balance → payout → status';
 
     public function handle(): int
     {
-        $phone   = $this->argument('phone');
-        $amount  = $this->argument('amount');
-        $network = strtoupper($this->argument('network'));
-
-        if ($network === 'AUTO') {
-            $network = $this->detectNetwork($phone);
-            $this->info("Auto-detected network: {$network}");
-        }
+        $phone  = $this->argument('phone');
+        $amount = (int) $this->argument('amount');
 
         $baseUrl   = rtrim(config('services.swapp.base_url',   env('SWAPP_BASE_URL',   'https://www.swapp.co.ug/apitest/mm')), '/');
         $clientId  = config('services.swapp.client_id',         env('SWAPP_CLIENT_ID',  ''));
         $apiKey    = config('services.swapp.api_key',            env('SWAPP_API_KEY',    ''));
         $apiSecret = config('services.swapp.api_secret',         env('SWAPP_API_SECRET', ''));
 
+        // Per docs: Account must be WITHOUT international code or leading 0
+        // e.g. 0782743720 → 782743720
+        $account = $this->normalisePhone($phone);
+
         $this->info("Base URL : {$baseUrl}");
         $this->info("Client ID: {$clientId}");
-        $this->info("Phone    : {$phone}");
+        $this->info("Phone    : {$phone}  →  Account: {$account}");
         $this->info("Amount   : {$amount} UGX");
         $this->newLine();
 
-        // ── STEP 1: Get token ─────────────────────────────────────────────
+        // ── STEP 1: Get OAuth token ───────────────────────────────────────
+        // Docs: POST /token  |  Header: Swapp-Client-ID + Authorization: Basic base64(key:secret)
         $this->line('<fg=yellow>STEP 1: Getting OAuth token...</>');
 
         $tokenResp = Http::timeout(20)
@@ -51,7 +50,7 @@ class TestSwappPayment extends Command
         $this->newLine();
 
         if (! $tokenResp->successful()) {
-            $this->error('Token request failed. Check credentials and base URL above.');
+            $this->error('Token request failed. Check credentials and base URL.');
             return 1;
         }
 
@@ -60,141 +59,84 @@ class TestSwappPayment extends Command
             $this->error('No access_token in response: ' . $tokenResp->body());
             return 1;
         }
-        $this->info("Token obtained: " . substr($token, 0, 30) . '...');
+        $this->info('Token: ' . substr($token, 0, 40) . '...');
         $this->newLine();
 
-        // ── STEP 2: Validate phone ────────────────────────────────────────
-        $this->line('<fg=yellow>STEP 2: Validating phone ' . $phone . '...</>');
+        $headers = [
+            'Swapp-Client-ID' => $clientId,
+            'Authorization'   => "Bearer {$token}",
+            'Content-Type'    => 'application/json',
+        ];
 
-        $msisdn = $this->normalisePhone($phone);
-        $this->line("MSISDN : {$msisdn}");
+        // ── STEP 2: Get Account Balance ───────────────────────────────────
+        // Docs: POST /balance  |  No body required
+        $this->line('<fg=yellow>STEP 2: Checking account balance...</>');
 
-        // Try with Network field
-        $validateResp = Http::timeout(20)
+        $balResp = Http::timeout(15)
             ->withoutVerifying()
-            ->withHeaders([
-                'Swapp-Client-ID' => $clientId,
-                'Authorization'   => "Bearer {$token}",
-                'Accept'          => 'application/json',
-                'Content-Type'    => 'application/json',
-            ])
-            ->post("{$baseUrl}/validate", [
-                'Account' => $msisdn,
-                'Network' => $network,
-            ]);
+            ->withHeaders($headers)
+            ->post("{$baseUrl}/balance");
 
-        $this->line("With Network={$network}: {$validateResp->status()} | " . $validateResp->body());
+        $this->line("Status : {$balResp->status()}");
+        $this->line("Body   : " . $balResp->body());
+        $this->newLine();
 
-        // Try without Network field
-        $validateResp2 = Http::timeout(20)
+        // ── STEP 3: Collect (USSD prompt to customer) ────────────────────
+        // POST /collect  — pulls money FROM customer, sends USSD pop-up
+        $requestId = (string) Str::uuid();
+        $this->line('<fg=yellow>STEP 3: Initiating collection (USSD prompt)...</>');
+        $this->line("Account   : {$account}");
+        $this->line("Amount    : {$amount}");
+        $this->line("RequestId : {$requestId}");
+
+        $collectResp = Http::timeout(30)
             ->withoutVerifying()
-            ->withHeaders([
-                'Swapp-Client-ID' => $clientId,
-                'Authorization'   => "Bearer {$token}",
-                'Accept'          => 'application/json',
-                'Content-Type'    => 'application/json',
-            ])
-            ->post("{$baseUrl}/validate", [
-                'Account' => $msisdn,
+            ->withHeaders($headers)
+            ->post("{$baseUrl}/collect", [
+                'Account'   => $account,
+                'Amount'    => $amount,
+                'RequestId' => $requestId,
             ]);
 
-        $this->line("Without Network:      {$validateResp2->status()} | " . $validateResp2->body());
+        $this->line("Status : {$collectResp->status()}");
+        $this->line("Body   : " . $collectResp->body());
         $this->newLine();
 
-        // ── STEP 3: Try collection — multiple endpoint + field combos ────────
-        $this->line('<fg=yellow>STEP 3: Sending payment prompt...</>');
+        // ── STEP 4: Transaction Status ────────────────────────────────────
+        $this->line('<fg=yellow>STEP 4: Checking transaction status...</>');
+        $this->line("RequestId : {$requestId}");
 
-        $callbackUrl = env('SWAPP_CALLBACK_URL', url('/payment/callback'));
-        $endpoints   = ['/collection', '/collections', '/requestpayment', '/payment'];
+        sleep(3); // give it a moment before polling
 
-        foreach ($endpoints as $ep) {
-            $rid = (string) Str::uuid();
-            $this->line("  POST {$baseUrl}{$ep}  [Account={$msisdn}, Network={$network}]");
-            $r = Http::timeout(20)->withoutVerifying()
-                ->withHeaders(['Swapp-Client-ID' => $clientId, 'Authorization' => "Bearer {$token}", 'Accept' => 'application/json', 'Content-Type' => 'application/json'])
-                ->post("{$baseUrl}{$ep}", [
-                    'RequestId'   => $rid,
-                    'Account'     => $msisdn,
-                    'Network'     => $network,
-                    'Amount'      => (string) $amount,
-                    'Narration'   => 'Renewal Summit 2026 - Test',
-                    'CallbackUrl' => $callbackUrl,
-                ]);
-            $this->line("  → {$r->status()} | " . $r->body());
-            if ($r->successful() && ! isset($r->json()['message'])) {
-                $this->info("  ✅ This endpoint worked!");
-                break;
-            }
-        }
-
-        // Try with local format (no country code)
-        $this->newLine();
-        $this->line('<fg=yellow>STEP 3b: Retry with local phone format (no 256 prefix)...</>');
-        $localMsisdn = '0' . substr($msisdn, 3); // 256708356505 → 0708356505
-        $rid2 = (string) Str::uuid();
-        $r2 = Http::timeout(20)->withoutVerifying()
-            ->withHeaders(['Swapp-Client-ID' => $clientId, 'Authorization' => "Bearer {$token}", 'Accept' => 'application/json', 'Content-Type' => 'application/json'])
-            ->post("{$baseUrl}/collection", [
-                'RequestId'   => $rid2,
-                'Account'     => $localMsisdn,
-                'Network'     => $network,
-                'Amount'      => (string) $amount,
-                'Narration'   => 'Renewal Summit 2026 - Test',
-                'CallbackUrl' => $callbackUrl,
+        $statusResp = Http::timeout(20)
+            ->withoutVerifying()
+            ->withHeaders($headers)
+            ->post("{$baseUrl}/getstatus", [
+                'RequestId' => $requestId,
             ]);
-        $this->line("  Local format {$localMsisdn}: {$r2->status()} | " . $r2->body());
 
-        // Try with an MTN number (sandbox may only support MTN)
-        $this->newLine();
-        $this->line('<fg=yellow>STEP 3c: Retry with a known MTN number (0772000000)...</>');
-        $mtnNum = '256772000000';
-        $rid3 = (string) Str::uuid();
-        $r3 = Http::timeout(20)->withoutVerifying()
-            ->withHeaders(['Swapp-Client-ID' => $clientId, 'Authorization' => "Bearer {$token}", 'Accept' => 'application/json', 'Content-Type' => 'application/json'])
-            ->post("{$baseUrl}/collection", [
-                'RequestId'   => $rid3,
-                'Account'     => $mtnNum,
-                'Network'     => 'MTN',
-                'Amount'      => (string) $amount,
-                'Narration'   => 'Renewal Summit 2026 - Test',
-                'CallbackUrl' => $callbackUrl,
-            ]);
-        $this->line("  MTN {$mtnNum}: {$r3->status()} | " . $r3->body());
-
+        $this->line("Status : {$statusResp->status()}");
+        $this->line("Body   : " . $statusResp->body());
         $this->newLine();
 
         return 0;
     }
 
-    private function detectNetwork(string $phone): string
-    {
-        $digits = preg_replace('/\D/', '', $phone);
-        // Normalise to local format (remove country code)
-        if (str_starts_with($digits, '256')) {
-            $digits = '0' . substr($digits, 3);
-        }
-
-        $prefix3 = substr($digits, 0, 3);
-
-        // MTN Uganda: 077x, 078x, 076x, 039x, 031x
-        $mtn = ['077', '078', '076', '039', '031'];
-        // Airtel Uganda: 070x, 075x, 074x, 020x
-        $airtel = ['070', '075', '074', '020'];
-
-        if (in_array($prefix3, $mtn))    return 'MTN';
-        if (in_array($prefix3, $airtel)) return 'Airtel';   // SwApp expects "Airtel" not "AIRTEL"
-
-        $this->warn("Cannot detect network for prefix '{$prefix3}', defaulting to MTN.");
-        return 'MTN';
-    }
-
+    /**
+     * Strip leading 0 or country code (256/+256) per SwApp docs:
+     * "The number should be without international codes or the leading 0."
+     * e.g. 0782743720 → 782743720
+     */
     private function normalisePhone(string $phone): string
     {
         $phone = preg_replace('/\D/', '', $phone);
+        // Remove country code 256
+        if (str_starts_with($phone, '256')) {
+            $phone = substr($phone, 3);
+        }
+        // Remove leading 0
         if (str_starts_with($phone, '0')) {
-            $phone = '256' . substr($phone, 1);
-        } elseif (! str_starts_with($phone, '256')) {
-            $phone = '256' . $phone;
+            $phone = substr($phone, 1);
         }
         return $phone;
     }

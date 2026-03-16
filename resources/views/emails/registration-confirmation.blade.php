@@ -35,8 +35,8 @@
 <div class="wrapper">
 
     <div class="header">
-        <h1>✅ Registration Confirmed</h1>
-        <p>Renewal Summit 2026 · International Conference · August 17–27, 2026</p>
+        <h1>Registration Confirmed</h1>
+        <p>Renewal Summit 2026 &middot; International Conference &middot; August 17&ndash;21, 2026</p>
     </div>
 
     <div class="body">
@@ -44,8 +44,8 @@
         <p class="greeting">Dear {{ $registration->full_name }},</p>
         <p class="intro">
             Thank you for registering for the <strong>Renewal Summit 2026</strong>. It will be our
-            utmost pleasure to host you <strong>August 17th–27th 2026</strong>. Below is the QR code
-            for your entry to the venue.
+            utmost pleasure to host you <strong>August 17th&ndash;21st, 2026</strong>. Your QR code
+            for venue entry is attached to this email as a PNG file.
         </p>
 
         <div class="section-title">Your Registration Details</div>
@@ -88,45 +88,38 @@
             <div class="ev-label">Theme</div>
             <div class="ev-value">Healthy Church</div>
             <div class="ev-label">Dates</div>
-            <div class="ev-value">August 17–27, 2026</div>
+            <div class="ev-value">August 17&ndash;21, 2026</div>
             <div class="ev-label">Venue</div>
             <div class="ev-value" style="margin-bottom:0;">Ggaba Community Church, Kampala, Uganda</div>
         </div>
 
-        <div class="section-title">📲 Your Entry QR Code</div>
+        <div class="section-title">Your Entry QR Code</div>
         <div class="qr-box">
-            @if($qrUrl)
-                <img src="{{ $qrUrl }}" alt="Entry QR Code">
-                <p class="qr-note">
-                    <strong>Present this QR code at the venue gate</strong> on the day of the event
-                    for check-in.<br>Your QR code is also attached to this email as a PNG file.
-                </p>
-            @else
-                <p class="qr-note" style="color:#c00;">
-                    Your QR code is being prepared. Please visit your registration page online.
-                </p>
-            @endif
+            <div style="background:#fff8e1; border:2px dashed #D4A017; border-radius:8px; padding:16px 20px; font-size:14px; color:#555; text-align:center;">
+                <strong>Your QR code is attached to this email</strong><br>
+                Open the attached file <em>RS2026-QRCode-{{ $registration->reference }}.png</em>
+                and present it at the venue gate on the day of the event.
+            </div>
+            <p class="qr-note" style="font-size:12px; color:#666; margin-top:10px;">
+                Save the QR code image to your phone or print it out before attending.
+            </p>
         </div>
 
-        <div class="section-title">QR Code Usage Rules</div>
+        <div class="section-title">QR Code Usage</div>
         <div class="qr-rule">
-            ✅ <strong>Single Entry:</strong> Once a person checks in, their QR code is marked used
+            <strong>Single Entry:</strong> Once a person checks in, their QR code is marked used
             for that entry session and cannot be used again for the same entry point.
         </div>
         <div class="qr-rule">
-            🔄 <strong>Multiple Entries:</strong> You may re-enter the venue within the same day
+            <strong>Multiple Entries:</strong> You may re-enter the venue within the same day
             (e.g. if you step out temporarily). Each day of the conference requires a fresh scan.
         </div>
 
-        <div style="text-align:center; margin:28px 0 20px;">
-            <a href="{{ url('/verify/' . $registration->qr_token) }}" class="btn">
-                View My Registration Online
-            </a>
-        </div>
+
 
         <p style="font-size:13px; color:#666; line-height:1.7;">
             If you have any questions, please contact us at
-            <a href="mailto:renewalsummit@africarenewal.org" style="color:#D4A017; font-weight:700;">renewalsummit@africarenewal.org</a>
+            <a href="mailto:info.renewalsummit@gmail.com" style="color:#D4A017; font-weight:700;">info.renewalsummit@gmail.com</a>
         </p>
 
         <p style="font-size:14px; color:#0f1f3d; font-weight:700; margin-top:24px;">
@@ -138,9 +131,8 @@
 
     <div class="footer">
         <p>
-            © {{ date('Y') }} Renewal Summit 2026 — Ggaba Community Church<br>
-            <a href="{{ url('/') }}">www.africarenewal.org</a> ·
-            <a href="mailto:renewalsummit@africarenewal.org">renewalsummit@africarenewal.org</a>
+            &copy; {{ date('Y') }} Renewal Summit 2026 &mdash; Ggaba Community Church<br>
+            <a href="mailto:info.renewalsummit@gmail.com">info.renewalsummit@gmail.com</a>
         </p>
         <p style="margin-top:8px; font-size:11px;">
             This email was sent to {{ $registration->email }} because you registered for Renewal Summit 2026.

@@ -56,7 +56,7 @@ class SwappPaymentService
     public function getToken(): string
     {
         return Cache::remember('swapp_token', now()->addMinutes(50), function () {
-            $response = Http::timeout(20)
+            $response = $this->http()->timeout(20)
                 ->withHeaders([
                     'Swapp-Client-ID' => $this->clientId,
                     'Authorization'   => 'Basic ' . base64_encode("{$this->apiKey}:{$this->apiSecret}"),
@@ -92,7 +92,7 @@ class SwappPaymentService
     public function validatePhone(string $phone, string $network = 'MTN'): array
     {
         try {
-            $response = Http::timeout(20)
+            $response = $this->http()->timeout(20)
                 ->withHeaders($this->bearerHeaders())
                 ->post("{$this->baseUrl}/validate", [
                     'Account' => $this->normalisePhone($phone),
@@ -157,15 +157,12 @@ class SwappPaymentService
         ]);
 
         try {
-            $response = Http::timeout(30)
+            $response = $this->http()->timeout(30)
                 ->withHeaders($this->bearerHeaders())
-                ->post("{$this->baseUrl}/collection", [
-                    'RequestId'   => $requestId,
-                    'Account'     => $this->normalisePhone($phone),
-                    'Network'     => $network,
-                    'Amount'      => (string) $registration->total_amount,
-                    'Narration'   => "Renewal Summit 2026 – {$registration->reference}",
-                    'CallbackUrl' => $this->callbackUrl,
+                ->post("{$this->baseUrl}/collect", [
+                    'Account'   => $this->normalisePhone($phone),
+                    'Amount'    => $registration->total_amount,
+                    'RequestId' => $requestId,
                 ]);
 
             $data = $response->json();
@@ -211,16 +208,24 @@ class SwappPaymentService
     public function checkStatus(string $requestId): array
     {
         try {
-            $response = Http::timeout(20)
+            $response = $this->http()->timeout(20)
                 ->withHeaders($this->bearerHeaders())
-                ->post("{$this->baseUrl}/transaction-status", [
+                ->post("{$this->baseUrl}/getstatus", [
                     'RequestId' => $requestId,
                 ]);
 
             $data = $response->json();
 
+            // SwApp nests the real status inside payment.status (e.g. "SUCCESSFUL").
+            // The top-level status is just an HTTP-like code (200), not a payment status.
+            $paymentStatus = $data['payment']['status']
+                ?? $data['Payment']['Status']
+                ?? $data['status']
+                ?? $data['Status']
+                ?? '';
+
             return [
-                'status'  => $this->mapStatus(strtolower($data['status'] ?? $data['Status'] ?? '')),
+                'status'  => $this->mapStatus(strtolower($paymentStatus)),
                 'message' => $data['message'] ?? $data['Message'] ?? '',
                 'raw'     => $data,
             ];
@@ -242,7 +247,10 @@ class SwappPaymentService
 
         $requestId = $payload['RequestId'] ?? $payload['request_id'] ?? null;
         $txId      = $payload['TransactionId'] ?? $payload['transaction_id'] ?? null;
-        $status    = strtolower($payload['Status'] ?? $payload['status'] ?? '');
+        // SwApp may nest the status inside payload.payment.status
+        $status    = strtolower(
+            $payload['payment']['status'] ?? $payload['Status'] ?? $payload['status'] ?? ''
+        );
 
         $payment = Payment::where('swapp_reference', $requestId)
             ->orWhere('swapp_transaction_id', $txId)
@@ -278,7 +286,7 @@ class SwappPaymentService
         $requestId = (string) Str::uuid();
 
         try {
-            $response = Http::timeout(30)
+            $response = $this->http()->timeout(30)
                 ->withHeaders($this->bearerHeaders())
                 ->post("{$this->baseUrl}/collection", [
                     'RequestId'   => $requestId,
@@ -305,7 +313,7 @@ class SwappPaymentService
     public function getBalance(): array
     {
         try {
-            $response = Http::timeout(15)
+            $response = $this->http()->timeout(15)
                 ->withHeaders($this->bearerHeaders())
                 ->post("{$this->baseUrl}/balance", []);
 
@@ -329,17 +337,31 @@ class SwappPaymentService
         ];
     }
 
+    /**
+     * Return an Http client instance.
+     * On local environments WAMP's PHP may not trust SwApp's SSL certificate,
+     * so we disable peer verification — safe for local testing only.
+     */
+    private function http(): \Illuminate\Http\Client\PendingRequest
+    {
+        $client = \Illuminate\Support\Facades\Http::withOptions([
+            'verify' => app()->environment('local') ? false : true,
+        ]);
+        return $client;
+    }
+
     private function normalisePhone(string $phone): string
     {
         $phone = preg_replace('/\D/', '', $phone);
+        // Remove country code 256/+256
+        if (str_starts_with($phone, '256')) {
+            $phone = substr($phone, 3);
+        }
+        // Remove leading 0
         if (str_starts_with($phone, '0')) {
-            $phone = '256' . substr($phone, 1);
+            $phone = substr($phone, 1);
         }
-        // Already has country code without +
-        if (str_starts_with($phone, '256') && strlen($phone) === 12) {
-            return $phone;
-        }
-        return $phone;
+        return $phone; // e.g. 782743720
     }
 
     private function mapStatus(string $swappStatus): string

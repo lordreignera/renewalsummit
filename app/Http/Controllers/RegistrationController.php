@@ -181,13 +181,25 @@ class RegistrationController extends Controller
             'card_expiry.regex'  => 'Expiry must be in MM/YY format.',
         ]);
 
-        // ── DEMO MODE ──────────────────────────────────────────────────────
-        // Both Mobile Money and VISA are accepted immediately without a real
-        // gateway call. Replace this block with live SwApp/gateway calls when
-        // ready to go live.
-        // ──────────────────────────────────────────────────────────────────
+        // ── MOBILE MONEY ──────────────────────────────────────────────────
+        if ($data['payment_method'] === 'mobile_money') {
+            $result = $this->swapp->initiateMobileMoney($reg, $data['phone_number']);
 
-        // Mark registration as paid
+            if (! $result['success']) {
+                return back()->withInput()
+                    ->with('error', $result['message'] ?? 'Payment initiation failed. Please try again.');
+            }
+
+            // Store SwApp request ID in session so pending page can reference it
+            session(['swapp_request_id' => $result['request_id']]);
+
+            // Redirect to pending page — user approves on their phone
+            // The /payment/callback route handles marking the registration paid
+            return redirect()->route('register.pending', $reg->reference);
+        }
+
+        // ── VISA / CARD ────────────────────────────────────────────────────
+        // Card gateway not yet integrated. Mark paid immediately for now.
         $reg->update([
             'status'       => 'paid',
             'current_step' => 3,
@@ -202,15 +214,14 @@ class RegistrationController extends Controller
             Log::error('QR generation failed', ['error' => $e->getMessage(), 'reg' => $reg->id]);
         }
 
-        // Send confirmation email — temporarily disabled (SMTP not yet configured)
-        // Uncomment the block below once MAIL_PASSWORD is set in .env
-        // if ($reg->email) {
-        //     try {
-        //         RegistrationConfirmationMail::dispatchToRegistration($reg);
-        //     } catch (\Throwable $e) {
-        //         Log::error('Confirmation email failed', ['error' => $e->getMessage(), 'reg' => $reg->id]);
-        //     }
-        // }
+        // Send confirmation email
+        if ($reg->email) {
+            try {
+                RegistrationConfirmationMail::dispatchToRegistration($reg);
+            } catch (\Throwable $e) {
+                Log::error('Confirmation email failed', ['error' => $e->getMessage(), 'reg' => $reg->id]);
+            }
+        }
 
         session()->forget('registration_id');
         session(['completed_ref' => $reg->reference]);

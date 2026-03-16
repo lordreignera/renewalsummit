@@ -60,7 +60,7 @@
         <div class="text-sm text-gray-600 bg-gray-50 rounded-xl p-4 mb-6">
             <div class="font-bold text-summit mb-2">📅 Renewal Summit 2026</div>
             <div>📍 Ggaba Community Church, Uganda</div>
-            <div>🗓 August 17–27, 2026</div>
+            <div>August 17–21, 2026</div>
             <div>🏷 Theme: Healthy Church</div>
         </div>
 

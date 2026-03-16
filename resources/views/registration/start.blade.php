@@ -6,7 +6,7 @@
 
     <div class="text-center mb-10">
         <h1 class="text-3xl font-extrabold text-summit">Register for Renewal Summit 2026</h1>
-        <p class="text-gray-500 mt-2">Secure your place · August 17–27, 2026 · Ggaba Community Church, Uganda</p>
+        <p class="text-gray-500 mt-2">Secure your place · August 17–21, 2026 · Ggaba Community Church, Uganda</p>
     </div>
 
     {{-- Start New --}}
