@@ -192,7 +192,11 @@ class SwappPaymentService
             ]);
             $payment->update(['status' => 'failed', 'failure_reason' => $e->getMessage()]);
 
-            return ['success' => false, 'payment' => $payment, 'request_id' => null, 'message' => 'Payment initiation failed. Please try again.'];
+            $debugMsg = app()->hasDebugModeEnabled()
+                ? 'Payment error: ' . $e->getMessage()
+                : 'Payment initiation failed. Please try again.';
+
+            return ['success' => false, 'payment' => $payment, 'request_id' => null, 'message' => $debugMsg];
         }
     }
 
