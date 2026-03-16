@@ -224,6 +224,54 @@
     </div>
 </section>
 
+{{-- ── HOSTS ──────────────────────────────────────────────────────── --}}
+<section id="hosts" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-14">
+            <span class="bg-gold/10 text-yellow-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">Your Hosts</span>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-summit mt-4">Meet Rev. Peter &amp; Irene Kasirivu</h2>
+        </div>
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div class="space-y-5 text-gray-700 leading-relaxed">
+                <p class="text-lg">
+                    Rev. Peter Kasirivu is the <strong>Senior Pastor of Ggaba Community Church</strong>,
+                    Founder &amp; President of <strong>Africa Renewal Ministries Uganda</strong>, and Chancellor of
+                    Africa Renewal University. He serves as Vice-Chairman of the Evangelical Fellowship of Uganda
+                    (EFU) &mdash; an umbrella fellowship of over <strong>12,000 churches</strong> &mdash; and
+                    General Overseer of the <strong>Fellowship of Community Churches (FCC)</strong>, with over
+                    1,200 churches across Uganda.
+                </p>
+                <p>
+                    In 1990, Rev. Peter founded Africa Renewal Ministries through Ggaba Community Church in response
+                    to overwhelming community needs. From those humble beginnings, the ministry has grown to
+                    <strong>seven affiliated ministries</strong> impacting more than <strong>30 communities</strong>
+                    across Uganda.
+                </p>
+                <p>
+                    Together, Rev. Peter and <strong>Irene Kasirivu</strong> have led the planting of
+                    <strong>over 1,200 churches</strong>, trained more than <strong>2,700 leaders</strong>, and
+                    sponsored <strong>15,000+ children</strong>. God has blessed them with four children:
+                    James, Lydia, Joy Ruth, and Isaac Joshua.
+                </p>
+                <a href="{{ route('register.start') }}"
+                   class="inline-block bg-summit hover:bg-blue-900 text-white font-bold px-6 py-3 rounded-lg transition mt-4">
+                    Join Us &rarr;
+                </a>
+            </div>
+            <div class="relative rounded-2xl overflow-hidden shadow-xl">
+                <img src="{{ asset('images/Ps-Peter-Irene-Kasirivu.jpg') }}"
+                     alt="Rev. Peter and Irene Kasirivu"
+                     class="w-full object-cover object-top" style="height:650px;">
+                <div class="absolute inset-0 bg-gradient-to-t from-summit/70 to-transparent flex flex-col
+                            justify-end p-6">
+                    <p class="text-white font-extrabold text-xl">Rev. Peter &amp; Irene Kasirivu</p>
+                    <p class="text-yellow-300 text-sm mt-1">Senior Pastor &middot; Ggaba Community Church &middot; Uganda</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 {{-- ── GALLERY ───────────────────────────────────────────────────── --}}
 <section class="py-16 bg-gray-50" id="gallery">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -552,7 +600,7 @@
 
             @php
             $plenary = [
-                ['name' => 'Rev. Peter Kasirivu',  'role' => 'Host',             'church' => '',                         'country' => 'Uganda',  'img' => null, 'badge' => 'Host'],
+                ['name' => 'Rev. Peter Kasirivu',  'role' => 'Senior Pastor, GCC &amp; ARM President', 'church' => 'Ggaba Community Church', 'country' => 'Uganda', 'img' => 'Ps-Peter-Irene-Kasirivu.jpg', 'badge' => 'Host'],
                 ['name' => 'Dr. Paul David Tripp', 'role' => 'Plenary Speaker',  'church' => 'Paul Tripp Ministries',    'country' => 'USA',     'img' => null, 'badge' => null],
                 ['name' => 'Ps. Michael Yearley',  'role' => 'Keynote Speaker',  'church' => 'Rocky Peak',               'country' => 'USA',     'img' => null, 'badge' => 'Keynote'],
                 ['name' => 'Ps. Brad Thomas',      'role' => 'Keynote Speaker',  'church' => 'Austin Ridge',             'country' => 'USA',     'img' => null, 'badge' => 'Keynote'],
@@ -574,7 +622,7 @@
                 {{-- Avatar --}}
                 <div class="relative mb-4">
                     @if($s['img'])
-                        <img src="{{ asset('images/speakers/' . $s['img']) }}"
+                        <img src="{{ asset('images/' . $s['img']) }}"
                              alt="{{ $s['name'] }}"
                              class="w-28 h-28 rounded-full object-cover object-top border-4 border-white shadow-lg
                                     group-hover:border-yellow-400 transition-all duration-300">
