@@ -261,7 +261,7 @@
             <div class="relative rounded-2xl overflow-hidden shadow-xl">
                 <img src="{{ asset('images/Ps-Peter-Irene-Kasirivu.jpg') }}"
                      alt="Rev. Peter and Irene Kasirivu"
-                     class="w-full object-cover object-top" style="height:650px;">
+                     class="w-full object-cover object-top" style="height:520px;">
                 <div class="absolute inset-0 bg-gradient-to-t from-summit/70 to-transparent flex flex-col
                             justify-end p-6">
                     <p class="text-white font-extrabold text-xl">Rev. Peter &amp; Irene Kasirivu</p>
