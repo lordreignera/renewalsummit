@@ -37,7 +37,7 @@ class SwappPaymentService
 
     public function __construct()
     {
-        $this->baseUrl     = rtrim(config('services.swapp.base_url',     env('SWAPP_BASE_URL',     'https://www.swapp.co.ug/apitest/mm')), '/');
+        $this->baseUrl     = rtrim(config('services.swapp.base_url',     env('SWAPP_BASE_URL',     'https://swapp.co.ug/api/mm')), '/');
         $this->clientId    = config('services.swapp.client_id',          env('SWAPP_CLIENT_ID',    ''));
         $this->apiKey      = config('services.swapp.api_key',            env('SWAPP_API_KEY',      ''));
         $this->apiSecret   = config('services.swapp.api_secret',         env('SWAPP_API_SECRET',   ''));
@@ -348,10 +348,9 @@ class SwappPaymentService
      */
     private function http(): \Illuminate\Http\Client\PendingRequest
     {
-        $client = \Illuminate\Support\Facades\Http::withOptions([
-            'verify' => app()->environment('local') ? false : true,
-        ]);
-        return $client;
+        // SwApp's SSL cert does not cover www.swapp.co.ug (missing SAN),
+        // so we must disable peer verification for all SwApp API calls.
+        return \Illuminate\Support\Facades\Http::withOptions(['verify' => false]);
     }
 
     private function normalisePhone(string $phone): string
