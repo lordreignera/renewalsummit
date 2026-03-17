@@ -600,19 +600,19 @@
 
             @php
             $plenary = [
-                ['name' => 'Rev. Peter Kasirivu',  'role' => 'Senior Pastor, GCC &amp; ARM President', 'church' => 'Ggaba Community Church', 'country' => 'Uganda', 'img' => 'Ps-Peter-Irene-Kasirivu.jpg', 'badge' => 'Host'],
-                ['name' => 'Dr. Paul David Tripp', 'role' => 'Plenary Speaker',  'church' => 'Paul Tripp Ministries',    'country' => 'USA',     'img' => null, 'badge' => null],
-                ['name' => 'Ps. Michael Yearley',  'role' => 'Keynote Speaker',  'church' => 'Rocky Peak',               'country' => 'USA',     'img' => null, 'badge' => 'Keynote'],
-                ['name' => 'Ps. Brad Thomas',      'role' => 'Keynote Speaker',  'church' => 'Austin Ridge',             'country' => 'USA',     'img' => null, 'badge' => 'Keynote'],
+                ['name' => 'Rev. Peter Kasirivu',  'role' => 'Senior Pastor, GCC &amp; ARM President', 'church' => 'Ggaba Community Church', 'country' => 'Uganda', 'img' => 'Peter_Irene_Kasirivu.jpg', 'badge' => 'Host'],
+                ['name' => 'Dr. Paul David Tripp', 'role' => 'Plenary Speaker',  'church' => 'Paul Tripp Ministries',    'country' => 'USA',     'img' => 'paul_david_tripp.png', 'badge' => null],
+                ['name' => 'Ps. Michael Yearley',  'role' => 'Keynote Speaker',  'church' => 'Rocky Peak',               'country' => 'USA',     'img' => 'Micheal_Yearly.jpeg', 'badge' => 'Keynote'],
+                ['name' => 'Ps. Brad Thomas',      'role' => 'Keynote Speaker',  'church' => 'Austin Ridge',             'country' => 'USA',     'img' => 'Brad_Thomas.jpeg', 'badge' => 'Keynote'],
                 ['name' => 'Ps. Eric Geiger',      'role' => 'Plenary Speaker',  'church' => 'Mariners Church',          'country' => 'USA',     'img' => null, 'badge' => 'Pending'],
-                ['name' => 'Ps. Bradley Goode',    'role' => 'Plenary Speaker',  'church' => 'Good News Church',         'country' => 'USA',     'img' => null, 'badge' => null],
-                ['name' => 'Ps. Jose Jazas',       'role' => 'Plenary Speaker',  'church' => '26 West Church',           'country' => 'USA',     'img' => null, 'badge' => null],
-                ['name' => 'Ps. Jason Uptmore',    'role' => 'Plenary Speaker',  'church' => 'Wayside Chapel',           'country' => 'USA',     'img' => null, 'badge' => null],
+                ['name' => 'Ps. Bradley Goode',    'role' => 'Plenary Speaker',  'church' => 'Good News Church',         'country' => 'USA',     'img' => 'Bradley_Goode.jpeg', 'badge' => null],
+                ['name' => 'Ps. Jose Jazas',       'role' => 'Plenary Speaker',  'church' => '26 West Church',           'country' => 'USA',     'img' => 'Jose_Zayas.webp', 'badge' => null],
+                ['name' => 'Ps. Jason Uptmore',    'role' => 'Plenary Speaker',  'church' => 'Wayside Chapel',           'country' => 'USA',     'img' => 'Jason_Uptmore.jpeg', 'badge' => null],
                 ['name' => 'Ps. Bryant Lee',       'role' => 'Plenary Speaker',  'church' => 'Higher Expectation Church','country' => 'USA',     'img' => null, 'badge' => null],
-                ['name' => 'Bp. Oscar Muriu',      'role' => 'Plenary Speaker',  'church' => 'Nairobi Chapel',           'country' => 'Kenya',   'img' => null, 'badge' => null],
-                ['name' => 'Ps. Mark Strong',      'role' => 'Plenary Speaker',  'church' => '',                         'country' => '',        'img' => null, 'badge' => null],
-                ['name' => 'Ps. Julius Rwotlonyo', 'role' => 'Plenary Speaker',  'church' => 'Watoto Church',            'country' => 'Uganda',  'img' => null, 'badge' => null],
-                ['name' => 'Ps. Curtis Bronzan',   'role' => 'Plenary Speaker',  'church' => 'FPC Houston',              'country' => 'USA',     'img' => null, 'badge' => null],
+                ['name' => 'Bp. Oscar Muriu',      'role' => 'Plenary Speaker',  'church' => 'Nairobi Chapel',           'country' => 'Kenya',   'img' => 'Bishop Oscar.jpeg', 'badge' => null],
+                ['name' => 'Ps. Mark Strong',      'role' => 'Plenary Speaker',  'church' => '',                         'country' => '',        'img' => 'Mark_Strong.jpeg', 'badge' => null],
+                ['name' => 'Ps. Julius Rwotlonyo', 'role' => 'Plenary Speaker',  'church' => 'Watoto Church',            'country' => 'Uganda',  'img' => 'Julius_Rwotlonyo.jpeg', 'badge' => null],
+                ['name' => 'Ps. Curtis Bronzan',   'role' => 'Plenary Speaker',  'church' => 'FPC Houston',              'country' => 'USA',     'img' => 'Curtis_Bronzan.jpeg', 'badge' => null],
                 ['name' => 'Woman Speaker',         'role' => 'Plenary Speaker',  'church' => '',                         'country' => '',        'img' => null, 'badge' => 'TBA'],
             ];
             @endphp
