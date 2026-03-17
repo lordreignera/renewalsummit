@@ -610,7 +610,7 @@
                 ['name' => 'Ps. Jason Uptmore',    'role' => 'Plenary Speaker',  'church' => 'Wayside Chapel',           'country' => 'USA',     'img' => 'Jason_Uptmore.jpeg', 'badge' => null],
                 ['name' => 'Ps. Bryant Lee',       'role' => 'Plenary Speaker',  'church' => 'Higher Expectation Church','country' => 'USA',     'img' => 'Pr. Bryant Lee.jpeg', 'badge' => null],
                 ['name' => 'Bp. Oscar Muriu',      'role' => 'Plenary Speaker',  'church' => 'Nairobi Chapel',           'country' => 'Kenya',   'img' => 'Bishop Oscar.jpeg', 'badge' => null],
-                ['name' => 'Ps. Mark Strong',      'role' => 'Plenary Speaker',  'church' => '',                         'country' => '',        'img' => 'Mark_Strong.jpeg', 'badge' => null],
+                ['name' => 'Ps. Mark E Strong',    'role' => 'Plenary Speaker',  'church' => 'Life Change Church',      'country' => 'USA',     'img' => 'Mark_Strong.jpeg', 'badge' => null],
                 ['name' => 'Ps. Julius Rwotlonyo', 'role' => 'Plenary Speaker',  'church' => 'Watoto Church',            'country' => 'Uganda',  'img' => 'Julius_Rwotlonyo.jpeg', 'badge' => null],
                 ['name' => 'Ps. Curtis Bronzan',   'role' => 'Plenary Speaker',  'church' => 'FPC Houston',              'country' => 'USA',     'img' => 'Curtis_Bronzan.jpeg', 'badge' => null],
                 ['name' => 'Woman Speaker',         'role' => 'Plenary Speaker',  'church' => '',                         'country' => '',        'img' => null, 'badge' => 'TBA'],
@@ -669,7 +669,7 @@
             @php
             $breakout = [
                 ['name' => 'Tony Bowick',           'role' => 'Breakout Speaker', 'church' => 'Rocky Peak',  'country' => 'USA',      'img' => null],
-                ['name' => 'Dr. Augustin Longa',    'role' => 'Breakout Speaker', 'church' => '',            'country' => 'Cameroon', 'img' => null],
+                ['name' => 'Dr. Augustine Longa',    'role' => 'Breakout Speaker', 'church' => '',            'country' => 'Cameroon', 'img' => null],
                 ['name' => 'Bp. Christopher Mukwavi','role'=> 'Breakout Speaker', 'church' => '',            'country' => 'Zambia',   'img' => null],
                 ['name' => 'Ps. Bernard Mukwavi',   'role' => 'Breakout Speaker', 'church' => '',            'country' => 'Canada',   'img' => null],
                 ['name' => 'Ps. Brian Morehead',    'role' => 'Breakout Speaker', 'church' => 'Rocky Peak',  'country' => 'USA',      'img' => null],
