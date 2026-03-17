@@ -613,7 +613,6 @@
                 ['name' => 'Ps. Mark E Strong',    'role' => 'Plenary Speaker',  'church' => 'Life Change Church',      'country' => 'USA',     'img' => 'Mark_Strong.jpeg', 'badge' => null],
                 ['name' => 'Ps. Julius Rwotlonyo', 'role' => 'Plenary Speaker',  'church' => 'Watoto Church',            'country' => 'Uganda',  'img' => 'Julius_Rwotlonyo.jpeg', 'badge' => null],
                 ['name' => 'Ps. Curtis Bronzan',   'role' => 'Plenary Speaker',  'church' => 'FPC Houston',              'country' => 'USA',     'img' => 'Curtis_Bronzan.jpeg', 'badge' => null],
-                ['name' => 'Woman Speaker',         'role' => 'Plenary Speaker',  'church' => '',                         'country' => '',        'img' => null, 'badge' => 'TBA'],
             ];
             @endphp
 
