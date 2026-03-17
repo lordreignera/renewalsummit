@@ -259,7 +259,7 @@
                 </a>
             </div>
             <div class="relative rounded-2xl overflow-hidden shadow-xl">
-                <img src="{{ asset('images/Ps-Peter-Irene-Kasirivu.jpg') }}"
+                 <img src="{{ asset('images/Peter_Irene_Kasirivu.jpg') }}"
                      alt="Rev. Peter and Irene Kasirivu"
                      class="w-full object-cover object-top" style="height:520px;">
                 <div class="absolute inset-0 bg-gradient-to-t from-summit/70 to-transparent flex flex-col
@@ -606,7 +606,7 @@
                 ['name' => 'Ps. Brad Thomas',      'role' => 'Keynote Speaker',  'church' => 'Austin Ridge',             'country' => 'USA',     'img' => 'Brad_Thomas.jpeg', 'badge' => 'Keynote'],
                 ['name' => 'Ps. Eric Geiger',      'role' => 'Plenary Speaker',  'church' => 'Mariners Church',          'country' => 'USA',     'img' => null, 'badge' => 'Pending'],
                 ['name' => 'Ps. Bradley Goode',    'role' => 'Plenary Speaker',  'church' => 'Good News Church',         'country' => 'USA',     'img' => 'Bradley_Goode.jpeg', 'badge' => null],
-                ['name' => 'Ps. Jose Jazas',       'role' => 'Plenary Speaker',  'church' => '26 West Church',           'country' => 'USA',     'img' => 'Jose_Zayas.webp', 'badge' => null],
+                ['name' => 'Ps. Jose Jayas',       'role' => 'Plenary Speaker',  'church' => '26 West Church',           'country' => 'USA',     'img' => 'Jose_Zayas.webp', 'badge' => null],
                 ['name' => 'Ps. Jason Uptmore',    'role' => 'Plenary Speaker',  'church' => 'Wayside Chapel',           'country' => 'USA',     'img' => 'Jason_Uptmore.jpeg', 'badge' => null],
                 ['name' => 'Ps. Bryant Lee',       'role' => 'Plenary Speaker',  'church' => 'Higher Expectation Church','country' => 'USA',     'img' => null, 'badge' => null],
                 ['name' => 'Bp. Oscar Muriu',      'role' => 'Plenary Speaker',  'church' => 'Nairobi Chapel',           'country' => 'Kenya',   'img' => 'Bishop Oscar.jpeg', 'badge' => null],
@@ -622,10 +622,10 @@
                 {{-- Avatar --}}
                 <div class="relative mb-4">
                     @if($s['img'])
-                        <img src="{{ asset('images/' . $s['img']) }}"
-                             alt="{{ $s['name'] }}"
-                             class="w-28 h-28 rounded-full object-cover object-top border-4 border-white shadow-lg
-                                    group-hover:border-yellow-400 transition-all duration-300">
+                            <img src="{{ asset('images/' . $s['img']) }}"
+                                alt="{{ $s['name'] }}"
+                                class="w-28 h-28 rounded-full object-cover object-top border-4 border-white shadow-lg
+                                     group-hover:border-yellow-400 transition-all duration-300">
                     @else
                         <div class="w-28 h-28 rounded-full bg-gradient-to-br from-slate-700 to-slate-900
                                     flex items-center justify-center border-4 border-white shadow-lg
@@ -678,7 +678,7 @@
 
             @foreach($breakout as $s)
             <div class="flex flex-col items-center text-center group">
-                <div class="w-24 h-24 rounded-full bg-gradient-to-br from-yellow-700 to-yellow-900
+                <div class="w-28 h-28 rounded-full bg-gradient-to-br from-yellow-700 to-yellow-900
                             flex items-center justify-center border-4 border-white shadow-md
                             group-hover:border-yellow-400 transition-all duration-300 text-white text-xl font-bold mb-3 select-none">
                     {{ collect(explode(' ', $s['name']))->map(fn($w) => strtoupper(substr($w,0,1)))->take(2)->implode('') }}
@@ -793,21 +793,21 @@
                     'desc'    => 'International-standard hotel in Kampala city. ~8 km from venue.',
                     'price'   => 'From UGX 280,000 / night',
                     'icon'    => '🏩',
-                    'url'     => 'https://www.marriott.com/en-us/hotels/enbbr-protea-hotel-kampala/',
+                    'url'     => 'https://www.marriott.com/en-us/hotels/ebbka-protea-hotel-kampala/overview/',
                 ],
                 [
                     'name'    => 'San Jose Hotel Kampala',
                     'desc'    => 'Comfortable mid-range hotel with conference facilities. ~6 km from venue.',
                     'price'   => 'From UGX 200,000 / night',
                     'icon'    => '🏪',
-                    'url'     => 'https://www.sanjosehotelkampala.com',
+                    'url'     => 'https://sirjosehotel.com/index.php/en/',
                 ],
                 [
                     'name'    => 'Hotel Africana',
                     'desc'    => 'Well-known Kampala hotel near the city centre. ~10 km from venue.',
                     'price'   => 'From UGX 180,000 / night',
                     'icon'    => '🌍',
-                    'url'     => 'https://www.hotelafrican.com',
+                    'url'     => 'https://www.hotelafricana.com/web/',
                 ],
                 [
                     'name'    => 'St Mbaga Hotel',
