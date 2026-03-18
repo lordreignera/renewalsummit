@@ -63,7 +63,7 @@
         <p class="hero-fadeup-4" style="color:rgba(255,255,255,.88);font-size:1.2rem;line-height:1.8;max-width:640px;margin:0 auto 2.8rem;">
             A global gathering for pastors &amp; leaders to examine the spiritual, relational and missional
             markers of a healthy church.&nbsp;
-            <strong style="color:#fff;">1,500+ leaders from 27 nations.</strong>
+            <strong style="color:#fff;">1,500+ leaders from 30+ nations.</strong>
         </p>
 
         {{-- CTAs --}}
@@ -147,7 +147,7 @@
         </div>
 
         <div class="mt-10">
-            <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=Renewal+Summit+2026&dates=20260817T000000Z/20260827T235959Z&details=International+Conference+%E2%80%93+Healthy+Church.+A+global+gathering+for+pastors+and+leaders+from+27+nations.+Register+at+renewalsummit.africarenewal.org&location=Ggaba+Community+Church%2C+Kampala%2C+Uganda&sf=true&output=xml"
+            <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=Renewal+Summit+2026&dates=20260817T000000Z/20260827T235959Z&details=International+Conference+%E2%80%93+Healthy+Church.+A+global+gathering+for+pastors+and+leaders+from+30%2B+nations.+Register+at+renewalsummit.africarenewal.org&location=Ggaba+Community+Church%2C+Kampala%2C+Uganda&sf=true&output=xml"
                target="_blank" rel="noopener"
                class="inline-flex items-center gap-3 bg-white text-summit font-bold px-7 py-3.5 rounded-xl
                       shadow-lg hover:bg-yellow-50 transition text-sm">
@@ -170,7 +170,7 @@
         </div>
         <div class="flex flex-col items-center gap-3">
             <div class="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-white/40 bg-white/10 flex items-center justify-center shadow-lg">
-                <span class="text-3xl sm:text-4xl font-extrabold" data-countup="27">0</span>
+                <span class="text-3xl sm:text-4xl font-extrabold" data-countup="30" data-suffix="+">0</span>
             </div>
             <div class="text-xs sm:text-sm font-semibold uppercase tracking-widest opacity-90">Nations</div>
         </div>
@@ -588,7 +588,7 @@
         {{-- Section header --}}
         <div class="text-center mb-14">
             <p class="uppercase tracking-widest text-yellow-500 text-sm font-bold mb-2">Renewal Summit 2026</p>
-            <h2 class="text-4xl font-extrabold text-gray-900 mb-3">Speakers &amp; International Guests</h2>
+            <h2 class="text-4xl font-extrabold text-gray-900 mb-3">Speakers</h2>
             <div class="mx-auto w-16 h-1 bg-yellow-400 rounded"></div>
         </div>
 
@@ -702,31 +702,40 @@
             </div>
         </div>
 
-        {{-- D. INTERNATIONAL GUESTS --}}
-        <h3 class="text-lg font-bold uppercase tracking-widest text-gray-500 mb-6 border-b border-gray-100 pb-3">
-            D. International Guests
-        </h3>
-        <div class="grid sm:grid-cols-2 gap-4 mb-4">
-            <div class="flex items-start gap-4 bg-gray-50 rounded-xl p-5 border border-gray-100">
-                <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-white font-bold text-lg shrink-0">DTS</div>
-                <div>
-                    <p class="font-bold text-gray-900">Dallas Theological Seminary</p>
-                    <p class="text-xs text-gray-500 mt-0.5">A team joining us from Dallas, USA</p>
-                </div>
-            </div>
-            <div class="flex items-start gap-4 bg-gray-50 rounded-xl p-5 border border-gray-100">
-                <div class="w-12 h-12 rounded-full bg-yellow-500 flex items-center justify-center text-white font-bold text-lg shrink-0">🌍</div>
-                <div>
-                    <p class="font-bold text-gray-900">Global Partners &amp; Delegates</p>
-                    <p class="text-xs text-gray-500 mt-0.5">Representatives and partners from many nations</p>
-                </div>
-            </div>
-        </div>
+        {{-- D. (moved) Location & Directions — removed here; now a separate section below --}}
 
     </div>
 </section>
 
 {{-- ── REGISTER CTA (Donate panel hidden — awaiting PayPal approval) ─── --}}
+
+{{-- ── LOCATION / MAP ───────────────────────────────────────────────── --}}
+<section class="py-20 bg-white" id="location">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-10">
+            <p class="uppercase tracking-widest text-yellow-500 text-sm font-bold mb-2">Renewal Summit 2026</p>
+            <h2 class="text-3xl font-extrabold text-gray-900 mb-3">Where to find us?</h2>
+            <div class="mx-auto w-12 h-1 bg-yellow-400 rounded"></div>
+            <p class="text-sm text-gray-500 mt-3">Locate us and get directions to Ggaba Community Church.</p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-6 mb-8 items-start">
+            <div class="bg-white rounded-xl p-5 border border-gray-100">
+                <p class="font-bold text-gray-900">Ggaba Community Church</p>
+                <p class="text-xs text-gray-500 mt-0.5">Ggaba, Kampala, Uganda</p>
+                <p class="text-sm text-gray-500 mt-3">For directions and navigation, open in Google Maps or use the embedded map to the right.</p>
+                <p class="mt-3">
+                    <a href="https://maps.app.goo.gl/hTRW1RictpXmAQKYA" target="_blank" rel="noopener noreferrer" class="inline-block bg-yellow-100 text-yellow-700 px-3 py-2 rounded font-medium">Open in Google Maps</a>
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=Ggaba%20Community%20Church%2C%20Kampala" target="_blank" rel="noopener noreferrer" class="ml-3 inline-block text-sm text-gray-600 underline">Get directions</a>
+                </p>
+            </div>
+            <div class="bg-gray-50 rounded-xl overflow-hidden border border-gray-100">
+                <iframe class="w-full h-64 sm:h-56 md:h-72 border-0" src="https://www.google.com/maps?q=Ggaba+Community+Church+Kampala&output=embed" allowfullscreen loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
+</section>
+
 <section class="py-20 bg-gray-100">
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="bg-summit text-white px-10 py-16 flex flex-col items-center text-center rounded-3xl shadow-2xl">

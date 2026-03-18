@@ -117,9 +117,9 @@
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                             Ggaba Community Church, Uganda
                         </li>
-                        <li style="display:flex;align-items:center;gap:.6rem;color:rgba(255,255,255,.75);font-size:.92rem;">
+                            <li style="display:flex;align-items:center;gap:.6rem;color:rgba(255,255,255,.75);font-size:.92rem;">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                            1,500 Leaders · 27 Nations
+                            1,500 Leaders · 30+ Nations
                         </li>
                         <li style="display:flex;align-items:center;gap:.6rem;color:rgba(255,255,255,.75);font-size:.92rem;">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
@@ -157,6 +157,11 @@
 
             {{-- Bottom bar --}}
             <div style="border-top:1px solid rgba(255,255,255,.12);padding:1.4rem 0;text-align:center;">
+                <div style="color:rgba(255,255,255,.75);font-size:.92rem;margin-bottom:.6rem;">
+                    RSVP: <a href="mailto:renewalsummit@africarenewal.org" style="color:#D4A017;text-decoration:none;">renewalsummit@africarenewal.org</a>
+                    &nbsp;&middot;&nbsp;
+                    Phone: <a href="tel:+256705631980" style="color:#D4A017;text-decoration:none;">+256705631980</a>
+                </div>
                 <p style="color:rgba(255,255,255,.35);font-size:.8rem;">
                     © {{ date('Y') }} Renewal Summit 2026 – Ggaba Community Church, Uganda.
                 </p>

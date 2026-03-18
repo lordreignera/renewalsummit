@@ -43,7 +43,7 @@
                     <div class="text-blue-300 text-xs uppercase tracking-widest mt-1">Leaders</div>
                 </div>
                 <div>
-                    <div class="text-gold text-3xl font-extrabold">27</div>
+                    <div class="text-gold text-3xl font-extrabold">30+</div>
                     <div class="text-blue-300 text-xs uppercase tracking-widest mt-1">Nations</div>
                 </div>
                 <div>
