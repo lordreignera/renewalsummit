@@ -103,7 +103,7 @@
         </div>
 
         <p class="text-xs text-gray-400 text-center">
-            For transport or GCC Guest House enquiries, contact
+            For transport enquiries, contact
             <a href="mailto:renewalsummit@africarenewal.org" class="underline text-gold">renewalsummit@africarenewal.org</a>
         </p>
     </div>

@@ -824,13 +824,7 @@
                     'icon'    => '🏠',
                     'url'     => 'https://www.google.com/search?q=St+Mbaga+Hotel+Kampala',
                 ],
-                [
-                    'name'    => 'GCC Guest House',
-                    'desc'    => 'On-site guest house at Gaba Community Church. Limited rooms — book early.',
-                    'price'   => 'From UGX 80,000 / night',
-                    'icon'    => '⛪',
-                    'url'     => 'mailto:info@renewalsummit.ug',
-                ],
+                // GCC Guest House removed — not available for 2026
             ];
             @endphp
 
@@ -857,7 +851,7 @@
 
         <p class="text-center text-xs text-gray-400 mt-8">
             Prices are approximate. Please contact hotels directly for availability and group rates.
-            For the GCC Guest House or transport enquiries, email <a href="mailto:renewalsummit@africarenewal.org" class="underline text-gold">renewalsummit@africarenewal.org</a>.
+            For transport enquiries, email <a href="mailto:renewalsummit@africarenewal.org" class="underline text-gold">renewalsummit@africarenewal.org</a>.
         </p>
     </div>
 </section>
