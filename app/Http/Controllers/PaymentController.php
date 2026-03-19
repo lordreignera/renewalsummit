@@ -44,8 +44,12 @@ class PaymentController extends Controller
 
             if ($payment && $payment->isSuccessful()) {
                 $reg = $payment->registration;
-                if ($reg && $reg->email) {
+                if ($payment->payment_context === 'registration' && $reg && $reg->email) {
                     $this->qrService->generateAndDispatch($reg);
+                }
+
+                if ($payment->payment_context === 'accommodation' && $reg) {
+                    $reg->update(['accommodation_payment_status' => 'paid']);
                 }
             }
         }
@@ -92,6 +96,7 @@ class PaymentController extends Controller
         // Actively poll SwApp when payment is still pending
         if (! $reg->isPaid()) {
             $payment = $reg->payments()
+                ->where('payment_context', 'registration')
                 ->whereNotNull('swapp_reference')
                 ->latest()
                 ->first();
@@ -124,6 +129,45 @@ class PaymentController extends Controller
         return response()->json([
             'status'    => $reg->status,
             'paid'      => $reg->isPaid(),
+            'reference' => $reg->reference,
+        ]);
+    }
+
+    public function accommodationStatus(string $reference, string $token): JsonResponse
+    {
+        $reg = Registration::where('reference', $reference)
+            ->where('qr_token', $token)
+            ->with('payments')
+            ->firstOrFail();
+
+        $payment = $reg->payments()
+            ->where('payment_context', 'accommodation')
+            ->whereNotNull('swapp_reference')
+            ->latest()
+            ->first();
+
+        if ($payment && $payment->status !== 'success') {
+            try {
+                $swappStatus = $this->swapp->checkStatus($payment->swapp_reference);
+
+                if ($swappStatus['status'] === 'success') {
+                    $payment->update(['status' => 'success', 'paid_at' => now()]);
+                    $reg->update(['accommodation_payment_status' => 'paid']);
+                    $reg->refresh();
+                } elseif (in_array($swappStatus['status'], ['failed', 'cancelled'], true)) {
+                    $payment->update([
+                        'status'         => $swappStatus['status'],
+                        'failure_reason' => $swappStatus['message'] ?? null,
+                    ]);
+                }
+            } catch (\Throwable $e) {
+                Log::warning('Accommodation status poll failed', ['error' => $e->getMessage()]);
+            }
+        }
+
+        return response()->json([
+            'accommodation_payment_status' => $reg->accommodation_payment_status,
+            'paid' => $reg->accommodation_payment_status === 'paid',
             'reference' => $reg->reference,
         ]);
     }

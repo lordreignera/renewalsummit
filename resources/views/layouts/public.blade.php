@@ -27,7 +27,10 @@
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased">
 
+    @php $embedded = request()->boolean('embed'); @endphp
+
     <!-- Navbar -->
+    @if(! $embedded)
     <nav style="background:#ffffff; box-shadow:0 2px 8px rgba(0,0,0,0.10); position:sticky; top:0; z-index:50;">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between" style="height:68px;">
@@ -39,7 +42,9 @@
                     <a href="{{ route('home') }}#about"    style="color:#1a2a4a;" onmouseover="this.style.color='#D4A017'" onmouseout="this.style.color='#1a2a4a'">About</a>
                     <a href="{{ route('home') }}#gallery"  style="color:#1a2a4a;" onmouseover="this.style.color='#D4A017'" onmouseout="this.style.color='#1a2a4a'">Gallery</a>
                     <a href="{{ route('home') }}#speakers" style="color:#1a2a4a;" onmouseover="this.style.color='#D4A017'" onmouseout="this.style.color='#1a2a4a'">Speakers</a>
+                    <a href="{{ route('home') }}#testimonies" style="color:#1a2a4a;" onmouseover="this.style.color='#D4A017'" onmouseout="this.style.color='#1a2a4a'">Watch Videos</a>
                     <a href="{{ route('home') }}#contact"  style="color:#1a2a4a;" onmouseover="this.style.color='#D4A017'" onmouseout="this.style.color='#1a2a4a'">Contact</a>
+                    <a href="{{ route('home') }}#accommodation" style="color:#1a2a4a;" onmouseover="this.style.color='#D4A017'" onmouseout="this.style.color='#1a2a4a'">Accommodation</a>
                     {{-- DISABLED: awaiting PayPal approval --}}
                     {{-- <a href="{{ route('donate') }}"        style="color:#D4A017; font-weight:700;" onmouseover="this.style.color='#b38610'" onmouseout="this.style.color='#D4A017'">Donate</a> --}}
                     <a href="{{ route('register.start') }}"
@@ -60,13 +65,16 @@
             <a href="{{ route('home') }}#about"    style="display:block; color:#1a2a4a; padding:0.5rem 0; font-weight:600;">About</a>
             <a href="{{ route('home') }}#gallery"  style="display:block; color:#1a2a4a; padding:0.5rem 0; font-weight:600;">Gallery</a>
             <a href="{{ route('home') }}#speakers" style="display:block; color:#1a2a4a; padding:0.5rem 0; font-weight:600;">Speakers</a>
+            <a href="{{ route('home') }}#testimonies" style="display:block; color:#1a2a4a; padding:0.5rem 0; font-weight:600;">Watch Videos</a>
             <a href="{{ route('home') }}#contact"  style="display:block; color:#1a2a4a; padding:0.5rem 0; font-weight:600;">Contact</a>
+            <a href="{{ route('home') }}#accommodation" style="display:block; color:#1a2a4a; padding:0.5rem 0; font-weight:600;">Accommodation</a>
             {{-- DISABLED: awaiting PayPal approval --}}
             {{-- <a href="{{ route('donate') }}"        style="display:block; color:#D4A017; padding:0.5rem 0; font-weight:700;">Donate</a> --}}
             <a href="{{ route('register.start') }}"
                style="display:block; background:#D4A017; color:#fff; text-align:center; font-weight:700; padding:0.6rem 1rem; border-radius:0.5rem; margin-top:0.5rem; text-decoration:none;">Register Now</a>
         </div>
     </nav>
+    @endif
 
     <!-- Flash Messages -->
     @foreach(['success' => 'green', 'error' => 'red', 'info' => 'blue', 'warning' => 'yellow'] as $type => $color)
@@ -81,6 +89,7 @@
     @yield('content')
 
     <!-- Footer -->
+    @if(! $embedded)
     <footer id="contact" style="position:relative;overflow:hidden;color:#fff;">
 
         {{-- Background photo --}}
@@ -168,6 +177,7 @@
             </div>
         </div>
     </footer>
+    @endif
 
     @stack('scripts')
 </body>

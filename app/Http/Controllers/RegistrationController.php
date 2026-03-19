@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Mail\RegistrationConfirmationMail;
+use App\Models\Hotel;
+use App\Models\Payment;
 use App\Models\Registration;
 use App\Services\QrCodeService;
 use App\Services\SwappPaymentService;
@@ -34,19 +36,35 @@ class RegistrationController extends Controller
     {
         $request->validate(['phone' => 'required|string']);
 
-        $reg = Registration::where('phone', $request->phone)
+        $phone = trim((string) $request->phone);
+
+        // First priority: continue an unfinished registration if one exists.
+        $reg = Registration::where('phone', $phone)
             ->whereNotIn('status', ['paid', 'cancelled', 'checked_in'])
             ->latest()
             ->first();
 
-        if (! $reg) {
-            return back()->with('error', 'No pending registration found for that phone number. Please start a new registration.');
+        if ($reg) {
+            $request->session()->put('registration_id', $reg->id);
+
+            return redirect()->route('register.step', $reg->current_step)
+                ->with('info', "Resuming your registration — you were on Step {$reg->current_step}.");
         }
 
-        $request->session()->put('registration_id', $reg->id);
+        // If registration is already paid/checked_in, allow guest to continue to accommodation planning.
+        $paidReg = Registration::where('phone', $phone)
+            ->whereIn('status', ['paid', 'checked_in'])
+            ->latest()
+            ->first();
 
-        return redirect()->route('register.step', $reg->current_step)
-            ->with('info', "Resuming your registration — you were on Step {$reg->current_step}.");
+        if ($paidReg) {
+            return redirect()->route('register.accommodation', [
+                'reference' => $paidReg->reference,
+                'token' => $paidReg->qr_token,
+            ])->with('info', 'Registration is already paid. You can now continue with accommodation planning.');
+        }
+
+        return back()->with('error', 'No active registration found for that phone number. Please start a new registration.');
     }
 
     /* ─────────────────────────────────────────────────────────────
@@ -123,7 +141,7 @@ class RegistrationController extends Controller
 
         session(['registration_id' => $reg->id]);
 
-        return redirect()->route('register.step', 2);
+        return redirect()->route('register.step2', $request->boolean('embed') ? ['embed' => 1] : []);
     }
 
     /* ─────────────────────────────────────────────────────────────
@@ -146,7 +164,7 @@ class RegistrationController extends Controller
         // Just advance the step.
         $reg->update(['current_step' => 3]);
 
-        return redirect()->route('register.step', 3);
+        return redirect()->route('register.step3', $request->boolean('embed') ? ['embed' => 1] : []);
     }
 
     /* ─────────────────────────────────────────────────────────────
@@ -263,6 +281,212 @@ class RegistrationController extends Controller
             : null;
 
         return view('registration.complete', compact('reg', 'qrUrl'));
+    }
+
+    public function accommodation(string $reference, string $token): View|RedirectResponse
+    {
+        $reg = Registration::query()
+            ->where('reference', $reference)
+            ->where('qr_token', $token)
+            ->first();
+
+        if (! $reg || ! in_array($reg->status, ['paid', 'checked_in'], true)) {
+            return redirect()->route('register.start')
+                ->with('error', 'Accommodation planning is available after registration payment confirmation.');
+        }
+
+        $hotels = Hotel::query()
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get();
+
+        return view('registration.accommodation', compact('reg', 'hotels'));
+    }
+
+    public function accommodationPending(string $reference, string $token): View|RedirectResponse
+    {
+        $reg = Registration::query()
+            ->where('reference', $reference)
+            ->where('qr_token', $token)
+            ->first();
+
+        if (! $reg || ! in_array($reg->status, ['paid', 'checked_in'], true)) {
+            return redirect()->route('register.start')
+                ->with('error', 'Accommodation payment access is invalid or expired.');
+        }
+
+        if ($reg->accommodation_payment_status === 'paid') {
+            return redirect()->route('register.complete', ['ref' => $reg->reference])
+                ->with('success', 'Accommodation payment already confirmed.');
+        }
+
+        $latestAccommodationPayment = $reg->payments()
+            ->where('payment_context', 'accommodation')
+            ->latest()
+            ->first();
+
+        $defaultPhone = $latestAccommodationPayment?->phone_number ?: $reg->phone;
+
+        return view('registration.accommodation_pending', compact('reg', 'defaultPhone'));
+    }
+
+    public function resendAccommodationPrompt(Request $request, string $reference, string $token): RedirectResponse
+    {
+        $reg = Registration::query()
+            ->where('reference', $reference)
+            ->where('qr_token', $token)
+            ->first();
+
+        if (! $reg || ! in_array($reg->status, ['paid', 'checked_in'], true)) {
+            return redirect()->route('register.start')
+                ->with('error', 'Accommodation payment access is invalid or expired.');
+        }
+
+        if ($reg->accommodation_payment_status === 'paid') {
+            return redirect()->route('register.complete', ['ref' => $reg->reference])
+                ->with('success', 'Accommodation payment already confirmed.');
+        }
+
+        if (($reg->accommodation_booking_mode ?? '') !== 'book_through_us_and_pay') {
+            return redirect()->route('register.accommodation', ['reference' => $reg->reference, 'token' => $reg->qr_token])
+                ->with('warning', 'Accommodation payment prompt is only for "book through us and pay now" mode.');
+        }
+
+        $data = $request->validate([
+            'phone_number' => 'required|string|max:20',
+        ]);
+
+        $amount = (int) ($reg->accommodation_fee ?? 0);
+        $currency = $reg->accommodation_currency ?: $reg->currency;
+
+        if ($amount <= 0) {
+            return back()->with('error', 'Accommodation amount is missing. Please return and save accommodation details again.');
+        }
+
+        $result = $this->swapp->initiateMobileMoneyForAmount(
+            registration: $reg,
+            amount: $amount,
+            currency: $currency,
+            phone: $data['phone_number'],
+            context: 'accommodation',
+        );
+
+        if (! $result['success']) {
+            return back()->withInput()
+                ->with('error', $result['message'] ?? 'Could not resend payment prompt.');
+        }
+
+        $reg->update(['accommodation_payment_status' => 'pending']);
+
+        return back()->with('info', 'A new accommodation payment prompt has been sent to your phone.');
+    }
+
+    public function saveAccommodation(Request $request, string $reference, string $token): RedirectResponse
+    {
+        $reg = Registration::query()
+            ->where('reference', $reference)
+            ->where('qr_token', $token)
+            ->first();
+
+        if (! $reg || ! in_array($reg->status, ['paid', 'checked_in'], true)) {
+            return redirect()->route('register.start')
+                ->with('error', 'Accommodation planning is available after registration payment confirmation.');
+        }
+
+        $data = $request->validate([
+            'accommodation_booking_mode' => 'required|in:self_book,book_through_us_no_payment,book_through_us_and_pay',
+            'accommodation_hotel_id' => 'required|exists:hotels,id',
+            'accommodation_room_type' => 'required|in:single,double',
+            'accommodation_nights' => 'required|integer|min:1|max:14',
+            'accommodation_currency' => 'required|in:USD,UGX',
+            'accommodation_fee' => 'nullable|integer|min:0',
+            'payment_method' => 'nullable|in:mobile_money,visa',
+            'phone_number' => 'nullable|string|max:20',
+            'card_name' => 'nullable|string|max:100',
+            'card_number' => 'nullable|string|max:25',
+            'card_expiry' => 'nullable|string|max:5',
+            'card_cvc' => 'nullable|string|max:4',
+        ]);
+
+        $hotel = Hotel::findOrFail((int) $data['accommodation_hotel_id']);
+        $currency = $data['accommodation_currency'];
+        $roomType = $data['accommodation_room_type'];
+        $nights = (int) $data['accommodation_nights'];
+        $perNight = $hotel->priceForRoomType($currency, $roomType);
+        $estimatedTotal = $perNight * $nights;
+
+        $update = [
+            'accommodation_required' => true,
+            'accommodation_choice' => $hotel->name,
+            'accommodation_hotel_id' => $hotel->id,
+            'accommodation_booking_mode' => $data['accommodation_booking_mode'],
+            'accommodation_room_type' => $roomType,
+            'accommodation_nights' => $nights,
+            'accommodation_currency' => $currency,
+            'accommodation_fee' => $estimatedTotal,
+        ];
+
+        if ($data['accommodation_booking_mode'] === 'self_book') {
+            $update['accommodation_payment_status'] = 'not_required';
+            $reg->update($update);
+
+            return redirect()->route('register.complete', ['ref' => $reg->reference])
+                ->with('success', 'Accommodation preference saved. We can now track where you will stay.');
+        }
+
+        if ($data['accommodation_booking_mode'] === 'book_through_us_no_payment') {
+            $update['accommodation_payment_status'] = 'pending';
+            $reg->update($update);
+
+            return redirect()->route('register.complete', ['ref' => $reg->reference])
+                ->with('info', 'Accommodation request saved. You selected pay later.');
+        }
+
+        $paymentMethod = $request->validate([
+            'payment_method' => 'required|in:mobile_money,visa',
+            'phone_number' => 'required_if:payment_method,mobile_money|nullable|string|max:20',
+            'card_name' => 'required_if:payment_method,visa|nullable|string|max:100',
+            'card_number' => ['required_if:payment_method,visa', 'nullable', 'string', 'regex:/^\d{4}\s?\d{4}\s?\d{4}\s?\d{4}$/'],
+            'card_expiry' => ['required_if:payment_method,visa', 'nullable', 'regex:/^(0[1-9]|1[0-2])\/\d{2}$/'],
+            'card_cvc' => 'required_if:payment_method,visa|nullable|digits_between:3,4',
+        ]);
+
+        $update['accommodation_payment_status'] = 'pending';
+        $reg->update($update);
+
+        if ($paymentMethod['payment_method'] === 'mobile_money') {
+            $result = $this->swapp->initiateMobileMoneyForAmount(
+                registration: $reg,
+                amount: $estimatedTotal,
+                currency: $currency,
+                phone: $paymentMethod['phone_number'],
+                context: 'accommodation',
+            );
+
+            if (! $result['success']) {
+                return back()->withInput()
+                    ->with('error', $result['message'] ?? 'Accommodation payment initiation failed.');
+            }
+
+            return redirect()->route('register.accommodation.pending', ['reference' => $reg->reference, 'token' => $reg->qr_token])
+                ->with('info', 'Accommodation payment prompt sent. Approve on your phone to complete.');
+        }
+
+        Payment::create([
+            'registration_id' => $reg->id,
+            'payment_context' => 'accommodation',
+            'payment_method' => 'visa',
+            'amount' => $estimatedTotal,
+            'currency' => $currency,
+            'status' => 'success',
+            'paid_at' => now(),
+        ]);
+
+        $reg->update(['accommodation_payment_status' => 'paid']);
+
+        return redirect()->route('register.complete', ['ref' => $reg->reference])
+            ->with('success', 'Accommodation payment completed and booking recorded.');
     }
 
     /* ─────────────────────────────────────────────────────────────

@@ -4,6 +4,8 @@
 @section('content')
 <div class="max-w-2xl mx-auto px-4 py-12">
 
+    @php $embed = request()->boolean('embed'); @endphp
+
     @include('registration.partials.steps', ['currentStep' => 2])
 
     <div class="bg-white rounded-2xl shadow-lg p-5 sm:p-8">
@@ -91,10 +93,10 @@
             </div>
         </div>
 
-        <form method="POST" action="{{ route('register.step2.save') }}">
+        <form method="POST" action="{{ route('register.step2.save', $embed ? ['embed' => 1] : []) }}">
             @csrf
             <div class="flex gap-3">
-                <a href="{{ route('register.step1') }}"
+                <a href="{{ route('register.step1', $embed ? ['embed' => 1] : []) }}"
                    class="flex-1 border-2 border-gray-300 text-gray-600 font-bold py-3 rounded-xl text-center transition hover:bg-gray-50">
                     ← Edit
                 </a>

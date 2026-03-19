@@ -358,11 +358,11 @@
      */
     function extractLookupValue(text) {
         text = text.trim();
-        // New QR format: contains "Ref: RS-2026-XXXXX" on a line
-        const refMatch = text.match(/Ref:\s*(RS-[\w-]+)/i);
+        // New QR format: contains "Ref: RS2026-XXXXX" on a line
+        const refMatch = text.match(/Ref:\s*(RS[\w-]+)/i);
         if (refMatch) return refMatch[1];
         // Bare reference number
-        if (/^RS-[\w-]+$/i.test(text)) return text;
+        if (/^RS[\w-]+$/i.test(text)) return text;
         // Old URL token
         const verifyMatch = text.match(/\/verify\/([a-f0-9-]{36})/);
         if (verifyMatch) return verifyMatch[1];

@@ -13,7 +13,10 @@
         ['FCC Members',      $stats['fcc'],           '✝️',  'bg-purple-50', 'text-purple-700'],
         ['International',    $stats['international'], '🌍', 'bg-indigo-50', 'text-indigo-700'],
         ['Local Leaders',   $stats['local'],         '🇺🇬', 'bg-orange-50', 'text-orange-700'],
-        ['Revenue (UGX)',    number_format($stats['revenue']),   '💰', 'bg-emerald-50', 'text-emerald-700'],
+        ['Registration Revenue',    number_format($stats['registration_revenue']),   '💰', 'bg-emerald-50', 'text-emerald-700'],
+        ['Accommodation Revenue',    number_format($stats['accommodation_revenue']),   '🏨', 'bg-cyan-50', 'text-cyan-700'],
+        ['Accommodation Bookings', $stats['accommodation_bookings'], '🛏️', 'bg-teal-50', 'text-teal-700'],
+        ['Accommodation Pending', $stats['accommodation_pending'], '📌', 'bg-amber-50', 'text-amber-700'],
         ['Donations (UGX)',  number_format($stats['donations']), '🙏', 'bg-pink-50',    'text-pink-700'],
     ] as [$label, $value, $icon, $bg, $text])
     <div class="{{ $bg }} rounded-2xl p-5">
@@ -84,6 +87,42 @@
 
 </div>
 
+<div class="mt-6 bg-white rounded-2xl shadow-sm p-6">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-bold text-summit">Recent Accommodation Activity</h2>
+        <span class="bg-teal-100 text-teal-700 text-xs font-bold px-2 py-0.5 rounded">{{ $recentAccommodation->count() }}</span>
+    </div>
+
+    @if($recentAccommodation->isEmpty())
+        <p class="text-gray-400 text-sm text-center py-6">No accommodation bookings yet.</p>
+    @else
+        <div class="space-y-3">
+            @foreach($recentAccommodation as $reg)
+            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl text-sm">
+                <div class="w-8 h-8 rounded-full bg-teal-600 text-white flex items-center justify-center text-xs font-bold">
+                    🏨
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="font-semibold truncate">{{ $reg->full_name }}</div>
+                    <div class="text-xs text-gray-400 truncate">
+                        {{ $reg->accommodationHotel->name ?? $reg->accommodation_choice ?? 'Hotel not set' }} ·
+                        {{ ucfirst($reg->accommodation_room_type ?? 'single') }} ·
+                        {{ (int) ($reg->accommodation_nights ?? 1) }} night(s) ·
+                        {{ ucfirst(str_replace('_', ' ', $reg->accommodation_booking_mode ?? 'self_book')) }}
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="font-bold text-summit">{{ ($reg->accommodation_currency ?: $reg->currency) }} {{ number_format($reg->accommodation_fee ?: 0) }}</div>
+                    <div class="text-xs font-bold {{ $reg->accommodation_payment_status === 'paid' ? 'text-green-600' : ($reg->accommodation_payment_status === 'pending' ? 'text-yellow-600' : 'text-gray-400') }}">
+                        {{ strtoupper(str_replace('_', ' ', $reg->accommodation_payment_status ?? 'not_required')) }}
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    @endif
+</div>
+
 {{-- ── Quick Actions ───────────────────────────────────────────── --}}
 <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
     <a href="{{ route('admin.checkin') }}"
@@ -100,6 +139,11 @@
        class="bg-white border-2 border-gray-200 rounded-2xl p-5 text-center hover:border-yellow-400 transition">
         <div class="text-3xl mb-2">📥</div>
         <div class="font-bold text-sm text-summit">Export CSV</div>
+    </a>
+    <a href="{{ route('admin.hotels.index') }}"
+       class="bg-white border-2 border-gray-200 rounded-2xl p-5 text-center hover:border-yellow-400 transition">
+        <div class="text-3xl mb-2">🏨</div>
+        <div class="font-bold text-sm text-summit">Manage Hotels</div>
     </a>
     <a href="{{ route('register.start') }}" target="_blank"
        class="bg-white border-2 border-gray-200 rounded-2xl p-5 text-center hover:border-yellow-400 transition">

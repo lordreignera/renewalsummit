@@ -15,9 +15,32 @@ class RegistrationController extends Controller
 
     public function index(Request $request): View
     {
-        $query = Registration::with('latestPayment')->latest();
+        // ── KPI counts (always reflect full dataset, unaffected by filters) ──
+        $kpiTotal = Registration::count();
 
-        // Filters
+        $kpiFullyPaid = Registration::where('status', 'paid')
+            ->where(function ($q) {
+                $q->whereNull('accommodation_hotel_id')
+                  ->orWhere('accommodation_payment_status', 'paid')
+                  ->orWhere('accommodation_booking_mode', 'self_book')
+                  ->orWhere('accommodation_payment_status', 'not_required');
+            })->count();
+
+        $kpiRegPaidAccPending = Registration::where('status', 'paid')
+            ->whereNotNull('accommodation_hotel_id')
+            ->where('accommodation_booking_mode', 'book_through_us_and_pay')
+            ->where(function ($q) {
+                $q->where('accommodation_payment_status', '!=', 'paid')
+                  ->orWhereNull('accommodation_payment_status');
+            })->count();
+
+        $kpiAwaitingReg = Registration::whereIn('status', ['draft', 'pending'])->count();
+
+        $kpiCheckedIn = Registration::where('status', 'checked_in')->count();
+
+        // ── Filtered query ────────────────────────────────────────────────────
+        $query = Registration::with(['latestPayment', 'accommodationHotel'])->latest();
+
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
@@ -39,16 +62,139 @@ class RegistrationController extends Controller
                     ->orWhere('reference', 'like', $term);
             });
         }
+        if ($request->filled('acc_status')) {
+            switch ($request->acc_status) {
+                case 'fully_paid':
+                    $query->where('status', 'paid')
+                        ->where(function ($q) {
+                            $q->whereNull('accommodation_hotel_id')
+                              ->orWhere('accommodation_payment_status', 'paid')
+                              ->orWhere('accommodation_booking_mode', 'self_book')
+                              ->orWhere('accommodation_payment_status', 'not_required');
+                        });
+                    break;
+                case 'reg_paid_acc_pending':
+                    $query->where('status', 'paid')
+                        ->whereNotNull('accommodation_hotel_id')
+                        ->where('accommodation_booking_mode', 'book_through_us_and_pay')
+                        ->where(function ($q) {
+                            $q->where('accommodation_payment_status', '!=', 'paid')
+                              ->orWhereNull('accommodation_payment_status');
+                        });
+                    break;
+                case 'awaiting_reg':
+                    $query->whereIn('status', ['draft', 'pending']);
+                    break;
+                case 'checked_in':
+                    $query->where('status', 'checked_in');
+                    break;
+            }
+        }
 
         $registrations = $query->paginate(25)->withQueryString();
 
-        return view('admin.registrations.index', compact('registrations'));
+        return view('admin.registrations.index', compact(
+            'registrations',
+            'kpiTotal',
+            'kpiFullyPaid',
+            'kpiRegPaidAccPending',
+            'kpiAwaitingReg',
+            'kpiCheckedIn'
+        ));
     }
 
     public function show(Registration $registration): View
     {
-        $registration->load('payments');
+        $registration->load(['payments', 'accommodationHotel']);
         return view('admin.registrations.show', compact('registration'));
+    }
+
+    /**
+     * Show form to create a manual registration from admin.
+     */
+    public function create(): View
+    {
+        return view('admin.registrations.create');
+    }
+
+    /**
+     * Store a manual registration created by an admin.
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'full_name'               => 'required|string|max:191',
+            'phone'                   => 'required|string|max:50|unique:registrations,phone',
+            'email'                   => 'nullable|email|max:191',
+            'address'                 => 'nullable|string|max:500',
+            'country_type'            => 'required|in:local,africa,international',
+            'nationality'             => 'nullable|string|max:191',
+            'affiliation'             => 'required|in:fcc,other',
+            'fcc_region'              => 'nullable|required_if:affiliation,fcc|string|max:191',
+            'fcc_regional_leader'     => 'nullable|required_if:affiliation,fcc|string|max:191',
+            'fcc_church'              => 'nullable|required_if:affiliation,fcc|string|max:191',
+            'fcc_pastor'              => 'nullable|string|max:191',
+            'designation'             => 'nullable|string|max:191',
+            'designation_specify'     => 'nullable|required_if:designation,church_leader|string|max:191',
+
+            'emergency_contact_name'  => 'nullable|string|max:191',
+            'emergency_contact_phone' => 'nullable|string|max:50',
+            'medical_conditions'      => 'nullable|string',
+            'allergies'               => 'nullable|string',
+            'mobility_needs'          => 'nullable|string',
+            'special_needs'           => 'nullable|string',
+
+            'accommodation_required'  => 'nullable|boolean',
+            'accommodation_choice'    => 'nullable|string|max:191',
+            'accommodation_fee'       => 'nullable|integer',
+
+            'sms_opt_in'              => 'nullable|boolean',
+            'admin_notes'             => 'nullable|string',
+        ]);
+
+        // Normalize booleans
+        $data['accommodation_required'] = (bool) ($data['accommodation_required'] ?? false);
+        $data['sms_opt_in'] = (bool) ($data['sms_opt_in'] ?? false);
+
+        // Registration fee is paid first (same tiers as public step 1).
+        $feeTiers = [
+            'local'         => ['amount' => (int) env('SUMMIT_FEE_LOCAL', 150000), 'currency' => 'UGX'],
+            'africa'        => ['amount' => (int) env('SUMMIT_FEE_AFRICA', 50), 'currency' => 'USD'],
+            'international' => ['amount' => (int) env('SUMMIT_FEE_INTERNATIONAL', 100), 'currency' => 'USD'],
+        ];
+        $tier = $feeTiers[$data['country_type']];
+
+        // Accommodation details are captured for logistics but not charged here.
+        $data['status'] = 'pending';
+        $data['currency'] = $tier['currency'];
+        $data['base_fee'] = $tier['amount'];
+        $data['total_amount'] = $tier['amount'];
+        $data['accommodation_payment_status'] = $data['accommodation_required'] ? 'pending' : 'not_required';
+        $data['current_step'] = 3;
+
+        $registration = Registration::create($data);
+
+        // Reuse the existing payment step flow so QR + email happen after successful payment.
+        session(['registration_id' => $registration->id]);
+
+        return redirect()->route('admin.registrations.payment', $registration)
+            ->with('success', "Manual registration for {$registration->full_name} created. Proceed with registration fee payment.");
+    }
+
+    /**
+     * Show payment step embedded inside admin dashboard.
+     */
+    public function payment(Registration $registration): View|RedirectResponse
+    {
+        if (in_array($registration->status, ['paid', 'checked_in'], true)) {
+            return redirect()->route('admin.registrations.show', $registration)
+                ->with('info', 'Registration is already paid.');
+        }
+
+        // Reuse public step 3 payment submission flow by binding this record to session.
+        session(['registration_id' => $registration->id]);
+
+        return view('admin.registrations.payment', compact('registration'));
     }
 
     /**
@@ -66,10 +212,10 @@ class RegistrationController extends Controller
         // Attempt to extract a reference from multi-line QR text
         $reference = null;
         if (str_contains($input, 'Ref:')) {
-            if (preg_match('/Ref:\s*(RS-[\w-]+)/i', $input, $m)) {
+            if (preg_match('/Ref:\s*(RS[\w-]+)/i', $input, $m)) {
                 $reference = $m[1];
             }
-        } elseif (preg_match('/^RS-[\w-]+$/i', trim($input))) {
+        } elseif (preg_match('/^RS[\w-]+$/i', trim($input))) {
             // Bare reference number passed directly
             $reference = trim($input);
         }
@@ -178,7 +324,7 @@ class RegistrationController extends Controller
      */
     public function export(Request $request)
     {
-        $query = Registration::whereIn('status', ['paid', 'checked_in']);
+        $query = Registration::with('accommodationHotel')->whereIn('status', ['paid', 'checked_in']);
 
         if ($request->filled('affiliation')) {
             $query->where('affiliation', $request->affiliation);
@@ -201,6 +347,7 @@ class RegistrationController extends Controller
                 'Attendee Type', 'Nationality', 'Affiliation',
                 'FCC Region', 'FCC Regional Leader', 'FCC Church', 'FCC Pastor',
                 'Currency', 'Base Fee', 'Total Amount',
+                'Accommodation Hotel', 'Accommodation Mode', 'Room Type', 'Nights', 'Accommodation Currency', 'Accommodation Fee', 'Accommodation Payment Status',
                 'Status', 'Checked In At', 'Registered At',
             ]);
 
@@ -222,6 +369,13 @@ class RegistrationController extends Controller
                     $reg->currency,
                     $reg->base_fee,
                     $reg->total_amount,
+                    $reg->accommodationHotel->name ?? $reg->accommodation_choice,
+                    $reg->accommodation_booking_mode,
+                    $reg->accommodation_room_type,
+                    $reg->accommodation_nights,
+                    $reg->accommodation_currency,
+                    $reg->accommodation_fee,
+                    $reg->accommodation_payment_status,
                     $reg->status,
                     $reg->checked_in_at?->format('Y-m-d H:i:s'),
                     $reg->created_at->format('Y-m-d H:i:s'),

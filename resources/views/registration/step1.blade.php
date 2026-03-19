@@ -60,11 +60,6 @@
                 {{-- FCC fields (shown when Yes is selected) --}}
                 <div id="fcc-fields" class="mt-4 {{ $currentAff === 'fcc' ? '' : 'hidden' }}
                                               bg-yellow-50 border border-yellow-200 rounded-xl p-5 space-y-4">
-                    <div class="flex items-center gap-2">
-                        <span class="bg-gold text-white text-xs font-bold px-2 py-0.5 rounded">FCC</span>
-                        <span class="text-xs text-yellow-700 font-medium">Accommodation is provided &amp; included for FCC members</span>
-                    </div>
-
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Region <span class="text-red-500">*</span></label>
                         <input type="text" name="fcc_region" value="{{ old('fcc_region', $reg->fcc_region ?? '') }}"

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
@@ -36,14 +37,36 @@ class Registration extends Model
         'qr_code_path',
         'qr_sent_at',
         'checked_in_at',
+        // Manual registration fields
+        'emergency_contact_name',
+        'emergency_contact_phone',
+        'medical_conditions',
+        'allergies',
+        'mobility_needs',
+        'special_needs',
+        'accommodation_required',
+        'accommodation_choice',
+        'accommodation_hotel_id',
+        'accommodation_booking_mode',
+        'accommodation_room_type',
+        'accommodation_nights',
+        'accommodation_currency',
+        'accommodation_fee',
+        'accommodation_payment_status',
+        'sms_opt_in',
+        'admin_notes',
     ];
 
     protected $casts = [
         'base_fee'       => 'integer',
         'total_amount'   => 'integer',
         'current_step'   => 'integer',
+        'accommodation_hotel_id' => 'integer',
+        'accommodation_nights' => 'integer',
         'qr_sent_at'     => 'datetime',
         'checked_in_at'  => 'datetime',
+        'accommodation_required' => 'boolean',
+        'sms_opt_in'             => 'boolean',
     ];
 
     /**
@@ -75,6 +98,11 @@ class Registration extends Model
     public function latestPayment(): HasOne
     {
         return $this->hasOne(Payment::class)->latestOfMany();
+    }
+
+    public function accommodationHotel(): BelongsTo
+    {
+        return $this->belongsTo(Hotel::class, 'accommodation_hotel_id');
     }
 
     /* ─── Helpers ───────────────────────────────────────────────── */

@@ -23,7 +23,7 @@
     {{-- Resume --}}
     <div class="bg-white rounded-2xl shadow-lg p-8" id="resume">
         <h2 class="text-xl font-bold text-summit mb-1">Resume Registration</h2>
-        <p class="text-sm text-gray-500 mb-6">Already started? Enter your phone number to pick up where you left off.</p>
+        <p class="text-sm text-gray-500 mb-6">Already started or already paid? Enter your phone number to continue your registration or jump to accommodation planning.</p>
 
         @if($errors->any())
             <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg p-3 mb-4 text-sm">
@@ -55,6 +55,7 @@
             <li>Provide your church / FCC affiliation</li>
             <li>Complete payment via Mobile Money or VISA</li>
             <li>Receive your QR entry code via email</li>
+            <li>Optionally continue to accommodation planning</li>
         </ol>
     </div>
 </div>

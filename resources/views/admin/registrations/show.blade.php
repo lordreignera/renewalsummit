@@ -29,8 +29,13 @@
                     ['Address',      $registration->address ?? '—'],
                     ['Attendee Type', $registration->country_type === 'local' ? 'Ugandan' : ($registration->country_type === 'africa' ? 'Rest of Africa' : 'International')],
                     ['Nationality',  $registration->nationality ?? '—'],
-                    ['Affiliation',  $registration->affiliation === 'fcc' ? 'FCC Member' : 'Other / Guest'],
+                    ['Affiliation',  $registration->affiliation === 'fcc' ? 'FCC Member' : 'Guest'],
                     ['Fee',          $registration->formattedTotal],
+                    ['Accommodation Hotel', $registration->accommodationHotel->name ?? $registration->accommodation_choice ?? '—'],
+                    ['Accommodation Mode', ucfirst(str_replace('_', ' ', $registration->accommodation_booking_mode ?? '—'))],
+                    ['Room & Nights', ($registration->accommodation_room_type ? ucfirst($registration->accommodation_room_type) : '—') . ' · ' . ($registration->accommodation_nights ?: 1) . ' night(s)'],
+                    ['Accommodation Total', $registration->accommodation_fee ? (($registration->accommodation_currency ?: $registration->currency) . ' ' . number_format($registration->accommodation_fee)) : '—'],
+                    ['Accommodation Payment', ucfirst(str_replace('_', ' ', $registration->accommodation_payment_status ?? 'not_required'))],
                 ] as [$label, $val])
                 <div>
                     <div class="text-xs text-gray-400 font-medium">{{ $label }}</div>
@@ -68,28 +73,57 @@
         {{-- Payment History --}}
         <div class="bg-white rounded-2xl shadow-sm p-6">
             <h2 class="font-bold text-summit text-lg mb-4">Payment History</h2>
-            @forelse($registration->payments as $payment)
-            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl mb-2 text-sm">
-                <div class="text-xl">{{ $payment->payment_method === 'visa' ? '💳' : '📱' }}</div>
-                <div class="flex-1">
-                    <div class="font-semibold">{{ strtoupper(str_replace('_', ' ', $payment->payment_method)) }}</div>
-                    <div class="text-xs text-gray-400">
-                        {{ $payment->network ?? '' }}
-                        {{ $payment->phone_number ?? '' }}
-                        {{ $payment->swapp_transaction_id ? '· TXN: ' . $payment->swapp_transaction_id : '' }}
+            @php
+                $registrationPayments = $registration->payments->where('payment_context', 'registration');
+                $accommodationPayments = $registration->payments->where('payment_context', 'accommodation');
+                $pc = ['success'=>'text-green-600','failed'=>'text-red-500','pending'=>'text-yellow-600'];
+            @endphp
+
+            <div class="mb-5">
+                <h3 class="text-sm font-bold text-summit mb-3">Registration Payments</h3>
+                @forelse($registrationPayments as $payment)
+                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl mb-2 text-sm">
+                    <div class="text-xl">{{ $payment->payment_method === 'visa' ? '💳' : '📱' }}</div>
+                    <div class="flex-1">
+                        <div class="font-semibold">{{ strtoupper(str_replace('_', ' ', $payment->payment_method)) }}</div>
+                        <div class="text-xs text-gray-400">
+                            {{ $payment->network ?? '' }}
+                            {{ $payment->phone_number ?? '' }}
+                            {{ $payment->swapp_transaction_id ? '· TXN: ' . $payment->swapp_transaction_id : '' }}
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-bold">{{ $payment->formattedAmount }}</div>
+                        <div class="text-xs font-bold {{ $pc[$payment->status] ?? 'text-gray-400' }}">{{ strtoupper($payment->status) }}</div>
                     </div>
                 </div>
-                <div class="text-right">
-                    <div class="font-bold">UGX {{ number_format($payment->amount) }}</div>
-                    @php $pc = ['success'=>'text-green-600','failed'=>'text-red-500','pending'=>'text-yellow-600']; @endphp
-                    <div class="text-xs font-bold {{ $pc[$payment->status] ?? 'text-gray-400' }}">
-                        {{ strtoupper($payment->status) }}
-                    </div>
-                </div>
+                @empty
+                <p class="text-sm text-gray-400">No registration payments yet.</p>
+                @endforelse
             </div>
-            @empty
-            <p class="text-sm text-gray-400">No payment records yet.</p>
-            @endforelse
+
+            <div>
+                <h3 class="text-sm font-bold text-summit mb-3">Accommodation Payments</h3>
+                @forelse($accommodationPayments as $payment)
+                <div class="flex items-center gap-3 p-3 bg-teal-50 rounded-xl mb-2 text-sm border border-teal-100">
+                    <div class="text-xl">{{ $payment->payment_method === 'visa' ? '💳' : '🏨' }}</div>
+                    <div class="flex-1">
+                        <div class="font-semibold">{{ strtoupper(str_replace('_', ' ', $payment->payment_method)) }}</div>
+                        <div class="text-xs text-gray-400">
+                            {{ $payment->network ?? '' }}
+                            {{ $payment->phone_number ?? '' }}
+                            {{ $payment->swapp_transaction_id ? '· TXN: ' . $payment->swapp_transaction_id : '' }}
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-bold">{{ $payment->formattedAmount }}</div>
+                        <div class="text-xs font-bold {{ $pc[$payment->status] ?? 'text-gray-400' }}">{{ strtoupper($payment->status) }}</div>
+                    </div>
+                </div>
+                @empty
+                <p class="text-sm text-gray-400">No accommodation payments yet.</p>
+                @endforelse
+            </div>
         </div>
 
     </div>
@@ -155,6 +189,11 @@
                     📧 Resend QR Email
                 </button>
             </form>
+            <a href="{{ route('register.accommodation', ['reference' => $registration->reference, 'token' => $registration->qr_token]) }}"
+               target="_blank"
+               class="block text-center bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-xl text-sm transition">
+                🏨 Accommodation Planner
+            </a>
             <a href="{{ route('admin.checkin.process', $registration->qr_token) }}"
                class="block text-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-xl text-sm transition">
                 📲 Manual Check-In

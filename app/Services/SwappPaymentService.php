@@ -139,6 +139,25 @@ class SwappPaymentService
 
     public function initiateMobileMoney(Registration $registration, string $phone, string $network = ''): array
     {
+        return $this->initiateMobileMoneyForAmount(
+            registration: $registration,
+            amount: (int) $registration->total_amount,
+            currency: 'UGX',
+            phone: $phone,
+            network: $network,
+            context: 'registration',
+        );
+    }
+
+    public function initiateMobileMoneyForAmount(
+        Registration $registration,
+        int $amount,
+        string $currency,
+        string $phone,
+        string $network = '',
+        string $context = 'registration'
+    ): array
+    {
         if (empty($network)) {
             $network = self::detectNetwork($phone);
         }
@@ -147,11 +166,12 @@ class SwappPaymentService
 
         $payment = Payment::create([
             'registration_id' => $registration->id,
+            'payment_context' => $context,
             'payment_method'  => 'mobile_money',
             'phone_number'    => $phone,
             'network'         => strtoupper($network),
-            'amount'          => $registration->total_amount,
-            'currency'        => 'UGX',
+            'amount'          => $amount,
+            'currency'        => $currency,
             'status'          => 'initiated',
             'swapp_reference' => $requestId,
         ]);
@@ -161,7 +181,7 @@ class SwappPaymentService
                 ->withHeaders($this->bearerHeaders())
                 ->post("{$this->baseUrl}/collect", [
                     'Account'   => $this->normalisePhone($phone),
-                    'Amount'    => $registration->total_amount,
+                    'Amount'    => $amount,
                     'RequestId' => $requestId,
                 ]);
 
@@ -275,7 +295,13 @@ class SwappPaymentService
         ]);
 
         if ($mapped === 'success') {
-            $payment->registration->update(['status' => 'paid']);
+            if ($payment->payment_context === 'registration') {
+                $payment->registration->update(['status' => 'paid']);
+            }
+
+            if ($payment->payment_context === 'accommodation') {
+                $payment->registration->update(['accommodation_payment_status' => 'paid']);
+            }
         }
 
         return true;

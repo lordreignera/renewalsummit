@@ -12,6 +12,7 @@ class Payment extends Model
 
     protected $fillable = [
         'registration_id',
+        'payment_context',
         'swapp_transaction_id',
         'swapp_reference',
         'payment_method',
@@ -43,6 +44,8 @@ class Payment extends Model
 
     public function getFormattedAmountAttribute(): string
     {
-        return 'UGX ' . number_format($this->amount);
+        return $this->currency === 'USD'
+            ? '$' . number_format($this->amount) . ' USD'
+            : 'UGX ' . number_format($this->amount);
     }
 }

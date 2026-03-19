@@ -1,17 +1,34 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
+use App\Http\Controllers\Admin\HotelController as AdminHotel;
 use App\Http\Controllers\Admin\RegistrationController as AdminRegistration;
+use App\Http\Controllers\Admin\TestimonialVideoController as AdminTestimonialVideo;
 // use App\Http\Controllers\DonationController; // DISABLED: awaiting PayPal approval
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\QrImageController;
 use App\Http\Controllers\RegistrationController;
+use App\Http\Controllers\TestimonialVideoController;
 use Illuminate\Support\Facades\Route;
 
 /* ─────────────────────────────────────────────────────────────
  | Public – Landing Page
  |────────────────────────────────────────────────────────────*/
-Route::get('/', fn() => view('home'))->name('home');
+Route::get('/', function () {
+    $approvedVideos = \App\Models\TestimonialVideo::where('status', 'approved')
+        ->latest('approved_at')
+        ->take(8)
+        ->get();
+
+    $hotels = \App\Models\Hotel::where('is_active', true)
+        ->orderBy('sort_order')
+        ->orderBy('name')
+        ->get();
+
+    return view('home', compact('approvedVideos', 'hotels'));
+})->name('home');
+
+Route::post('/testimonials/videos', [TestimonialVideoController::class, 'store'])->name('testimonials.store');
 
 /* ─────────────────────────────────────────────────────────────
  | QR Code Image (proxy – works for both local & R2 storage)
@@ -41,6 +58,10 @@ Route::prefix('register')->name('register.')->group(function () {
 
 Route::get('/registration/pending/{reference}', [RegistrationController::class, 'pending'])->name('register.pending');
 Route::get('/registration/complete',            [RegistrationController::class, 'complete'])->name('register.complete');
+Route::get('/registration/{reference}/{token}/accommodation', [RegistrationController::class, 'accommodation'])->name('register.accommodation');
+Route::post('/registration/{reference}/{token}/accommodation', [RegistrationController::class, 'saveAccommodation'])->name('register.accommodation.save');
+Route::get('/registration/{reference}/{token}/accommodation/pending', [RegistrationController::class, 'accommodationPending'])->name('register.accommodation.pending');
+Route::post('/registration/{reference}/{token}/accommodation/pending/resend', [RegistrationController::class, 'resendAccommodationPrompt'])->name('register.accommodation.pending.resend');
 
 /* ─────────────────────────────────────────────────────────────
  | QR Verification
@@ -55,6 +76,7 @@ Route::post('/payment/callback',  [PaymentController::class, 'callback'])->name(
 
 // Polling endpoint (AJAX)
 Route::get('/payment/status/{reference}', [PaymentController::class, 'status'])->name('payment.status');
+Route::get('/payment/accommodation-status/{reference}/{token}', [PaymentController::class, 'accommodationStatus'])->name('payment.accommodation.status');
 
 /* ─────────────────────────────────────────────────────────────
  | Donations — DISABLED: awaiting PayPal approval
@@ -72,13 +94,35 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     ->group(function () {
 
         Route::get('/', [AdminDashboard::class, 'index'])->name('dashboard');
+        Route::prefix('hotels')->name('hotels.')->group(function () {
+            Route::get('/', [AdminHotel::class, 'index'])->name('index');
+            Route::get('/create', [AdminHotel::class, 'create'])->name('create');
+            Route::post('/create', [AdminHotel::class, 'store'])->name('store');
+            Route::get('/{hotel}/edit', [AdminHotel::class, 'edit'])->name('edit');
+            Route::put('/{hotel}', [AdminHotel::class, 'update'])->name('update');
+            Route::delete('/{hotel}', [AdminHotel::class, 'destroy'])->name('destroy');
+        });
 
         // Registrations CRUD & actions
         Route::prefix('registrations')->name('registrations.')->group(function () {
+            // Manual registration (admin)
+            Route::get('/create',               [AdminRegistration::class, 'create'])->name('create');
+            Route::post('/create',              [AdminRegistration::class, 'store'])->name('store');
+            Route::get('/{registration}/payment', [AdminRegistration::class, 'payment'])->name('payment');
+
             Route::get('/',                      [AdminRegistration::class, 'index'])->name('index');
             Route::get('/export',                [AdminRegistration::class, 'export'])->name('export');
             Route::get('/{registration}',        [AdminRegistration::class, 'show'])->name('show');
             Route::post('/{registration}/resend-qr',    [AdminRegistration::class, 'resendQr'])->name('resend-qr');
+        });
+
+        Route::prefix('testimonials')->name('testimonials.')->group(function () {
+            Route::get('/', [AdminTestimonialVideo::class, 'index'])->name('index');
+            Route::get('/{video}/review', [AdminTestimonialVideo::class, 'review'])->name('review');
+            Route::post('/{video}/viewed', [AdminTestimonialVideo::class, 'markViewed'])->name('viewed');
+            Route::post('/{video}/approve', [AdminTestimonialVideo::class, 'approve'])->name('approve');
+            Route::post('/{video}/reject', [AdminTestimonialVideo::class, 'reject'])->name('reject');
+            Route::delete('/{video}', [AdminTestimonialVideo::class, 'destroy'])->name('destroy');
         });
 
         // Check-in

@@ -20,7 +20,10 @@ class DashboardController extends Controller
             'fcc'           => Registration::where('affiliation', 'fcc')->whereIn('status', ['paid', 'checked_in'])->count(),
             'international' => Registration::where('country_type', 'international')->whereIn('status', ['paid', 'checked_in'])->count(),
             'local'         => Registration::where('country_type', 'local')->whereIn('status', ['paid', 'checked_in'])->count(),
-            'revenue'       => Payment::where('status', 'success')->sum('amount'),
+            'registration_revenue' => Payment::where('status', 'success')->where('payment_context', 'registration')->sum('amount'),
+            'accommodation_revenue' => Payment::where('status', 'success')->where('payment_context', 'accommodation')->sum('amount'),
+            'accommodation_bookings' => Registration::whereNotNull('accommodation_hotel_id')->count(),
+            'accommodation_pending' => Registration::where('accommodation_payment_status', 'pending')->count(),
             'donations'     => Donation::where('status', 'success')->sum('amount'),
         ];
 
@@ -39,6 +42,12 @@ class DashboardController extends Controller
             ->take(10)
             ->get();
 
-        return view('admin.dashboard', compact('stats', 'daily', 'todayRegistrations'));
+        $recentAccommodation = Registration::with('accommodationHotel')
+            ->whereNotNull('accommodation_hotel_id')
+            ->latest('updated_at')
+            ->take(8)
+            ->get();
+
+        return view('admin.dashboard', compact('stats', 'daily', 'todayRegistrations', 'recentAccommodation'));
     }
 }

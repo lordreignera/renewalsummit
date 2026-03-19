@@ -64,48 +64,36 @@
             <div>🏷 Theme: Healthy Church</div>
         </div>
 
+        <a href="{{ route('register.accommodation', ['reference' => $reg->reference, 'token' => $reg->qr_token]) }}"
+           class="block w-full bg-gold hover:bg-yellow-600 text-white font-bold py-3 rounded-xl transition mb-3">
+            🏨 Continue to Accommodation Planning
+        </a>
+
+        @if($reg->accommodation_hotel_id)
+        <div class="text-xs text-gray-500 bg-gray-50 rounded-xl p-3 mb-3 text-left">
+            <div><strong>Accommodation:</strong> {{ $reg->accommodation_choice }}</div>
+            <div><strong>Mode:</strong> {{ ucfirst(str_replace('_', ' ', $reg->accommodation_booking_mode ?? 'self_book')) }}</div>
+            <div><strong>Status:</strong> {{ ucfirst(str_replace('_', ' ', $reg->accommodation_payment_status ?? 'not_required')) }}</div>
+        </div>
+        @endif
+
         <a href="{{ route('home') }}"
            class="block w-full bg-summit hover:bg-blue-900 text-white font-bold py-3 rounded-xl transition">
             ← Back to Home
         </a>
     </div>
 
-    {{-- Accommodation & Transport --}}
+    {{-- Accommodation next-step note --}}
     <div class="bg-white rounded-2xl shadow-lg p-8 mt-6">
-        <h2 class="text-xl font-extrabold text-summit mb-2">🏨 Do you need accommodation &amp; transport?</h2>
-        <p class="text-sm text-gray-500 mb-5">
-            Your registration is confirmed! Accommodation is arranged separately — please book directly
-            with any of our recommended partner hotels near Ggaba Community Church.
+        <h2 class="text-xl font-extrabold text-summit mb-2">🏨 Accommodation Next Step</h2>
+        <p class="text-sm text-gray-500 mb-4">
+            Use the accommodation planner to choose your hotel, room type, and number of nights.
+            You can either book yourself, request us to book and pay later, or pay accommodation through us now.
         </p>
-
-        @php
-        $hotels = [
-            ['name' => 'Speke Resort Munyonyo', 'desc' => 'Luxury lakeside resort · ~5 km from venue',  'url' => 'https://www.spekeresort.com'],
-            ['name' => 'Sir Jose Hotel',        'desc' => 'UGX 120,000/night · Near venue',             'url' => 'https://www.google.com/search?q=Sir+Jose+Hotel+Kampala'],
-            ['name' => 'St Mbaga Seminary',     'desc' => 'Peaceful retreat close to the venue',        'url' => 'https://www.google.com/search?q=St+Mbaga+Seminary+Kampala'],
-            ['name' => 'Eka Hotel',             'desc' => 'Modern hotel in Kampala',                    'url' => 'https://www.ekahotel.com'],
-        ];
-        @endphp
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
-            @foreach($hotels as $hotel)
-            <a href="{{ $hotel['url'] }}" target="_blank" rel="noopener noreferrer"
-               class="flex items-center gap-3 border-2 border-gray-100 hover:border-yellow-400
-                      rounded-xl px-4 py-3 transition group">
-                <div class="text-2xl">🏨</div>
-                <div class="flex-1 min-w-0">
-                    <div class="font-bold text-summit text-sm group-hover:text-gold">{{ $hotel['name'] }}</div>
-                    <div class="text-xs text-gray-400">{{ $hotel['desc'] }}</div>
-                </div>
-                <div class="text-gray-300 group-hover:text-gold shrink-0">→</div>
-            </a>
-            @endforeach
-        </div>
-
-        <p class="text-xs text-gray-400 text-center">
-            For transport enquiries, contact
-            <a href="mailto:renewalsummit@africarenewal.org" class="underline text-gold">renewalsummit@africarenewal.org</a>
-        </p>
+        <a href="{{ route('register.accommodation', ['reference' => $reg->reference, 'token' => $reg->qr_token]) }}"
+           class="inline-block bg-gold hover:bg-yellow-600 text-white font-bold px-5 py-3 rounded-xl transition text-sm">
+            Open Accommodation Planner →
+        </a>
     </div>
 </div>
 @endsection

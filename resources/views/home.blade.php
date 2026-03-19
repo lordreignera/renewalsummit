@@ -128,6 +128,8 @@
     </script>
 </section>
 
+
+
 {{-- ── COUNTDOWN ────────────────────────────────────────────────── --}}
 <section class="bg-summit py-14">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -552,6 +554,120 @@
 </script>
 @endpush
 
+{{-- ── WHY SHOULD YOU JOIN US? / VIDEO TESTIMONIES ───────────────── --}}
+<section id="testimonies" class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="text-center mb-14">
+            <span class="bg-gold/10 text-yellow-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">Community Voices</span>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-summit mt-4">Why Should You Join Us?</h2>
+            <p class="text-gray-500 mt-3 max-w-2xl mx-auto">
+                Hear from pastors and leaders who have experienced the Renewal Summit. Their stories will inspire you to be there.
+            </p>
+        </div>
+
+        {{-- Approved videos --}}
+        @if(isset($approvedVideos) && $approvedVideos->count())
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+            @foreach($approvedVideos as $video)
+            <div class="bg-white border border-gray-200 rounded-2xl p-3 shadow-sm">
+                <video controls preload="metadata" class="w-full rounded-xl bg-black" style="max-height:210px;">
+                    <source src="{{ asset('storage/' . $video->video_path) }}" type="{{ $video->mime_type ?: 'video/mp4' }}">
+                </video>
+                <div class="mt-2 px-1">
+                    <div class="font-bold text-summit text-sm">{{ $video->name }}</div>
+                    <div class="text-xs text-gray-400">{{ $video->country }}</div>
+                    @if($video->message)
+                        <p class="text-xs text-gray-600 mt-1 leading-relaxed">{{ $video->message }}</p>
+                    @endif
+                </div>
+            </div>
+            @endforeach
+        </div>
+        @else
+        <div class="rounded-2xl border border-dashed border-gray-300 p-10 text-center text-sm text-gray-500 bg-white mb-12">
+            No videos yet &mdash; be the first to share an invitation!
+        </div>
+        @endif
+
+        {{-- Share CTA / Upload form --}}
+        @if(session('testimonial_success'))
+            <div class="max-w-xl mx-auto text-center bg-green-50 border border-green-200 rounded-2xl p-8">
+                <div class="text-4xl mb-3">&#127881;</div>
+                <h3 class="font-extrabold text-green-800 text-lg">Thank you for sharing!</h3>
+                <p class="text-sm text-green-700 mt-2">Your video is under review. Once approved it will appear above for everyone to see.</p>
+            </div>
+        @else
+            <div class="text-center" id="tv-btn-wrap">
+                <button onclick="document.getElementById('tv-form-wrap').classList.remove('hidden'); document.getElementById('tv-btn-wrap').classList.add('hidden');"
+                        class="inline-flex items-center gap-2 bg-summit hover:bg-blue-900 text-white font-bold px-7 py-3.5 rounded-xl shadow-lg transition text-sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    Share Your Invitation Video
+                </button>
+            </div>
+
+            <div id="tv-form-wrap" class="hidden max-w-xl mx-auto mt-8 bg-white border border-gray-200 rounded-2xl p-7 shadow-md">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-extrabold text-summit text-lg">Share Your Video</h3>
+                    <button type="button"
+                            onclick="document.getElementById('tv-form-wrap').classList.add('hidden'); document.getElementById('tv-btn-wrap').classList.remove('hidden');"
+                            class="text-gray-400 hover:text-gray-600 text-2xl font-bold leading-none">&times;</button>
+                </div>
+                <p class="text-xs text-gray-500 mb-5">Formats: MP4, MOV, WEBM &mdash; Max <strong>3 MB</strong>. All uploads are reviewed before appearing on this page.</p>
+
+                @if($errors->any())
+                <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                    <ul class="list-disc pl-5 space-y-0.5">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
+
+                <form method="POST" action="{{ route('testimonials.store') }}" enctype="multipart/form-data" class="space-y-4">
+                    @csrf
+                    <div>
+                        <label class="block text-sm font-bold text-summit mb-1">Your Name *</label>
+                        <input type="text" name="name" value="{{ old('name') }}" required
+                               class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-summit mb-1">Country *</label>
+                        <input type="text" name="country" value="{{ old('country') }}" required
+                               placeholder="e.g. Uganda, Kenya, USA"
+                               class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-summit mb-1">Short Message <span class="font-normal text-gray-400">(optional)</span></label>
+                        <textarea name="message" rows="2" maxlength="500"
+                                  placeholder="E.g. We are coming to Renewal Summit 2026!"
+                                  class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">{{ old('message') }}</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-summit mb-1">Video File *</label>
+                        <input type="file" name="video" required accept="video/mp4,video/quicktime,video/webm"
+                               class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm bg-white">
+                    </div>
+                    <button type="submit"
+                            class="w-full bg-gold hover:bg-yellow-500 text-white font-bold py-3 rounded-xl transition text-sm">
+                        Submit for Approval &rarr;
+                    </button>
+                </form>
+            </div>
+
+            @if($errors->any() || old('name'))
+            <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                document.getElementById('tv-form-wrap').classList.remove('hidden');
+                document.getElementById('tv-btn-wrap').classList.add('hidden');
+            });
+            </script>
+            @endif
+        @endif
+    </div>
+</section>
+
 {{-- ── SCHEDULE ──────────────────────────────────────────────────── --}}
 <section class="py-20 bg-gray-50">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -785,74 +901,96 @@
             </p>
         </div>
 
+        {{-- Exchange rate notice --}}
+        @php $ugxRate = config('app.usd_ugx_rate', 3700); @endphp
+        <div class="flex items-center justify-center gap-2 mb-6">
+            <span class="inline-flex items-center gap-2 bg-white border border-yellow-200 text-yellow-800 text-xs font-semibold px-4 py-2 rounded-full shadow-sm">
+                💱 Current rate: <strong>1 USD ≈ UGX {{ number_format($ugxRate) }}</strong>
+                <span class="text-yellow-500 font-normal">— used for UGX price estimates</span>
+            </span>
+        </div>
+
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
-            @php
-            $hotels = [
-                [
-                    'name'    => 'Speke Resort Munyonyo',
-                    'desc'    => 'Luxury lakeside resort on the shores of Lake Victoria. ~5 km from venue.',
-                    'price'   => 'From UGX 350,000 / night',
-                    'icon'    => '🏨',
-                    'url'     => 'https://www.spekeresort.com',
-                ],
-                [
-                    'name'    => 'Protea Hotel by Marriott',
-                    'desc'    => 'International-standard hotel in Kampala city. ~8 km from venue.',
-                    'price'   => 'From UGX 280,000 / night',
-                    'icon'    => '🏩',
-                    'url'     => 'https://www.marriott.com/en-us/hotels/ebbka-protea-hotel-kampala/overview/',
-                ],
-                [
-                    'name'    => 'San Jose Hotel Kampala',
-                    'desc'    => 'Comfortable mid-range hotel with conference facilities. ~6 km from venue.',
-                    'price'   => 'From UGX 200,000 / night',
-                    'icon'    => '🏪',
-                    'url'     => 'https://sirjosehotel.com/index.php/en/',
-                ],
-                [
-                    'name'    => 'Hotel Africana',
-                    'desc'    => 'Well-known Kampala hotel near the city centre. ~10 km from venue.',
-                    'price'   => 'From UGX 180,000 / night',
-                    'icon'    => '🌍',
-                    'url'     => 'https://www.hotelafricana.com/web/',
-                ],
-                [
-                    'name'    => 'St Mbaga Hotel',
-                    'desc'    => 'Budget-friendly and conveniently located near Gaba Road.',
-                    'price'   => 'From UGX 120,000 / night',
-                    'icon'    => '🏠',
-                    'url'     => 'https://www.google.com/search?q=St+Mbaga+Hotel+Kampala',
-                ],
-                // GCC Guest House removed — not available for 2026
-            ];
-            @endphp
-
-            @foreach($hotels as $hotel)
+            @forelse(($hotels ?? collect()) as $hotel)
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+                <div class="h-36 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center border-b border-gray-100">
+                    <span class="text-5xl" aria-hidden="true">🏨</span>
+                </div>
                 <div class="p-6 flex-1">
-                    <div class="text-3xl mb-3">{{ $hotel['icon'] }}</div>
-                    <h3 class="font-extrabold text-summit text-lg leading-tight mb-1">{{ $hotel['name'] }}</h3>
-                    <p class="text-sm text-gray-500 leading-relaxed mb-3">{{ $hotel['desc'] }}</p>
-                    <span class="inline-block bg-yellow-50 text-yellow-800 text-xs font-bold px-3 py-1 rounded-full">
-                        {{ $hotel['price'] }}
-                    </span>
+                    <h3 class="font-extrabold text-summit text-lg leading-tight mb-1">{{ $hotel->name }}</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed mb-3">{{ $hotel->description ?: 'Recommended accommodation near the summit venue.' }}</p>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div class="bg-yellow-50 text-yellow-800 px-3 py-2 rounded-lg border border-yellow-100">
+                            <div class="font-bold">Single / night</div>
+                            <div>${{ number_format($hotel->single_price_usd) }}</div>
+                            <div>UGX {{ number_format($hotel->single_price_ugx) }}</div>
+                        </div>
+                        <div class="bg-blue-50 text-blue-800 px-3 py-2 rounded-lg border border-blue-100">
+                            <div class="font-bold">Double / night</div>
+                            <div>${{ number_format($hotel->double_price_usd) }}</div>
+                            <div>UGX {{ number_format($hotel->double_price_ugx) }}</div>
+                        </div>
+                    </div>
                 </div>
                 <div class="px-6 pb-5">
-                    <a href="{{ $hotel['url'] }}" target="_blank" rel="noopener noreferrer"
-                       class="block w-full text-center bg-summit hover:opacity-80 text-white font-bold py-2.5 rounded-xl text-sm transition">
+                    <a href="{{ $hotel->booking_url ?: '#' }}" target="_blank" rel="noopener noreferrer"
+                       class="block w-full text-center bg-summit hover:opacity-80 text-white font-bold py-2.5 rounded-xl text-sm transition {{ $hotel->booking_url ? '' : 'pointer-events-none opacity-50' }}">
                         Book Now →
                     </a>
                 </div>
             </div>
-            @endforeach
-
+            @empty
+            <div class="col-span-full text-center text-sm text-gray-500 bg-white rounded-xl border border-dashed border-gray-300 p-8">
+                Hotel options will be published shortly.
+            </div>
+            @endforelse
         </div>
 
         <p class="text-center text-xs text-gray-400 mt-8">
             Prices are approximate. Please contact hotels directly for availability and group rates.
             For transport enquiries, email <a href="mailto:renewalsummit@africarenewal.org" class="underline text-gold">renewalsummit@africarenewal.org</a>.
         </p>
+
+        {{-- ── Plan your accommodation (paid attendees) ──────────────── --}}
+        <div class="mt-12 max-w-lg mx-auto bg-white rounded-2xl shadow-md border border-gray-100 p-8">
+            <div class="text-center mb-6">
+                <span class="text-3xl">🏨</span>
+                <h3 class="text-xl font-extrabold text-summit mt-2">Plan Your Accommodation</h3>
+                <p class="text-sm text-gray-500 mt-1">Already paid your registration fee? Enter your phone number and we'll take you straight to the accommodation planner where you can choose your hotel, room type and number of nights.</p>
+            </div>
+
+            @if(session('error') && str_contains(session('error'), 'registration'))
+                <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 mb-4 text-sm">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('register.resume') }}">
+                @csrf
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Your registered phone number</label>
+                    <input type="tel" name="phone" placeholder="e.g. 0772 123 456"
+                           value="{{ old('phone') }}"
+                           class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm
+                                  focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition"
+                           required>
+                    @error('phone')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <button type="submit"
+                        style="width:100%; background:#D4A017; color:#fff; font-weight:700; padding:0.75rem 1rem; border-radius:0.75rem; border:none; font-size:1rem; cursor:pointer; transition:background 0.2s;"
+                        onmouseover="this.style.background='#0f1f3d'" onmouseout="this.style.background='#D4A017'">
+                    Continue to Accommodation Planner →
+                </button>
+            </form>
+
+            <p class="text-center text-xs text-gray-400 mt-4">
+                Haven't registered yet?
+                <a href="{{ route('register.start') }}" class="text-gold font-semibold hover:underline">Register first →</a>
+            </p>
+        </div>
+
     </div>
 </section>
 

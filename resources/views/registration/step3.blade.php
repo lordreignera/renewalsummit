@@ -4,6 +4,8 @@
 @section('content')
 <div class="max-w-2xl mx-auto px-4 py-12">
 
+    @php $embed = request()->boolean('embed'); @endphp
+
     @include('registration.partials.steps', ['currentStep' => 3])
 
     <div class="bg-white rounded-2xl shadow-lg p-5 sm:p-8">
@@ -15,10 +17,8 @@
             <span class="text-xl leading-none">🏨</span>
             <div>
                 <span class="font-bold">Need accommodation?</span>
-                Accommodation is not included in the registration fee. Visit our
-                <a href="{{ route('home') }}#accommodation" target="_blank"
-                   class="underline font-semibold hover:text-blue-600">hotel listings page</a>
-                to book directly with recommended hotels near the venue.
+                After registration payment is successful, you will continue to the accommodation planner
+                where you can choose a hotel, room type, nights, and decide whether to pay through us.
             </div>
         </div>
 
@@ -80,7 +80,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('register.step3.pay') }}" id="payment-form">
+        <form method="POST" action="{{ route('register.step3.pay', $embed ? ['embed' => 1] : []) }}" id="payment-form">
             @csrf
 
             {{-- Payment Method --}}
@@ -188,7 +188,7 @@
             </div>
 
             <div class="flex gap-3">
-                <a href="{{ route('register.step2') }}"
+                <a href="{{ route('register.step2', $embed ? ['embed' => 1] : []) }}"
                    class="flex-1 border-2 border-gray-300 text-gray-600 font-bold py-3 rounded-xl text-center transition hover:bg-gray-50">
                     ← Back
                 </a>

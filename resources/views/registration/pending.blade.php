@@ -23,7 +23,7 @@
 
         <div class="text-sm text-gray-500 mb-6">
             <div>Reference: <span class="font-bold text-summit">{{ $reg->reference }}</span></div>
-            <div>Amount: <span class="font-bold text-gold">UGX {{ number_format($reg->total_amount) }}</span></div>
+            <div>Amount: <span class="font-bold text-gold">{{ $reg->currency === 'USD' ? '$' . number_format($reg->total_amount) . ' USD' : 'UGX ' . number_format($reg->total_amount) }}</span></div>
         </div>
 
         {{-- Status indicator --}}

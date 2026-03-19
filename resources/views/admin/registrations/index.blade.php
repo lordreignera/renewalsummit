@@ -4,6 +4,51 @@
 
 @section('content')
 
+{{-- ── KPI Cards ──────────────────────────────────────────────────── --}}
+<div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+
+    {{-- Total Registered --}}
+    <a href="{{ route('admin.registrations.index', array_merge(request()->except('acc_status','page'), [])) }}"
+       class="bg-white rounded-2xl shadow-sm p-5 flex flex-col gap-1 border-t-4 border-gray-400 hover:shadow-md transition group {{ !request('acc_status') ? 'ring-2 ring-gray-300' : '' }}">
+        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Total Registered</span>
+        <span class="text-3xl font-extrabold text-gray-800 group-hover:text-gray-900">{{ number_format($kpiTotal) }}</span>
+        <span class="text-xs text-gray-400">All registrations</span>
+    </a>
+
+    {{-- Fully Paid (Both) --}}
+    <a href="{{ route('admin.registrations.index', array_merge(request()->except('acc_status','page'), ['acc_status' => 'fully_paid'])) }}"
+       class="bg-white rounded-2xl shadow-sm p-5 flex flex-col gap-1 border-t-4 border-green-500 hover:shadow-md transition group {{ request('acc_status') === 'fully_paid' ? 'ring-2 ring-green-400' : '' }}">
+        <span class="text-xs font-semibold text-green-600 uppercase tracking-wide">Fully Paid</span>
+        <span class="text-3xl font-extrabold text-green-700">{{ number_format($kpiFullyPaid) }}</span>
+        <span class="text-xs text-gray-400">Reg ✓ &amp; Acc ✓</span>
+    </a>
+
+    {{-- Reg Paid · Acc Still Pending --}}
+    <a href="{{ route('admin.registrations.index', array_merge(request()->except('acc_status','page'), ['acc_status' => 'reg_paid_acc_pending'])) }}"
+       class="bg-white rounded-2xl shadow-sm p-5 flex flex-col gap-1 border-t-4 border-orange-400 hover:shadow-md transition group {{ request('acc_status') === 'reg_paid_acc_pending' ? 'ring-2 ring-orange-400' : '' }}">
+        <span class="text-xs font-semibold text-orange-600 uppercase tracking-wide">Reg Paid · Acc Pending</span>
+        <span class="text-3xl font-extrabold text-orange-600">{{ number_format($kpiRegPaidAccPending) }}</span>
+        <span class="text-xs text-gray-400">Awaiting acc payment</span>
+    </a>
+
+    {{-- Awaiting Registration Payment --}}
+    <a href="{{ route('admin.registrations.index', array_merge(request()->except('acc_status','page'), ['acc_status' => 'awaiting_reg'])) }}"
+       class="bg-white rounded-2xl shadow-sm p-5 flex flex-col gap-1 border-t-4 border-red-400 hover:shadow-md transition group {{ request('acc_status') === 'awaiting_reg' ? 'ring-2 ring-red-400' : '' }}">
+        <span class="text-xs font-semibold text-red-600 uppercase tracking-wide">Awaiting Reg Payment</span>
+        <span class="text-3xl font-extrabold text-red-600">{{ number_format($kpiAwaitingReg) }}</span>
+        <span class="text-xs text-gray-400">Draft / Pending</span>
+    </a>
+
+    {{-- Checked In --}}
+    <a href="{{ route('admin.registrations.index', array_merge(request()->except('acc_status','page'), ['acc_status' => 'checked_in'])) }}"
+       class="bg-white rounded-2xl shadow-sm p-5 flex flex-col gap-1 border-t-4 border-blue-500 hover:shadow-md transition group {{ request('acc_status') === 'checked_in' ? 'ring-2 ring-blue-400' : '' }}">
+        <span class="text-xs font-semibold text-blue-600 uppercase tracking-wide">Checked In</span>
+        <span class="text-3xl font-extrabold text-blue-700">{{ number_format($kpiCheckedIn) }}</span>
+        <span class="text-xs text-gray-400">At the venue</span>
+    </a>
+
+</div>
+
 {{-- ── Filters ─────────────────────────────────────────────────── --}}
 <form method="GET" class="bg-white rounded-2xl shadow-sm p-5 mb-6">
     <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
@@ -23,7 +68,7 @@
                 class="border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-400 outline-none">
             <option value="">All Affiliations</option>
             <option value="fcc"   {{ request('affiliation') == 'fcc'   ? 'selected' : '' }}>FCC</option>
-            <option value="other" {{ request('affiliation') == 'other' ? 'selected' : '' }}>Other / Guest</option>
+            <option value="other" {{ request('affiliation') == 'other' ? 'selected' : '' }}>Guest</option>
         </select>
 
         <select name="country_type"
@@ -36,6 +81,16 @@
 
         <input type="date" name="date" value="{{ request('date') }}"
                class="border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-400 outline-none">
+
+        <select name="acc_status"
+                class="border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-400 outline-none
+                       {{ request('acc_status') ? 'border-yellow-400 bg-yellow-50' : '' }}">
+            <option value="">All Payment States</option>
+            <option value="fully_paid"           {{ request('acc_status') == 'fully_paid'           ? 'selected' : '' }}>✅ Fully Paid (Reg + Acc)</option>
+            <option value="reg_paid_acc_pending"  {{ request('acc_status') == 'reg_paid_acc_pending'  ? 'selected' : '' }}>⏳ Reg Paid · Acc Pending</option>
+            <option value="awaiting_reg"          {{ request('acc_status') == 'awaiting_reg'          ? 'selected' : '' }}>🔴 Awaiting Reg Payment</option>
+            <option value="checked_in"            {{ request('acc_status') == 'checked_in'            ? 'selected' : '' }}>🏷️ Checked In</option>
+        </select>
 
         <div class="flex gap-2">
             <button type="submit"
@@ -56,10 +111,16 @@
         Showing <strong>{{ $registrations->count() }}</strong> of
         <strong>{{ $registrations->total() }}</strong> registrations
     </p>
-    <a href="{{ route('admin.registrations.export', request()->query()) }}"
-       class="bg-green-600 hover:bg-green-700 text-white text-sm font-bold px-4 py-2 rounded-xl transition">
-        📥 Export CSV
-    </a>
+    <div class="flex items-center gap-2">
+          <a href="{{ route('admin.registrations.create') }}"
+              class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-4 py-2 rounded-xl transition">
+            + Manual Registration
+        </a>
+        <a href="{{ route('admin.registrations.export', request()->query()) }}"
+           class="bg-green-600 hover:bg-green-700 text-white text-sm font-bold px-4 py-2 rounded-xl transition">
+            Export CSV
+        </a>
+    </div>
 </div>
 
 {{-- ── Table ────────────────────────────────────────────────────── --}}
@@ -74,8 +135,9 @@
                     <th class="px-4 py-3 text-left font-semibold text-gray-600">Type</th>
                     <th class="px-4 py-3 text-left font-semibold text-gray-600">Affil.</th>
                     <th class="px-4 py-3 text-left font-semibold text-gray-600">Designation</th>
+                    <th class="px-4 py-3 text-left font-semibold text-gray-600">Accommodation</th>
 
-                    <th class="px-4 py-3 text-left font-semibold text-gray-600">Status</th>
+                    <th class="px-4 py-3 text-left font-semibold text-gray-600">Payment Status</th>
                     <th class="px-4 py-3 text-left font-semibold text-gray-600">Date</th>
                     <th class="px-4 py-3 text-left font-semibold text-gray-600">Actions</th>
                 </tr>
@@ -106,32 +168,102 @@
                         </span>
                     </td>
                     <td class="px-4 py-3">
+                        @php $affLabel = $reg->affiliation === 'fcc' ? 'FCC' : 'Guest'; @endphp
                         <span class="text-xs px-2 py-0.5 rounded-full font-bold
                             {{ $reg->affiliation === 'fcc' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-500' }}">
-                            {{ strtoupper($reg->affiliation) }}
+                            {{ strtoupper($affLabel) }}
                         </span>
                     </td>
                     <td class="px-4 py-3 text-xs text-gray-600 capitalize">
                         {{ str_replace('_', ' ', $reg->designation ?? '—') }}
                     </td>
-                    <td class="px-4 py-3">
-                        @php $colors = [
-                            'draft'      => 'bg-gray-100 text-gray-600',
-                            'pending'    => 'bg-yellow-100 text-yellow-700',
-                            'paid'       => 'bg-green-100 text-green-700',
-                            'checked_in' => 'bg-blue-100 text-blue-700',
-                            'cancelled'  => 'bg-red-100 text-red-600',
-                        ]; @endphp
-                        <span class="text-xs px-2 py-0.5 rounded-full font-bold {{ $colors[$reg->status] ?? 'bg-gray-100 text-gray-600' }}">
-                            {{ ucfirst(str_replace('_', ' ', $reg->status)) }}
-                        </span>
+                    <td class="px-4 py-3 text-xs text-gray-600">
+                        @if($reg->accommodation_hotel_id)
+                            <div class="font-semibold text-summit">{{ $reg->accommodationHotel->name ?? $reg->accommodation_choice }}</div>
+                            <div>{{ ucfirst(str_replace('_',' ', $reg->accommodation_booking_mode ?? 'self_book')) }}</div>
+                            <div class="text-gray-400">{{ ucfirst($reg->accommodation_room_type ?? 'single') }} · {{ (int) ($reg->accommodation_nights ?? 1) }} night(s)</div>
+                        @else
+                            <span class="text-gray-400">—</span>
+                        @endif
+                    </td>
+                    <td class="px-4 py-3 text-xs">
+                        @php
+                            $regColors = [
+                                'draft'      => 'bg-gray-100 text-gray-600',
+                                'pending'    => 'bg-yellow-100 text-yellow-700',
+                                'paid'       => 'bg-green-100 text-green-700',
+                                'checked_in' => 'bg-blue-100 text-blue-700',
+                                'cancelled'  => 'bg-red-100 text-red-600',
+                            ];
+
+                            $accStatus = 'not_selected';
+                            $accLabel = 'Not selected';
+                            if ($reg->accommodation_hotel_id) {
+                                if (($reg->accommodation_booking_mode ?? '') === 'self_book') {
+                                    $accStatus = 'self_book';
+                                    $accLabel = 'Self book';
+                                } elseif (($reg->accommodation_booking_mode ?? '') === 'book_through_us_no_payment') {
+                                    $accStatus = 'pending_manual';
+                                    $accLabel = 'Booked via us (pay later)';
+                                } else {
+                                    $accStatus = $reg->accommodation_payment_status ?: 'pending';
+                                    $accLabel = ucfirst(str_replace('_', ' ', $accStatus));
+                                }
+                            }
+
+                            $accColors = [
+                                'not_selected' => 'bg-gray-100 text-gray-500',
+                                'self_book' => 'bg-indigo-100 text-indigo-700',
+                                'pending_manual' => 'bg-orange-100 text-orange-700',
+                                'pending' => 'bg-yellow-100 text-yellow-700',
+                                'paid' => 'bg-green-100 text-green-700',
+                                'not_required' => 'bg-gray-100 text-gray-500',
+                            ];
+                        @endphp
+
+                        <div class="space-y-1.5">
+                            <div class="flex items-center gap-2">
+                                <span class="text-[11px] font-semibold text-gray-500">Reg:</span>
+                                <span class="text-xs px-2 py-0.5 rounded-full font-bold {{ $regColors[$reg->status] ?? 'bg-gray-100 text-gray-600' }}">
+                                    {{ ucfirst(str_replace('_', ' ', $reg->status)) }}
+                                </span>
+                                <span class="text-[11px] text-gray-400">{{ $reg->currency }} {{ number_format($reg->total_amount) }}</span>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <span class="text-[11px] font-semibold text-gray-500">Acc:</span>
+                                <span class="text-xs px-2 py-0.5 rounded-full font-bold {{ $accColors[$accStatus] ?? 'bg-gray-100 text-gray-600' }}">
+                                    {{ $accLabel }}
+                                </span>
+                                @if($reg->accommodation_hotel_id && $reg->accommodation_fee)
+                                    <span class="text-[11px] text-gray-400">{{ $reg->accommodation_currency ?: $reg->currency }} {{ number_format($reg->accommodation_fee) }}</span>
+                                @endif
+                            </div>
+                        </div>
                     </td>
                     <td class="px-4 py-3 text-xs text-gray-400">{{ $reg->created_at->format('d M Y') }}</td>
                     <td class="px-4 py-3">
-                        <a href="{{ route('admin.registrations.show', $reg) }}"
-                           class="text-xs bg-summit text-white px-3 py-1.5 rounded-lg hover:opacity-80 transition">
-                            View
-                        </a>
+                        <div class="flex items-center gap-2 whitespace-nowrap">
+                            <a href="{{ route('admin.registrations.show', $reg) }}"
+                                         class="inline-flex items-center justify-center text-xs font-bold bg-gray-800 hover:bg-gray-900 text-white px-3 py-2 rounded-lg transition shadow-sm">
+                                View
+                            </a>
+
+                            @if(in_array($reg->status, ['paid', 'checked_in']))
+                                <a href="{{ route('register.accommodation', ['reference' => $reg->reference, 'token' => $reg->qr_token]) }}"
+                                   target="_blank"
+                                   class="inline-flex items-center justify-center text-xs font-bold bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg transition shadow-sm">
+                                    Hotel
+                                </a>
+                            @endif
+
+                            @if(in_array($reg->status, ['draft', 'pending']))
+                                <a href="{{ route('admin.registrations.payment', $reg) }}"
+                                   class="inline-flex items-center justify-center text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition shadow-sm">
+                                    Pay
+                                </a>
+                            @endif
+                        </div>
                     </td>
                 </tr>
                 @empty
