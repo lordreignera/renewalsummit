@@ -590,82 +590,7 @@
         </div>
         @endif
 
-        {{-- Share CTA / Upload form --}}
-        @if(session('testimonial_success'))
-            <div class="max-w-xl mx-auto text-center bg-green-50 border border-green-200 rounded-2xl p-8">
-                <div class="text-4xl mb-3">&#127881;</div>
-                <h3 class="font-extrabold text-green-800 text-lg">Thank you for sharing!</h3>
-                <p class="text-sm text-green-700 mt-2">Your video is under review. Once approved it will appear above for everyone to see.</p>
-            </div>
-        @else
-            <div class="text-center" id="tv-btn-wrap">
-                <button onclick="document.getElementById('tv-form-wrap').classList.remove('hidden'); document.getElementById('tv-btn-wrap').classList.add('hidden');"
-                        class="inline-flex items-center gap-2 bg-summit hover:bg-blue-900 text-white font-bold px-7 py-3.5 rounded-xl shadow-lg transition text-sm">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    Share Your Invitation Video
-                </button>
-            </div>
-
-            <div id="tv-form-wrap" class="hidden max-w-xl mx-auto mt-8 bg-white border border-gray-200 rounded-2xl p-7 shadow-md">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="font-extrabold text-summit text-lg">Share Your Video</h3>
-                    <button type="button"
-                            onclick="document.getElementById('tv-form-wrap').classList.add('hidden'); document.getElementById('tv-btn-wrap').classList.remove('hidden');"
-                            class="text-gray-400 hover:text-gray-600 text-2xl font-bold leading-none">&times;</button>
-                </div>
-                <p class="text-xs text-gray-500 mb-5">Formats: MP4, MOV, WEBM &mdash; Max <strong>10 MB</strong>. All uploads are reviewed before appearing on this page.</p>
-
-                @if($errors->any())
-                <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                    <ul class="list-disc pl-5 space-y-0.5">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-                @endif
-
-                <form method="POST" action="{{ route('testimonials.store') }}" enctype="multipart/form-data" class="space-y-4">
-                    @csrf
-                    <div>
-                        <label class="block text-sm font-bold text-summit mb-1">Your Name *</label>
-                        <input type="text" name="name" value="{{ old('name') }}" required
-                               class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-summit mb-1">Country *</label>
-                        <input type="text" name="country" value="{{ old('country') }}" required
-                               placeholder="e.g. Uganda, Kenya, USA"
-                               class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-summit mb-1">Short Message <span class="font-normal text-gray-400">(optional)</span></label>
-                        <textarea name="message" rows="2" maxlength="500"
-                                  placeholder="E.g. We are coming to Renewal Summit 2026!"
-                                  class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">{{ old('message') }}</textarea>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-summit mb-1">Video File *</label>
-                        <input type="file" name="video" required accept="video/mp4,video/quicktime,video/webm"
-                               class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm bg-white">
-                        <p class="text-xs text-gray-400 mt-1">Keep the file between 5 MB and 10 MB for faster uploads and smoother review.</p>
-                    </div>
-                    <button type="submit"
-                            class="w-full bg-gold hover:bg-yellow-500 text-white font-bold py-3 rounded-xl transition text-sm">
-                        Submit for Approval &rarr;
-                    </button>
-                </form>
-            </div>
-
-            @if($errors->any() || old('name'))
-            <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                document.getElementById('tv-form-wrap').classList.remove('hidden');
-                document.getElementById('tv-btn-wrap').classList.add('hidden');
-            });
-            </script>
-            @endif
-        @endif
+        {{-- Videos are uploaded via the admin dashboard and appear above once published --}}
     </div>
 </section>
 
@@ -809,7 +734,7 @@
         </div>
 
         {{-- C. PANELS --}}
-        <h3 class="text-lg font-bold uppercase tracking-widest text-gray-500 mb-6 border-b border-gray-100 pb-3">
+      <!--  <h3 class="text-lg font-bold uppercase tracking-widest text-gray-500 mb-6 border-b border-gray-100 pb-3">
             C. Panels
         </h3>
         <div class="flex items-center justify-center bg-gray-50 rounded-2xl py-10 mb-16 text-center">
@@ -817,9 +742,7 @@
                 <p class="text-gray-400 text-sm font-medium uppercase tracking-widest mb-1">Coming Soon</p>
                 <p class="text-gray-500 text-base">Panel speakers will be announced shortly.</p>
             </div>
-        </div>
-
-        {{-- D. (moved) Location & Directions — removed here; now a separate section below --}}
+        </div> -->
 
     </div>
 </section>

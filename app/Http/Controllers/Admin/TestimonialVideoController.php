@@ -11,6 +11,43 @@ use Illuminate\View\View;
 
 class TestimonialVideoController extends Controller
 {
+    public function create(): View
+    {
+        return view('admin.testimonials.create');
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'name'    => 'required|string|max:191',
+            'country' => 'required|string|max:120',
+            'message' => 'nullable|string|max:500',
+            'video'   => 'required|file|mimetypes:video/mp4,video/quicktime,video/webm|max:102400',
+        ], [
+            'video.max'       => 'Video must be 100 MB or less.',
+            'video.mimetypes' => 'Please upload an MP4, MOV, or WEBM video.',
+        ]);
+
+        $file = $request->file('video');
+        $path = $file->store('testimonials/videos', 'r2');
+
+        TestimonialVideo::create([
+            'name'              => $request->name,
+            'country'           => $request->country,
+            'message'           => $request->message ?? null,
+            'video_path'        => $path,
+            'original_filename' => $file->getClientOriginalName(),
+            'mime_type'         => $file->getMimeType(),
+            'size_kb'           => (int) ceil($file->getSize() / 1024),
+            'status'            => 'approved',
+            'viewed_at'         => now(),
+            'approved_at'       => now(),
+        ]);
+
+        return redirect()->route('admin.testimonials.index')
+            ->with('success', 'Video uploaded and published to the landing page.');
+    }
+
     public function index(Request $request): View
     {
         $query = TestimonialVideo::query()->latest();

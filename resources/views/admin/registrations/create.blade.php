@@ -3,7 +3,14 @@
 @section('page-title', 'Create Registration')
 
 @section('content')
-<div class="bg-white rounded-2xl shadow-sm p-6 max-w-3xl">
+<div class="max-w-3xl mx-auto space-y-4">
+    <a href="{{ route('admin.registrations.index') }}"
+       class="inline-flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-summit transition">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to Registrations
+    </a>
+
+<div class="bg-white rounded-2xl shadow-sm p-6 max-w-3xl mx-auto">
     @if(session('error'))
         <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {{ session('error') }}
@@ -244,6 +251,7 @@
             <a href="{{ route('admin.registrations.index') }}" class="px-4 py-2 border rounded-xl text-sm">Cancel</a>
         </div>
     </form>
+</div>
 </div>
 @endsection
 

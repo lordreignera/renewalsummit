@@ -141,9 +141,10 @@
                     <h4 style="color:#D4A017;font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.22em;margin-bottom:1.2rem;">Quick Links</h4>
                     <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.75rem;">
                         <li><a href="{{ route('register.start') }}" style="color:#D4A017;text-decoration:none;font-size:.92rem;font-weight:600;" onmouseover="this.style.color='#ffe082'" onmouseout="this.style.color='#D4A017'">→ Register Now</a></li>
-                        {{-- DISABLED: awaiting PayPal approval --}}
-                        {{-- <li><a href="{{ route('donate') }}" style="color:rgba(255,255,255,.75);text-decoration:none;font-size:.92rem;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.75)'">→ Donate</a></li> --}}
-                        <li><a href="mailto:renewalsummit@africarenewal.org" style="color:rgba(255,255,255,.75);text-decoration:none;font-size:.85rem;word-break:break-all;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.75)'">→ renewalsummit@africarenewal.org</a></li>
+                        <li><a href="https://afru.ac.ug/" target="_blank" rel="noopener" style="color:rgba(255,255,255,.75);text-decoration:none;font-size:.85rem;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.75)'">→ afru.ac.ug</a></li>
+                        <li><a href="https://renewalhealthcare.org/" target="_blank" rel="noopener" style="color:rgba(255,255,255,.75);text-decoration:none;font-size:.85rem;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.75)'">→ renewalhealthcare.org</a></li>
+                        <li><a href="https://africarenewal.org/" target="_blank" rel="noopener" style="color:rgba(255,255,255,.75);text-decoration:none;font-size:.85rem;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.75)'">→ africarenewal.org</a></li>
+                        <li><a href="https://gabachurch.org/" target="_blank" rel="noopener" style="color:rgba(255,255,255,.75);text-decoration:none;font-size:.85rem;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.75)'">→ gabachurch.org</a></li>
                     </ul>
                 </div>
 

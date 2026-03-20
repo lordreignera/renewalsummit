@@ -28,7 +28,6 @@ Route::get('/', function () {
     return view('home', compact('approvedVideos', 'hotels'));
 })->name('home');
 
-Route::post('/testimonials/videos', [TestimonialVideoController::class, 'store'])->name('testimonials.store');
 Route::get('/testimonials/videos/{video}/stream', [TestimonialVideoController::class, 'stream'])->name('testimonials.stream');
 
 /* ─────────────────────────────────────────────────────────────
@@ -118,7 +117,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         });
 
         Route::prefix('testimonials')->name('testimonials.')->group(function () {
-            Route::get('/', [AdminTestimonialVideo::class, 'index'])->name('index');
+            Route::get('/',         [AdminTestimonialVideo::class, 'index'])->name('index');
+            Route::get('/create',   [AdminTestimonialVideo::class, 'create'])->name('create');
+            Route::post('/',        [AdminTestimonialVideo::class, 'store'])->name('store');
             Route::get('/{video}/review', [AdminTestimonialVideo::class, 'review'])->name('review');
             Route::post('/{video}/viewed', [AdminTestimonialVideo::class, 'markViewed'])->name('viewed');
             Route::post('/{video}/approve', [AdminTestimonialVideo::class, 'approve'])->name('approve');

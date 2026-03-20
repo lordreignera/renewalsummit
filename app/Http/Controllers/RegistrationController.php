@@ -405,8 +405,8 @@ class RegistrationController extends Controller
             'accommodation_booking_mode' => 'required|in:self_book,book_through_us_no_payment,book_through_us_and_pay',
             'accommodation_hotel_id' => 'required|exists:hotels,id',
             'accommodation_room_type' => 'required|in:single,double',
-            'accommodation_nights' => 'required|integer|min:1|max:14',
-            'accommodation_currency' => 'required|in:USD,UGX',
+            'accommodation_nights' => 'nullable|integer|min:1|max:14',
+            'accommodation_currency' => 'nullable|in:USD,UGX',
             'accommodation_fee' => 'nullable|integer|min:0',
             'payment_method' => 'nullable|in:mobile_money,visa',
             'phone_number' => 'nullable|string|max:20',
@@ -417,11 +417,12 @@ class RegistrationController extends Controller
         ]);
 
         $hotel = Hotel::findOrFail((int) $data['accommodation_hotel_id']);
-        $currency = $data['accommodation_currency'];
+        $isSelfBook = $data['accommodation_booking_mode'] === 'self_book';
+        $currency = $data['accommodation_currency'] ?? $reg->currency ?? 'UGX';
         $roomType = $data['accommodation_room_type'];
-        $nights = (int) $data['accommodation_nights'];
-        $perNight = $hotel->priceForRoomType($currency, $roomType);
-        $estimatedTotal = $perNight * $nights;
+        $nights = $isSelfBook ? null : (int) ($data['accommodation_nights'] ?? 1);
+        $perNight = $isSelfBook ? 0 : $hotel->priceForRoomType($currency, $roomType);
+        $estimatedTotal = $isSelfBook ? 0 : ($perNight * $nights);
 
         $update = [
             'accommodation_required' => true,
@@ -430,8 +431,8 @@ class RegistrationController extends Controller
             'accommodation_booking_mode' => $data['accommodation_booking_mode'],
             'accommodation_room_type' => $roomType,
             'accommodation_nights' => $nights,
-            'accommodation_currency' => $currency,
-            'accommodation_fee' => $estimatedTotal,
+            'accommodation_currency' => $isSelfBook ? null : $currency,
+            'accommodation_fee' => $isSelfBook ? null : $estimatedTotal,
         ];
 
         if ($data['accommodation_booking_mode'] === 'self_book') {

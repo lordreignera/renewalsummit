@@ -50,6 +50,20 @@ class RegistrationController extends Controller
         if ($request->filled('country_type')) {
             $query->where('country_type', $request->country_type);
         }
+        if ($request->filled('acc_mode')) {
+            switch ($request->acc_mode) {
+                case 'book_through_us':
+                    $query->whereIn('accommodation_booking_mode', ['book_through_us_and_pay', 'book_through_us_no_payment']);
+                    break;
+                case 'self_book':
+                    $query->where('accommodation_booking_mode', 'self_book');
+                    break;
+                case 'none':
+                    $query->whereNull('accommodation_hotel_id')
+                          ->whereNull('accommodation_booking_mode');
+                    break;
+            }
+        }
         if ($request->filled('date')) {
             $query->whereDate('created_at', $request->date);
         }

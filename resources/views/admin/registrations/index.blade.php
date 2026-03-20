@@ -82,6 +82,15 @@
         <input type="date" name="date" value="{{ request('date') }}"
                class="border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-400 outline-none">
 
+        <select name="acc_mode"
+                class="border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-400 outline-none
+                       {{ request('acc_mode') ? 'border-teal-400 bg-teal-50' : '' }}">
+            <option value="">All Accommodation Types</option>
+            <option value="book_through_us" {{ request('acc_mode') == 'book_through_us' ? 'selected' : '' }}>🏨 Booked Through Us</option>
+            <option value="self_book"       {{ request('acc_mode') == 'self_book'       ? 'selected' : '' }}>🔑 Self Booking</option>
+            <option value="none"            {{ request('acc_mode') == 'none'            ? 'selected' : '' }}>— No Accommodation</option>
+        </select>
+
         <select name="acc_status"
                 class="border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-400 outline-none
                        {{ request('acc_status') ? 'border-yellow-400 bg-yellow-50' : '' }}">
@@ -94,7 +103,7 @@
 
         <div class="flex gap-2">
             <button type="submit"
-                    class="flex-1 bg-gold hover:bg-yellow-600 text-white font-bold py-2 rounded-xl text-sm transition">
+                    class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 rounded-xl text-sm transition">
                 Filter
             </button>
             <a href="{{ route('admin.registrations.index') }}"

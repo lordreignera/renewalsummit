@@ -4,6 +4,14 @@
 
 @section('content')
 <div class="space-y-4">
+    <div class="flex items-center justify-between">
+        <a href="{{ route('admin.testimonials.create') }}"
+           class="inline-flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-5 py-2.5 rounded-xl shadow transition text-sm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Upload Video
+        </a>
+    </div>
+
     <form method="GET" class="bg-white rounded-2xl shadow-sm p-4 flex items-center gap-3 max-w-md">
         <select name="status" class="border border-gray-300 rounded-xl px-3 py-2 text-sm">
             <option value="">All statuses</option>

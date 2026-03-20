@@ -49,6 +49,28 @@
             </div>
             @endif
 
+            {{-- Self-book hotel links (shown only when self_book mode is active) --}}
+            <div id="self-book-links" class="hidden bg-blue-50 border border-blue-200 rounded-xl p-4">
+                <p class="text-sm font-bold text-blue-800 mb-3">📋 Book directly with your chosen hotel:</p>
+                <div class="space-y-2">
+                    @foreach($hotels as $h)
+                    <div class="flex items-center justify-between bg-white border border-blue-100 rounded-xl px-4 py-2.5 text-sm">
+                        <span class="font-semibold text-summit">{{ $h->name }}</span>
+                        @if($h->booking_url)
+                        <a href="{{ $h->booking_url }}" target="_blank" rel="noopener noreferrer"
+                           class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-semibold text-xs border border-blue-300 rounded-lg px-3 py-1 hover:bg-blue-50 transition">
+                            Book Now
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </a>
+                        @else
+                        <span class="text-xs text-gray-400">Contact hotel directly</span>
+                        @endif
+                    </div>
+                    @endforeach
+                </div>
+                <p class="text-xs text-blue-600 mt-3">You can still indicate your preferred hotel below so we can track it.</p>
+            </div>
+
             <div class="grid lg:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-bold text-summit mb-1">Hotel</label>
@@ -66,7 +88,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div>
+                <div id="room-type-wrap">
                     <label class="block text-sm font-bold text-summit mb-1">Room Type</label>
                     @php $roomOld = old('accommodation_room_type', $reg->accommodation_room_type ?? 'single'); @endphp
                     <select name="accommodation_room_type" id="room-type" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm" required>
@@ -76,15 +98,15 @@
                 </div>
             </div>
 
-            <div class="grid lg:grid-cols-3 gap-4">
+            <div id="nights-fee-row" class="grid lg:grid-cols-3 gap-4">
                 <div>
                     <label class="block text-sm font-bold text-summit mb-1">Number of Nights</label>
-                    <input type="number" min="1" max="14" step="1" name="accommodation_nights" id="nights" value="{{ old('accommodation_nights', $reg->accommodation_nights ?? 1) }}" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm" required>
+                    <input type="number" min="1" max="14" step="1" name="accommodation_nights" id="nights" value="{{ old('accommodation_nights', $reg->accommodation_nights ?? 1) }}" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm">
                 </div>
                 <div>
                     <label class="block text-sm font-bold text-summit mb-1">Payment Currency</label>
                     @php $currOld = old('accommodation_currency', $reg->accommodation_currency ?: $reg->currency); @endphp
-                    <select name="accommodation_currency" id="accommodation-currency" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm" required>
+                    <select name="accommodation_currency" id="accommodation-currency" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm">
                         <option value="USD" {{ $currOld === 'USD' ? 'selected' : '' }}>USD</option>
                         <option value="UGX" {{ $currOld === 'UGX' ? 'selected' : '' }}>UGX</option>
                     </select>
@@ -117,6 +139,15 @@
                 <div id="acc-mm-fields">
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Mobile Money Number</label>
                     <input type="tel" name="phone_number" value="{{ old('phone_number', $reg->phone) }}" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm" placeholder="e.g. 0772123456">
+                    <div class="bg-amber-50 border border-amber-300 rounded-xl px-4 py-3 mt-3 text-sm text-amber-800 flex gap-3 items-start">
+                        <span class="text-xl leading-none flex-shrink-0">📲</span>
+                        <div>
+                            <span class="font-bold">You will receive a USSD prompt</span> on your phone from
+                            <strong>Swapp Payment Systems</strong>. When it appears, enter your
+                            <strong>mobile money PIN</strong> to complete the payment.
+                            <span class="block text-amber-700 text-xs mt-1">Do not close the prompt — it will disappear automatically once payment is confirmed.</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="acc-visa-fields" class="hidden grid grid-cols-2 gap-3">
@@ -171,10 +202,18 @@
         fee.value = String(perNight * n);
     }
 
+    var nightsFeeRow = document.getElementById('nights-fee-row');
+    var selfBookLinks = document.getElementById('self-book-links');
+    var roomTypeWrap = document.getElementById('room-type-wrap');
+
     function togglePayNow() {
         var mode = document.querySelector('[name="accommodation_booking_mode"]:checked');
-        var show = mode && mode.value === 'book_through_us_and_pay';
-        payFields.classList.toggle('hidden', !show);
+        var isSelfBook = mode && mode.value === 'self_book';
+        var isPayNow = mode && mode.value === 'book_through_us_and_pay';
+        payFields.classList.toggle('hidden', !isPayNow);
+        nightsFeeRow.classList.toggle('hidden', isSelfBook);
+        selfBookLinks.classList.toggle('hidden', !isSelfBook);
+        roomTypeWrap.classList.toggle('hidden', isSelfBook);
     }
 
     function togglePayMethod() {

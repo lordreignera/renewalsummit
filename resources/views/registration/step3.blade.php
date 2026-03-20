@@ -137,6 +137,16 @@
                                   focus:ring-yellow-400 outline-none transition">
                     <p class="text-xs text-gray-400 mt-1">You will receive a payment prompt on this number.</p>
                 </div>
+                {{-- USSD prompt notice --}}
+                <div class="bg-amber-50 border border-amber-300 rounded-xl px-4 py-3 mb-3 text-sm text-amber-800 flex gap-3 items-start">
+                    <span class="text-xl leading-none flex-shrink-0">📲</span>
+                    <div>
+                        <span class="font-bold">You will receive a USSD prompt</span> on your phone from
+                        <strong>Swapp Payment Systems</strong>. When it appears, enter your
+                        <strong>mobile money PIN</strong> to complete the payment.
+                        <span class="block text-amber-700 text-xs mt-1">Do not close the prompt — it will disappear automatically once payment is confirmed.</span>
+                    </div>
+                </div>
             </div>
 
             {{-- VISA card fields --}}

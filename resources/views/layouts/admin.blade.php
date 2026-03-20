@@ -127,9 +127,7 @@
             <a href="{{ route('home') }}" target="_blank" class="sb-link">
                 <span class="icon">🌐</span> Public Site ↗
             </a>
-            <a href="{{ route('register.start') }}" target="_blank" class="sb-link">
-                <span class="icon">📝</span> Register ↗
-            </a>
+           
         </nav>
 
         {{-- Footer --}}
