@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\TestimonialVideo;
-use Illuminate\Http\Response;
+use Illuminate\Http\StreamedResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -44,20 +44,33 @@ class TestimonialVideoController extends Controller
         return back()->with('testimonial_success', 'Your video testimony was uploaded and is pending approval. Thank you!');
     }
 
-    public function stream(TestimonialVideo $video): Response
+    public function stream(TestimonialVideo $video): StreamedResponse
     {
         abort_unless($video->status === 'approved' || auth()->check(), 404);
 
-        $disk = config('filesystems.qr_disk', 'r2');
+        // Try configured disk first (r2), fall back to 'public' for videos
+        // uploaded before R2 was enabled.
+        $primaryDisk = config('filesystems.qr_disk', 'r2');
+        $disk = null;
+        foreach ([$primaryDisk, 'public'] as $candidate) {
+            try {
+                if (! empty($video->video_path) && Storage::disk($candidate)->exists($video->video_path)) {
+                    $disk = $candidate;
+                    break;
+                }
+            } catch (\Throwable $e) {
+                // disk not configured or unreachable — try next
+            }
+        }
 
-        if (empty($video->video_path) || ! Storage::disk($disk)->exists($video->video_path)) {
-            abort(404, 'Video file not found.');
+        if ($disk === null) {
+            abort(404, 'Video file not found on any storage disk.');
         }
 
         $stream = Storage::disk($disk)->readStream($video->video_path);
 
-        if ($stream === false) {
-            abort(404, 'Unable to open video file.');
+        if (! is_resource($stream)) {
+            abort(404, 'Unable to open video stream.');
         }
 
         $filename = $video->original_filename ?: basename($video->video_path);

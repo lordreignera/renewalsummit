@@ -14,10 +14,14 @@
             <p class="text-sm text-gray-700">{{ $video->message }}</p>
         @endif
 
-        <video controls class="w-full rounded-xl bg-black" preload="metadata">
-            <source src="{{ $video->video_url }}" type="{{ $video->mime_type ?: 'video/mp4' }}">
-            Your browser does not support the video tag.
-        </video>
+        <div id="video-wrap">
+            <video controls class="w-full rounded-xl bg-black" preload="metadata"
+                   onerror="document.getElementById('video-wrap').innerHTML='<div class=\'mt-2 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm\'>⚠️ Video file could not be loaded. It may have been stored before cloud storage was enabled and has since been removed from the server ephemeral disk. Ask the user to re-upload their testimonial.<\/div>'">
+                <source src="{{ $video->video_url }}" type="{{ $video->mime_type ?: 'video/mp4' }}"
+                        onerror="this.parentElement.dispatchEvent(new Event('error'))">
+                Your browser does not support the video tag.
+            </video>
+        </div>
 
         <div class="text-xs text-gray-500">
             File: {{ $video->original_filename ?: 'Uploaded video' }} | {{ $video->size_kb }} KB
