@@ -26,7 +26,8 @@ class TestimonialVideoController extends Controller
             'video.mimetypes' => 'Please upload an MP4, MOV, or WEBM video.',
         ]);
 
-        $disk = config('filesystems.qr_disk', 'r2');
+        // Videos must always go to R2 — local disk is ephemeral on cloud containers.
+        $disk = 'r2';
         $file = $request->file('video');
         $path = $file->store('testimonials/videos', $disk);
 
