@@ -29,6 +29,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::post('/testimonials/videos', [TestimonialVideoController::class, 'store'])->name('testimonials.store');
+Route::get('/testimonials/videos/{video}/stream', [TestimonialVideoController::class, 'stream'])->name('testimonials.stream');
 
 /* ─────────────────────────────────────────────────────────────
  | QR Code Image (proxy – works for both local & R2 storage)

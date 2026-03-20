@@ -15,7 +15,7 @@
         @endif
 
         <video controls class="w-full rounded-xl bg-black" preload="metadata">
-            <source src="{{ asset('storage/' . $video->video_path) }}" type="{{ $video->mime_type ?: 'video/mp4' }}">
+            <source src="{{ $video->video_url }}" type="{{ $video->mime_type ?: 'video/mp4' }}">
             Your browser does not support the video tag.
         </video>
 

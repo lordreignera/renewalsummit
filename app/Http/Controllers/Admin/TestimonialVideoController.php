@@ -76,9 +76,10 @@ class TestimonialVideoController extends Controller
 
     public function destroy(TestimonialVideo $video): RedirectResponse
     {
-        // Delete uploaded file from public storage when an admin removes a testimonial.
-        if (!empty($video->video_path) && Storage::disk('public')->exists($video->video_path)) {
-            Storage::disk('public')->delete($video->video_path);
+        // Delete uploaded file from R2 cloud storage.
+        $disk = config('filesystems.qr_disk', 'r2');
+        if (!empty($video->video_path) && Storage::disk($disk)->exists($video->video_path)) {
+            Storage::disk($disk)->delete($video->video_path);
         }
 
         $video->delete();

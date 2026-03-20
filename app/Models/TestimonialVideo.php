@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class TestimonialVideo extends Model
 {
@@ -24,8 +25,21 @@ class TestimonialVideo extends Model
     ];
 
     protected $casts = [
-        'viewed_at' => 'datetime',
+        'viewed_at'   => 'datetime',
         'approved_at' => 'datetime',
         'rejected_at' => 'datetime',
     ];
+
+    /**
+     * Returns the public URL for the video from whichever disk it is stored on.
+     * On production this points to Cloudflare R2; on local dev it falls back gracefully.
+     */
+    public function getVideoUrlAttribute(): string
+    {
+        if (empty($this->video_path)) {
+            return '';
+        }
+
+        return route('testimonials.stream', $this);
+    }
 }

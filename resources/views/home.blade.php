@@ -572,7 +572,7 @@
             @foreach($approvedVideos as $video)
             <div class="bg-white border border-gray-200 rounded-2xl p-3 shadow-sm">
                 <video controls preload="metadata" class="w-full rounded-xl bg-black" style="max-height:210px;">
-                    <source src="{{ asset('storage/' . $video->video_path) }}" type="{{ $video->mime_type ?: 'video/mp4' }}">
+                    <source src="{{ $video->video_url }}" type="{{ $video->mime_type ?: 'video/mp4' }}">
                 </video>
                 <div class="mt-2 px-1">
                     <div class="font-bold text-summit text-sm">{{ $video->name }}</div>
@@ -613,7 +613,7 @@
                             onclick="document.getElementById('tv-form-wrap').classList.add('hidden'); document.getElementById('tv-btn-wrap').classList.remove('hidden');"
                             class="text-gray-400 hover:text-gray-600 text-2xl font-bold leading-none">&times;</button>
                 </div>
-                <p class="text-xs text-gray-500 mb-5">Formats: MP4, MOV, WEBM &mdash; Max <strong>3 MB</strong>. All uploads are reviewed before appearing on this page.</p>
+                <p class="text-xs text-gray-500 mb-5">Formats: MP4, MOV, WEBM &mdash; Max <strong>10 MB</strong>. All uploads are reviewed before appearing on this page.</p>
 
                 @if($errors->any())
                 <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -648,6 +648,7 @@
                         <label class="block text-sm font-bold text-summit mb-1">Video File *</label>
                         <input type="file" name="video" required accept="video/mp4,video/quicktime,video/webm"
                                class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm bg-white">
+                        <p class="text-xs text-gray-400 mt-1">Keep the file between 5 MB and 10 MB for faster uploads and smoother review.</p>
                     </div>
                     <button type="submit"
                             class="w-full bg-gold hover:bg-yellow-500 text-white font-bold py-3 rounded-xl transition text-sm">

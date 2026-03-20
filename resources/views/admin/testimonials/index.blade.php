@@ -35,7 +35,7 @@
                         <td class="px-4 py-3">{{ $video->country }}</td>
                         <td class="px-4 py-3 text-gray-600">{{ $video->message ?: '—' }}</td>
                         <td class="px-4 py-3">
-                            <a href="{{ asset('storage/' . $video->video_path) }}" target="_blank" class="text-blue-600 hover:underline">Open Video</a>
+                            <a href="{{ $video->video_url }}" target="_blank" class="text-blue-600 hover:underline">Open Video</a>
                             <div class="text-xs text-gray-400">{{ $video->size_kb }} KB</div>
                             <div class="text-xs mt-1 {{ $video->viewed_at ? 'text-green-600' : 'text-amber-600' }}">
                                 {{ $video->viewed_at ? 'Viewed' : 'Not viewed yet' }}
