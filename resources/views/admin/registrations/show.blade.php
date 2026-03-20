@@ -70,6 +70,40 @@
         </div>
         @endif
 
+        {{-- Emergency & Medical --}}
+        @if($registration->emergency_contact_name || $registration->emergency_contact_phone || $registration->medical_conditions || $registration->allergies || $registration->mobility_needs || $registration->special_needs)
+        <div class="bg-red-50 border border-red-200 rounded-2xl p-6 text-sm">
+            <h3 class="font-bold text-red-800 mb-3">🚑 Emergency &amp; Medical</h3>
+            <div class="grid grid-cols-2 gap-4">
+                @if($registration->emergency_contact_name)
+                <div>
+                    <div class="text-xs text-red-400 font-medium">Emergency Contact Name</div>
+                    <div class="font-semibold text-red-800 mt-0.5">{{ $registration->emergency_contact_name }}</div>
+                </div>
+                @endif
+                @if($registration->emergency_contact_phone)
+                <div>
+                    <div class="text-xs text-red-400 font-medium">Emergency Contact Phone</div>
+                    <div class="font-semibold text-red-800 mt-0.5">{{ $registration->emergency_contact_phone }}</div>
+                </div>
+                @endif
+            </div>
+            @foreach([
+                ['Medical Conditions', $registration->medical_conditions],
+                ['Food Allergies',     $registration->allergies],
+                ['Mobility / Accessibility Needs', $registration->mobility_needs],
+                ['Other Special Needs', $registration->special_needs],
+            ] as [$label, $val])
+                @if($val)
+                <div class="mt-3">
+                    <div class="text-xs text-red-400 font-medium">{{ $label }}</div>
+                    <div class="font-semibold text-red-800 mt-0.5 whitespace-pre-line">{{ $val }}</div>
+                </div>
+                @endif
+            @endforeach
+        </div>
+        @endif
+
         {{-- Payment History --}}
         <div class="bg-white rounded-2xl shadow-sm p-6">
             <h2 class="font-bold text-summit text-lg mb-4">Payment History</h2>

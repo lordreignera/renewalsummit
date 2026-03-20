@@ -237,6 +237,56 @@
                 <input type="hidden" name="nationality" id="nationality-hidden" value="{{ $savedCountry }}">
             </div>
 
+            <hr class="border-gray-100 my-6">
+
+            {{-- Emergency & Medical --}}
+            <h3 class="text-sm font-bold text-gray-700 uppercase tracking-wide mb-4">Emergency &amp; Medical <span class="font-normal text-gray-400 uppercase tracking-normal text-xs">(optional)</span></h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Emergency contact name</label>
+                    <input type="text" name="emergency_contact_name"
+                           value="{{ old('emergency_contact_name', $reg->emergency_contact_name ?? '') }}"
+                           placeholder="e.g. Mary Mukasa"
+                           class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Emergency contact phone</label>
+                    <input type="tel" name="emergency_contact_phone"
+                           value="{{ old('emergency_contact_phone', $reg->emergency_contact_phone ?? '') }}"
+                           placeholder="e.g. 0772000000"
+                           class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition">
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Medical conditions <span class="font-normal text-gray-400">(if any)</span></label>
+                <textarea name="medical_conditions" rows="2"
+                          placeholder="e.g. Diabetes, high blood pressure…"
+                          class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition resize-none">{{ old('medical_conditions', $reg->medical_conditions ?? '') }}</textarea>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Food allergies <span class="font-normal text-gray-400">(if any)</span></label>
+                <textarea name="allergies" rows="2"
+                          placeholder="e.g. Peanuts, gluten…"
+                          class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition resize-none">{{ old('allergies', $reg->allergies ?? '') }}</textarea>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Mobility / accessibility needs</label>
+                <textarea name="mobility_needs" rows="2"
+                          placeholder="e.g. Wheelchair access required…"
+                          class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition resize-none">{{ old('mobility_needs', $reg->mobility_needs ?? '') }}</textarea>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Other special needs</label>
+                <textarea name="special_needs" rows="2"
+                          placeholder="Any other requirements we should know about…"
+                          class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition resize-none">{{ old('special_needs', $reg->special_needs ?? '') }}</textarea>
+            </div>
+
             <button type="submit"
                     class="w-full bg-gold hover:bg-yellow-600 text-white font-bold py-3 rounded-xl transition text-lg shadow">
                 Continue to Step 2 →

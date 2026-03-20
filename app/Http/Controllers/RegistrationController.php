@@ -94,6 +94,13 @@ class RegistrationController extends Controller
             'fcc_regional_leader'  => 'required_if:affiliation,fcc|nullable|string|max:200',
             'fcc_church'           => 'required_if:affiliation,fcc|nullable|string|max:200',
             'fcc_pastor'           => 'nullable|string|max:200',
+            // Emergency & Medical
+            'emergency_contact_name'  => 'nullable|string|max:191',
+            'emergency_contact_phone' => 'nullable|string|max:50',
+            'medical_conditions'      => 'nullable|string|max:1000',
+            'allergies'               => 'nullable|string|max:1000',
+            'mobility_needs'          => 'nullable|string|max:1000',
+            'special_needs'           => 'nullable|string|max:1000',
         ]);
 
         // Fee tiers: local=UGX 150k, africa=$50, international=$100
