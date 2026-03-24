@@ -709,21 +709,28 @@
 
             @php
             $breakout = [
-                ['name' => 'Tony Bowick',           'role' => 'Breakout Speaker', 'church' => 'Rocky Peak',  'country' => 'USA',      'img' => null],
-                ['name' => 'Dr. Augustine Longa',    'role' => 'Breakout Speaker', 'church' => '',            'country' => 'Cameroon', 'img' => null],
-                ['name' => 'Bp. Christopher Mukwavi','role'=> 'Breakout Speaker', 'church' => '',            'country' => 'Zambia',   'img' => null],
-                ['name' => 'Ps. Bernard Mukwavi',   'role' => 'Breakout Speaker', 'church' => '',            'country' => 'Canada',   'img' => null],
-                ['name' => 'Ps. Brian Morehead',    'role' => 'Breakout Speaker', 'church' => 'Rocky Peak',  'country' => 'USA',      'img' => null],
+                ['name' => 'Tony Bowick',            'role' => 'Breakout Speaker', 'church' => 'Rocky Peak',  'country' => 'USA',      'img' => 'images/Pr. Tony Bowick.jpg.jpeg'],
+                ['name' => 'Dr. Augustine Longa',    'role' => 'Breakout Speaker', 'church' => '',            'country' => 'Cameroon', 'img' => 'images/Dr. Augustine Longa.jpg.jpeg'],
+                ['name' => 'Bp. Christopher Mukwavi','role' => 'Breakout Speaker', 'church' => '',            'country' => 'Zambia',   'img' => 'images/Bp. Mukwavi zambia.jpg.jpeg'],
+                ['name' => 'Ps. Bernard Mukwavi',    'role' => 'Breakout Speaker', 'church' => '',            'country' => 'Canada',   'img' => 'images/Bernard Mukwavi.jpg.jpeg'],
+                ['name' => 'Ps. Brian Morehead',     'role' => 'Breakout Speaker', 'church' => 'Rocky Peak',  'country' => 'USA',      'img' => 'images/Pr. Brian Morehead.jpeg'],
             ];
             @endphp
 
             @foreach($breakout as $s)
             <div class="flex flex-col items-center text-center group">
-                <div class="w-28 h-28 rounded-full bg-gradient-to-br from-yellow-700 to-yellow-900
-                            flex items-center justify-center border-4 border-white shadow-md
-                            group-hover:border-yellow-400 transition-all duration-300 text-white text-xl font-bold mb-3 select-none">
-                    {{ collect(explode(' ', $s['name']))->map(fn($w) => strtoupper(substr($w,0,1)))->take(2)->implode('') }}
-                </div>
+                @if($s['img'])
+                    <img src="{{ asset($s['img']) }}"
+                         alt="{{ $s['name'] }}"
+                         class="w-28 h-28 rounded-full object-cover border-4 border-white shadow-md group-hover:border-yellow-400 transition-all duration-300 mb-3"
+                         loading="lazy">
+                @else
+                    <div class="w-28 h-28 rounded-full bg-gradient-to-br from-yellow-700 to-yellow-900
+                                flex items-center justify-center border-4 border-white shadow-md
+                                group-hover:border-yellow-400 transition-all duration-300 text-white text-xl font-bold mb-3 select-none">
+                        {{ collect(explode(' ', $s['name']))->map(fn($w) => strtoupper(substr($w,0,1)))->take(2)->implode('') }}
+                    </div>
+                @endif
                 <p class="font-bold text-gray-900 text-sm leading-snug">{{ $s['name'] }}</p>
                 @if($s['church'])
                     <p class="text-xs text-yellow-600 font-medium mt-0.5">{{ $s['church'] }}</p>
