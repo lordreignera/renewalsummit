@@ -642,19 +642,75 @@
 
             @php
             $plenary = [
-                ['name' => 'Rev. Peter Kasirivu',  'role' => 'Senior Pastor, GCC &amp; ARM President', 'church' => 'Ggaba Community Church', 'country' => 'Uganda', 'img' => 'Peter_Irene_Kasirivu.jpg', 'badge' => 'Host'],
-                ['name' => 'Dr. Paul David Tripp', 'role' => 'Plenary Speaker',  'church' => 'Paul Tripp Ministries',    'country' => 'USA',     'img' => 'paul_david_tripp.png', 'badge' => null],
-                ['name' => 'Ps. Michael Yearley',  'role' => 'Keynote Speaker',  'church' => 'Rocky Peak',               'country' => 'USA',     'img' => 'Micheal_Yearly.jpeg', 'badge' => 'Keynote'],
-                ['name' => 'Ps. Brad Thomas',      'role' => 'Keynote Speaker',  'church' => 'Austin Ridge',             'country' => 'USA',     'img' => 'Brad_Thomas.jpeg', 'badge' => 'Keynote'],
-                ['name' => 'Ps. Eric Geiger',      'role' => 'Plenary Speaker',  'church' => 'Mariners Church',          'country' => 'USA',     'img' => 'Pr. Eric Geiger.jpeg', 'badge' => 'Pending'],
-                ['name' => 'Ps. Bradley Goode',    'role' => 'Plenary Speaker',  'church' => 'Good News Church',         'country' => 'USA',     'img' => 'Bradley_Goode.jpeg', 'badge' => null],
-                ['name' => 'Ps. Jose Jayas',       'role' => 'Plenary Speaker',  'church' => '26 West Church',           'country' => 'USA',     'img' => 'Jose_Zayas.webp', 'badge' => null],
-                ['name' => 'Ps. Jason Uptmore',    'role' => 'Plenary Speaker',  'church' => 'Wayside Chapel',           'country' => 'USA',     'img' => 'Jason_Uptmore.jpeg', 'badge' => null],
-                ['name' => 'Ps. Bryant Lee',       'role' => 'Plenary Speaker',  'church' => 'Higher Expectation Church','country' => 'USA',     'img' => 'Pr. Bryant Lee.jpeg', 'badge' => null],
-                ['name' => 'Bp. Oscar Muriu',      'role' => 'Plenary Speaker',  'church' => 'Nairobi Chapel',           'country' => 'Kenya',   'img' => 'Bishop Oscar.jpeg', 'badge' => null],
-                ['name' => 'Ps. Mark E Strong',    'role' => 'Plenary Speaker',  'church' => 'Life Change Church',      'country' => 'USA',     'img' => 'Mark_Strong.jpeg', 'badge' => null],
-                ['name' => 'Ps. Julius Rwotlonyo', 'role' => 'Plenary Speaker',  'church' => 'Watoto Church',            'country' => 'Uganda',  'img' => 'Julius_Rwotlonyo.jpeg', 'badge' => null],
-                ['name' => 'Ps. Curtis Bronzan',   'role' => 'Plenary Speaker',  'church' => 'FPC Houston',              'country' => 'USA',     'img' => 'Curtis_Bronzan.jpeg', 'badge' => null],
+                [
+                    'name' => 'Rev. Peter Kasirivu', 'role' => 'Senior Pastor, GCC &amp; ARM President',
+                    'church' => 'Ggaba Community Church', 'country' => 'Uganda',
+                    'img' => 'Peter_Irene_Kasirivu.jpg', 'badge' => 'Host',
+                    'bio' => 'Rev. Peter Kasirivu is the Senior Pastor of Gaba Community Church, Founder &amp; President of Africa Renewal Ministries, and Founder &amp; Chancellor of Africa Renewal University. He oversees the Fellowship of Community Churches, which covers over 1,000 churches. Together with his wife Pastor Irene, he has nurtured over 2,700 leaders, educated more than 15,000 children, and transformed numerous communities.',
+                ],
+                [
+                    'name' => 'Dr. Paul David Tripp', 'role' => 'Plenary Speaker',
+                    'church' => 'Paul Tripp Ministries', 'country' => 'USA',
+                    'img' => 'paul_david_tripp.png', 'bio' => null,
+                ],
+                [
+                    'name' => 'Ps. Michael Yearley', 'role' => 'Keynote Speaker',
+                    'church' => 'Rocky Peak', 'country' => 'USA',
+                    'img' => 'Micheal_Yearly.jpeg', 'bio' => null,
+                ],
+                [
+                    'name' => 'Ps. Brad Thomas', 'role' => 'Keynote Speaker',
+                    'church' => 'Austin Ridge', 'country' => 'USA',
+                    'img' => 'Brad_Thomas.jpeg', 'bio' => null,
+                ],
+                [
+                    'name' => 'Ps. Eric Geiger', 'role' => 'Plenary Speaker',
+                    'church' => 'Mariners Church', 'country' => 'USA',
+                    'img' => 'Pr. Eric Geiger.jpeg', 'bio' => null,
+                ],
+                [
+                    'name' => 'Ps. Bradley Goode', 'role' => 'Plenary Speaker',
+                    'church' => 'Good News Church', 'country' => 'USA',
+                    'img' => 'Bradley_Goode.jpeg',
+                    'bio' => 'Rev. Bradley Goode is the pastor at Good News Church in Santa Rosa Beach, Florida. He previously led Dauphin Way United Methodist Church in Alabama for 5 years and Saint James UMC for 10 years, and has served churches in Detroit, Honolulu, and Vail. He holds a Master of Divinity and is a devoted husband and father — including having adopted their daughter Amelia from Uganda.',
+                ],
+                [
+                    'name' => 'Ps. Jose Zayas', 'role' => 'Plenary Speaker',
+                    'church' => '26 West Church', 'country' => 'USA',
+                    'img' => 'Jose_Zayas.webp',
+                    'bio' => 'Pastor Jose Zayas is the Lead Pastor of 26 West Church in Portland, Oregon. He is active in global missions, speaking at festivals, conferences, and outreaches across the USA, Europe, Asia, and Africa. He is the author of "Airborn" — a book on getting your faith off the ground. He is also a devoted father and husband.',
+                ],
+                [
+                    'name' => 'Ps. Jason Uptmore', 'role' => 'Plenary Speaker',
+                    'church' => 'Wayside Chapel', 'country' => 'USA',
+                    'img' => 'Jason_Uptmore.jpeg', 'bio' => null,
+                ],
+                [
+                    'name' => 'Ps. Bryant Lee', 'role' => 'Plenary Speaker',
+                    'church' => 'Higher Expectation Church', 'country' => 'USA',
+                    'img' => 'Pr. Bryant Lee.jpeg', 'bio' => null,
+                ],
+                [
+                    'name' => 'Bp. Oscar Muriu', 'role' => 'Plenary Speaker',
+                    'church' => 'Nairobi Chapel', 'country' => 'Kenya',
+                    'img' => 'Bishop Oscar.jpeg', 'bio' => null,
+                ],
+                [
+                    'name' => 'Ps. Mark E Strong', 'role' => 'Plenary Speaker',
+                    'church' => 'Life Change Church', 'country' => 'USA',
+                    'img' => 'Mark_Strong.jpeg', 'bio' => null,
+                ],
+                [
+                    'name' => 'Ps. Julius Rwotlonyo', 'role' => 'Plenary Speaker',
+                    'church' => 'Watoto Church', 'country' => 'Uganda',
+                    'img' => 'Julius_Rwotlonyo.jpeg', 'bio' => null,
+                ],
+                [
+                    'name' => 'Ps. Curtis Bronzan', 'role' => 'Plenary Speaker',
+                    'church' => 'FPC Houston', 'country' => 'USA',
+                    'img' => 'Curtis_Bronzan.jpeg',
+                    'bio' => 'Pastor Curtis Bronzan began ministry in 2003, serving in various pastoral roles before being appointed Senior Pastor &amp; Head of Staff at First Presbyterian Church of Houston in November 2022. He holds several degrees and is currently pursuing a Doctorate in Ministry. He is married to Cassie and they have two children.',
+                ],
             ];
             @endphp
 
@@ -663,19 +719,29 @@
                 {{-- Avatar --}}
                 <div class="relative mb-4">
                     @if($s['img'])
-                            <img src="{{ asset('images/' . $s['img']) }}"
-                                alt="{{ $s['name'] }}"
-                                class="w-28 h-28 rounded-full object-cover object-top border-4 border-white shadow-lg
-                                     group-hover:border-yellow-400 transition-all duration-300">
+                        <img src="{{ asset('images/' . $s['img']) }}"
+                             alt="{{ $s['name'] }}"
+                             class="w-28 h-28 rounded-full object-cover object-top border-4 border-white shadow-lg
+                                    group-hover:border-yellow-400 transition-all duration-300
+                                    {{ ($s['bio'] ?? null) ? 'speaker-bio-trigger cursor-pointer' : '' }}"
+                             @if($s['bio'] ?? null)
+                                 data-speaker-name="{{ $s['name'] }}"
+                                 data-speaker-bio="{{ $s['bio'] }}"
+                             @endif>
                     @else
                         <div class="w-28 h-28 rounded-full bg-gradient-to-br from-slate-700 to-slate-900
                                     flex items-center justify-center border-4 border-white shadow-lg
-                                    group-hover:border-yellow-400 transition-all duration-300 text-white text-2xl font-bold select-none">
+                                    group-hover:border-yellow-400 transition-all duration-300 text-white text-2xl font-bold select-none
+                                    {{ ($s['bio'] ?? null) ? 'speaker-bio-trigger cursor-pointer' : '' }}"
+                             @if($s['bio'] ?? null)
+                                 data-speaker-name="{{ $s['name'] }}"
+                                 data-speaker-bio="{{ $s['bio'] }}"
+                             @endif>
                             {{ collect(explode(' ', $s['name']))->map(fn($w) => strtoupper(substr($w,0,1)))->take(2)->implode('') }}
                         </div>
                     @endif
                     {{-- Badge --}}
-                    @if($s['badge'])
+                    @if($s['badge'] ?? null)
                         @php
                             $badgeColor = match($s['badge']) {
                                 'Keynote'  => 'bg-yellow-400 text-gray-900',
@@ -709,28 +775,62 @@
 
             @php
             $breakout = [
-                ['name' => 'Tony Bowick',            'role' => 'Breakout Speaker', 'church' => 'Rocky Peak',  'country' => 'USA',      'img' => 'images/Pr. Tony Bowick.jpg.jpeg'],
-                ['name' => 'Dr. Augustine Longa',    'role' => 'Breakout Speaker', 'church' => '',            'country' => 'Cameroon', 'img' => 'images/Dr. Augustine Longa.jpg.jpeg'],
-                ['name' => 'Bp. Christopher Mukwavi','role' => 'Breakout Speaker', 'church' => '',            'country' => 'Zambia',   'img' => 'images/Bp. Mukwavi zambia.jpg.jpeg'],
-                ['name' => 'Ps. Bernard Mukwavi',    'role' => 'Breakout Speaker', 'church' => '',            'country' => 'Canada',   'img' => 'images/Bernard Mukwavi.jpg.jpeg'],
-                ['name' => 'Ps. Brian Morehead',     'role' => 'Breakout Speaker', 'church' => 'Rocky Peak',  'country' => 'USA',      'img' => 'images/Pr. Brian Morehead.jpeg'],
+                [
+                    'name' => 'Tony Bowick', 'role' => 'Breakout Speaker',
+                    'church' => 'Rocky Peak', 'country' => 'USA',
+                    'img' => 'images/Pr. Tony Bowick.jpg.jpeg', 'bio' => null,
+                ],
+                [
+                    'name' => 'Dr. Augustine Longa', 'role' => 'Breakout Speaker',
+                    'church' => 'Central Africa Missions Outreach', 'country' => 'Côte d\'Ivoire',
+                    'img' => 'images/Dr. Augustine Longa.jpg.jpeg',
+                    'bio' => 'Dr. Augustin Longa is the founder of Central Africa Missions Outreach and Director of West Africa Missionary Movements. Holding a Doctorate in Missiology, he specialises in indigenous leadership among Muslim communities, having served in Chad, Nigeria, and Cameroon. He is based in Abidjan, Côte d\'Ivoire, with his wife and three children.',
+                ],
+                [
+                    'name' => 'Bp. Christopher Mukwavi', 'role' => 'Breakout Speaker',
+                    'church' => 'Living Hope Church', 'country' => 'Zambia',
+                    'img' => 'images/Bp. Mukwavi zambia.jpg.jpeg',
+                    'bio' => 'Rev. Christopher Mukwavi is the Senior Pastor of Living Hope Church in Zambia and the District Bishop for the Pentecostal Assemblies of God, Zambia Midlands District. He holds a Master\'s in Theology from Regent College, Canada, and has over 25 years of leadership experience. He is a devoted father of three and a loving husband.',
+                ],
+                [
+                    'name' => 'Ps. Bernard Mukwavi', 'role' => 'Breakout Speaker',
+                    'church' => '', 'country' => 'Canada',
+                    'img' => 'images/Bernard Mukwavi.jpg.jpeg', 'bio' => null,
+                ],
+                [
+                    'name' => 'Ps. Brian Morehead', 'role' => 'Breakout Speaker',
+                    'church' => 'Rocky Peak', 'country' => 'USA',
+                    'img' => 'images/pr. Brain Morehead2.png', 'bio' => null,
+                ],
             ];
             @endphp
 
             @foreach($breakout as $s)
             <div class="flex flex-col items-center text-center group">
-                @if($s['img'])
-                    <img src="{{ asset($s['img']) }}"
-                         alt="{{ $s['name'] }}"
-                         class="w-28 h-28 rounded-full object-cover border-4 border-white shadow-md group-hover:border-yellow-400 transition-all duration-300 mb-3"
-                         loading="lazy">
-                @else
-                    <div class="w-28 h-28 rounded-full bg-gradient-to-br from-yellow-700 to-yellow-900
-                                flex items-center justify-center border-4 border-white shadow-md
-                                group-hover:border-yellow-400 transition-all duration-300 text-white text-xl font-bold mb-3 select-none">
-                        {{ collect(explode(' ', $s['name']))->map(fn($w) => strtoupper(substr($w,0,1)))->take(2)->implode('') }}
-                    </div>
-                @endif
+                <div class="relative mb-3">
+                    @if($s['img'])
+                        <img src="{{ asset($s['img']) }}"
+                             alt="{{ $s['name'] }}"
+                             class="w-28 h-28 rounded-full object-cover border-4 border-white shadow-md group-hover:border-yellow-400 transition-all duration-300
+                                    {{ ($s['bio'] ?? null) ? 'speaker-bio-trigger cursor-pointer' : '' }}"
+                             loading="lazy"
+                             @if($s['bio'] ?? null)
+                                 data-speaker-name="{{ $s['name'] }}"
+                                 data-speaker-bio="{{ $s['bio'] }}"
+                             @endif>
+                    @else
+                        <div class="w-28 h-28 rounded-full bg-gradient-to-br from-yellow-700 to-yellow-900
+                                    flex items-center justify-center border-4 border-white shadow-md
+                                    group-hover:border-yellow-400 transition-all duration-300 text-white text-xl font-bold select-none
+                                    {{ ($s['bio'] ?? null) ? 'speaker-bio-trigger cursor-pointer' : '' }}"
+                             @if($s['bio'] ?? null)
+                                 data-speaker-name="{{ $s['name'] }}"
+                                 data-speaker-bio="{{ $s['bio'] }}"
+                             @endif>
+                            {{ collect(explode(' ', $s['name']))->map(fn($w) => strtoupper(substr($w,0,1)))->take(2)->implode('') }}
+                        </div>
+                    @endif
+                </div>
                 <p class="font-bold text-gray-900 text-sm leading-snug">{{ $s['name'] }}</p>
                 @if($s['church'])
                     <p class="text-xs text-yellow-600 font-medium mt-0.5">{{ $s['church'] }}</p>
@@ -832,14 +932,14 @@
             </p>
         </div>
 
-        {{-- Exchange rate notice --}}
+       <!-- {{-- Exchange rate notice --}}
         @php $ugxRate = config('app.usd_ugx_rate', 3700); @endphp
         <div class="flex items-center justify-center gap-2 mb-6">
             <span class="inline-flex items-center gap-2 bg-white border border-yellow-200 text-yellow-800 text-xs font-semibold px-4 py-2 rounded-full shadow-sm">
                 💱 Current rate: <strong>1 USD ≈ UGX {{ number_format($ugxRate) }}</strong>
                 <span class="text-yellow-500 font-normal">— used for UGX price estimates</span>
             </span>
-        </div>
+        </div> -->
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse(($hotels ?? collect()) as $hotel)
@@ -992,6 +1092,70 @@
 
     const bar = document.getElementById('stats-bar');
     if (bar) observer.observe(bar);
+})();
+
+// ── Speaker Bio Tooltip ───────────────────────────────────────────
+(function () {
+    // Create a single tooltip element appended to body so it's never clipped
+    const tip = document.createElement('div');
+    tip.id = 'speaker-bio-tip';
+    tip.style.cssText = [
+        'position:fixed',
+        'z-index:9999',
+        'max-width:280px',
+        'background:#111827',
+        'color:#fff',
+        'font-size:12px',
+        'line-height:1.6',
+        'border-radius:12px',
+        'padding:12px 14px',
+        'box-shadow:0 8px 30px rgba(0,0,0,0.4)',
+        'pointer-events:none',
+        'opacity:0',
+        'transition:opacity 0.2s ease',
+        'text-align:left',
+    ].join(';');
+    document.body.appendChild(tip);
+
+    let hideTimer = null;
+
+    function show(el) {
+        clearTimeout(hideTimer);
+        const name = el.dataset.speakerName || '';
+        const bio  = el.dataset.speakerBio  || '';
+        tip.innerHTML = '<p style="font-weight:700;color:#facc15;margin-bottom:6px;">' +
+            name.replace(/</g,'&lt;') + '</p><p>' + bio.replace(/</g,'&lt;') + '</p>';
+
+        // Position tooltip above the element, centred
+        const rect = el.getBoundingClientRect();
+        tip.style.opacity = '0';
+        tip.style.display = 'block';
+        const tw = tip.offsetWidth;
+        const th = tip.offsetHeight;
+
+        let left = rect.left + rect.width / 2 - tw / 2;
+        let top  = rect.top - th - 12;
+
+        // Keep inside viewport horizontally
+        left = Math.max(8, Math.min(left, window.innerWidth - tw - 8));
+        // If not enough room above, show below instead
+        if (top < 8) { top = rect.bottom + 12; }
+
+        tip.style.left = left + 'px';
+        tip.style.top  = top  + 'px';
+        tip.style.opacity = '1';
+    }
+
+    function hide() {
+        hideTimer = setTimeout(function () { tip.style.opacity = '0'; }, 100);
+    }
+
+    document.querySelectorAll('.speaker-bio-trigger').forEach(function (el) {
+        el.addEventListener('mouseenter', function () { show(el); });
+        el.addEventListener('mouseleave', hide);
+        el.addEventListener('focus',      function () { show(el); });
+        el.addEventListener('blur',       hide);
+    });
 })();
 </script>
 @endpush

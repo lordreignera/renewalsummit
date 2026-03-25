@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Registration;
+use App\Services\AfricaIsTalkingSmsService;
 use Endroid\QrCode\Color\Color;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\ErrorCorrectionLevel;
@@ -82,7 +83,7 @@ class QrCodeService
     }
 
     /**
-     * Generate QR, save path on model, then send the confirmation email.
+     * Generate QR, save path on model, then send the confirmation email and SMS.
      */
     public function generateAndDispatch(Registration $registration): void
     {
@@ -94,8 +95,20 @@ class QrCodeService
                 'qr_sent_at'   => null, // will be set after mail sent
             ]);
 
-            // Dispatch mail job
+            // Dispatch confirmation email
             \App\Mail\RegistrationConfirmationMail::dispatchToRegistration($registration);
+
+            // Send SMS confirmation to all registrants with a phone number
+            if ($registration->phone) {
+                $sms = new AfricaIsTalkingSmsService();
+                $qrUrl = route('qr.show', ['reference' => $registration->reference]);
+                $sms->sendRegistrationConfirmation(
+                    $registration->phone,
+                    $registration->full_name,
+                    $registration->reference,
+                    $qrUrl,
+                );
+            }
 
         } catch (\Exception $e) {
             Log::error('QR generation failed', [

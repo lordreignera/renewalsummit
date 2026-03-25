@@ -95,11 +95,27 @@
 
         <div class="section-title">Your Entry QR Code</div>
         <div class="qr-box">
-            <div style="background:#fff8e1; border:2px dashed #D4A017; border-radius:8px; padding:16px 20px; font-size:14px; color:#555; text-align:center;">
-                <strong>Your QR code is attached to this email</strong><br>
-                Open the attached file <em>RS2026-QRCode-{{ $registration->reference }}.png</em>
-                and present it at the venue gate on the day of the event.
-            </div>
+            @if($qrBase64 ?? null)
+                <img src="{{ $qrBase64 }}" alt="Your QR Code" style="max-width:220px; width:100%; border:4px solid #D4A017; border-radius:8px; display:block; margin:0 auto;">
+                <p style="margin-top:12px; font-size:13px; color:#555;">
+                    <strong>Your QR code image is shown above and also attached to this email.</strong><br>
+                    Present it at the venue gate on the day of the event.
+                </p>
+            @elseif($qrUrl ?? null)
+                <a href="{{ $qrUrl }}" target="_blank">
+                    <img src="{{ $qrUrl }}" alt="Your QR Code" style="max-width:220px; width:100%; border:4px solid #D4A017; border-radius:8px; display:block; margin:0 auto;">
+                </a>
+                <p style="margin-top:12px; font-size:13px; color:#555;">
+                    <strong>Your QR code image is shown above and also attached to this email.</strong><br>
+                    Present it at the venue gate on the day of the event.
+                </p>
+            @else
+                <div style="background:#fff8e1; border:2px dashed #D4A017; border-radius:8px; padding:16px 20px; font-size:14px; color:#555; text-align:center;">
+                    <strong>Your QR code is attached to this email</strong><br>
+                    Open the attached file <em>RS2026-QRCode-{{ $registration->reference }}.png</em>
+                    and present it at the venue gate on the day of the event.
+                </div>
+            @endif
             <p class="qr-note" style="font-size:12px; color:#666; margin-top:10px;">
                 Save the QR code image to your phone or print it out before attending.
             </p>

@@ -77,11 +77,16 @@
                     <select name="accommodation_hotel_id" id="hotel-id" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm" required>
                         <option value="">Choose hotel</option>
                         @foreach($hotels as $hotel)
+                        @php
+                            $roomTypesJson = $hotel->roomTypes->map(fn($rt) => [
+                                'slug'      => $rt->slug,
+                                'label'     => $rt->label,
+                                'price_ugx' => $rt->price_ugx,
+                                'price_usd' => $rt->price_usd,
+                            ])->values()->all();
+                        @endphp
                         <option value="{{ $hotel->id }}"
-                                data-single-usd="{{ $hotel->single_price_usd }}"
-                                data-double-usd="{{ $hotel->double_price_usd }}"
-                                data-single-ugx="{{ $hotel->single_price_ugx }}"
-                                data-double-ugx="{{ $hotel->double_price_ugx }}"
+                                data-room-types="{{ json_encode($roomTypesJson) }}"
                                 {{ (string) old('accommodation_hotel_id', $reg->accommodation_hotel_id) === (string) $hotel->id ? 'selected' : '' }}>
                             {{ $hotel->name }}
                         </option>
@@ -90,11 +95,11 @@
                 </div>
                 <div id="room-type-wrap">
                     <label class="block text-sm font-bold text-summit mb-1">Room Type</label>
-                    @php $roomOld = old('accommodation_room_type', $reg->accommodation_room_type ?? 'single'); @endphp
+                    @php $roomOld = old('accommodation_room_type', $reg->accommodation_room_type ?? ''); @endphp
                     <select name="accommodation_room_type" id="room-type" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm" required>
-                        <option value="single" {{ $roomOld === 'single' ? 'selected' : '' }}>Single Room</option>
-                        <option value="double" {{ $roomOld === 'double' ? 'selected' : '' }}>Double Room</option>
+                        <option value="">Choose hotel first</option>
                     </select>
+                    <input type="hidden" id="room-old-value" value="{{ $roomOld }}">
                 </div>
             </div>
 
@@ -169,47 +174,74 @@
 @push('scripts')
 <script>
 (function () {
-    var hotel = document.getElementById('hotel-id');
-    var room = document.getElementById('room-type');
-    var nights = document.getElementById('nights');
+    var hotel    = document.getElementById('hotel-id');
+    var room     = document.getElementById('room-type');
+    var nights   = document.getElementById('nights');
     var currency = document.getElementById('accommodation-currency');
-    var total = document.getElementById('accommodation-total');
-    var fee = document.getElementById('accommodation-fee');
-    var payFields = document.getElementById('pay-now-fields');
-    var modeInputs = document.querySelectorAll('[name="accommodation_booking_mode"]');
+    var total    = document.getElementById('accommodation-total');
+    var fee      = document.getElementById('accommodation-fee');
+    var payFields   = document.getElementById('pay-now-fields');
+    var modeInputs  = document.querySelectorAll('[name="accommodation_booking_mode"]');
+    var nightsFeeRow   = document.getElementById('nights-fee-row');
+    var selfBookLinks  = document.getElementById('self-book-links');
+    var roomTypeWrap   = document.getElementById('room-type-wrap');
+    var roomOldInput   = document.getElementById('room-old-value');
+
+    // Populate the room-type dropdown from the selected hotel's data-room-types JSON.
+    function populateRoomTypes() {
+        var opt = hotel.options[hotel.selectedIndex];
+        var types = [];
+        try { types = JSON.parse((opt && opt.dataset.roomTypes) || '[]'); } catch (e) {}
+
+        // Clear select and add a placeholder.
+        room.innerHTML = '';
+        if (!types.length) {
+            room.innerHTML = '<option value="">Choose hotel first</option>';
+            return;
+        }
+
+        var savedSlug = roomOldInput ? roomOldInput.value : '';
+        types.forEach(function (rt) {
+            var o = document.createElement('option');
+            o.value = rt.slug;
+            o.textContent = rt.label;
+            o.dataset.priceUgx = rt.price_ugx;
+            o.dataset.priceUsd = rt.price_usd;
+            if (rt.slug === savedSlug) { o.selected = true; }
+            room.appendChild(o);
+        });
+
+        // If nothing was pre-selected, default to first option.
+        if (room.value === '' && room.options.length) {
+            room.options[0].selected = true;
+        }
+    }
 
     function compute() {
-        var opt = hotel.options[hotel.selectedIndex];
-        if (!opt || !opt.value) {
+        var roomOpt = room.options[room.selectedIndex];
+        if (!hotel.value || !roomOpt || !roomOpt.value) {
             total.textContent = '--';
             fee.value = '0';
             return;
         }
 
-        var c = currency.value;
-        var r = room.value;
-        var n = Math.max(1, parseInt(nights.value || '1', 10));
+        var c       = currency.value;
+        var n       = Math.max(1, parseInt(nights.value || '1', 10));
+        var perNight = c === 'USD'
+            ? parseInt(roomOpt.dataset.priceUsd || '0', 10)
+            : parseInt(roomOpt.dataset.priceUgx || '0', 10);
 
-        var perNight;
-        if (c === 'USD') {
-            perNight = r === 'double' ? parseInt(opt.dataset.doubleUsd || '0', 10) : parseInt(opt.dataset.singleUsd || '0', 10);
-            total.textContent = '$' + (perNight * n).toLocaleString() + ' USD';
-        } else {
-            perNight = r === 'double' ? parseInt(opt.dataset.doubleUgx || '0', 10) : parseInt(opt.dataset.singleUgx || '0', 10);
-            total.textContent = 'UGX ' + (perNight * n).toLocaleString();
-        }
+        total.textContent = c === 'USD'
+            ? '$' + (perNight * n).toLocaleString() + ' USD'
+            : 'UGX ' + (perNight * n).toLocaleString();
 
         fee.value = String(perNight * n);
     }
 
-    var nightsFeeRow = document.getElementById('nights-fee-row');
-    var selfBookLinks = document.getElementById('self-book-links');
-    var roomTypeWrap = document.getElementById('room-type-wrap');
-
     function togglePayNow() {
-        var mode = document.querySelector('[name="accommodation_booking_mode"]:checked');
+        var mode      = document.querySelector('[name="accommodation_booking_mode"]:checked');
         var isSelfBook = mode && mode.value === 'self_book';
-        var isPayNow = mode && mode.value === 'book_through_us_and_pay';
+        var isPayNow   = mode && mode.value === 'book_through_us_and_pay';
         payFields.classList.toggle('hidden', !isPayNow);
         nightsFeeRow.classList.toggle('hidden', isSelfBook);
         selfBookLinks.classList.toggle('hidden', !isSelfBook);
@@ -217,25 +249,24 @@
     }
 
     function togglePayMethod() {
-        var pm = document.querySelector('[name="payment_method"]:checked');
+        var pm   = document.querySelector('[name="payment_method"]:checked');
         var visa = pm && pm.value === 'visa';
         document.getElementById('acc-mm-fields').classList.toggle('hidden', visa);
         document.getElementById('acc-visa-fields').classList.toggle('hidden', !visa);
     }
 
-    [hotel, room, nights, currency].forEach(function (el) {
+    hotel.addEventListener('change', function () { populateRoomTypes(); compute(); });
+    [room, nights, currency].forEach(function (el) {
         el.addEventListener('change', compute);
         el.addEventListener('input', compute);
     });
-
-    modeInputs.forEach(function (el) {
-        el.addEventListener('change', togglePayNow);
-    });
-
+    modeInputs.forEach(function (el) { el.addEventListener('change', togglePayNow); });
     document.querySelectorAll('[name="payment_method"]').forEach(function (el) {
         el.addEventListener('change', togglePayMethod);
     });
 
+    // Initialise on page load.
+    populateRoomTypes();
     compute();
     togglePayNow();
     togglePayMethod();

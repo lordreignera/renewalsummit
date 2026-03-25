@@ -44,4 +44,10 @@ return [
         'return_url'   => env('SWAPP_RETURN_URL'),
     ],
 
+    'africaistalking' => [
+        'username'  => env('AFRICAISTALKING_USERNAME'),
+        'api_key'   => env('AFRICAISTALKING_API_KEY'),
+        'sender_id' => env('AFRICAISTALKING_SENDER_ID', ''),
+    ],
+
 ];

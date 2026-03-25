@@ -304,6 +304,7 @@ class RegistrationController extends Controller
 
         $hotels = Hotel::query()
             ->where('is_active', true)
+            ->with(['roomTypes' => fn ($q) => $q->orderBy('sort_order')])
             ->orderBy('sort_order')
             ->orderBy('name')
             ->get();
@@ -404,7 +405,7 @@ class RegistrationController extends Controller
         $data = $request->validate([
             'accommodation_booking_mode' => 'required|in:self_book,book_through_us_no_payment,book_through_us_and_pay',
             'accommodation_hotel_id' => 'required|exists:hotels,id',
-            'accommodation_room_type' => 'required|in:single,double',
+            'accommodation_room_type' => 'required|string|max:50',
             'accommodation_nights' => 'nullable|integer|min:1|max:14',
             'accommodation_currency' => 'nullable|in:USD,UGX',
             'accommodation_fee' => 'nullable|integer|min:0',
@@ -416,7 +417,7 @@ class RegistrationController extends Controller
             'card_cvc' => 'nullable|string|max:4',
         ]);
 
-        $hotel = Hotel::findOrFail((int) $data['accommodation_hotel_id']);
+        $hotel = Hotel::with('roomTypes')->findOrFail((int) $data['accommodation_hotel_id']);
         $isSelfBook = $data['accommodation_booking_mode'] === 'self_book';
         $currency = $data['accommodation_currency'] ?? $reg->currency ?? 'UGX';
         $roomType = $data['accommodation_room_type'];

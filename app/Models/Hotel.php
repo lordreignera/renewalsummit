@@ -38,10 +38,21 @@ class Hotel extends Model
         return $this->hasMany(Registration::class, 'accommodation_hotel_id');
     }
 
-    public function priceForRoomType(string $currency, string $roomType): int
+    public function roomTypes(): HasMany
     {
-        $isDouble = $roomType === 'double';
+        return $this->hasMany(HotelRoomType::class)->orderBy('sort_order');
+    }
 
+    public function priceForRoomType(string $currency, string $roomTypeSlug): int
+    {
+        $roomType = $this->roomTypes()->where('slug', $roomTypeSlug)->first();
+
+        if ($roomType) {
+            return $currency === 'USD' ? $roomType->price_usd : $roomType->price_ugx;
+        }
+
+        // Legacy fallback for single / double before room-type table existed.
+        $isDouble = $roomTypeSlug === 'double';
         if ($currency === 'USD') {
             return $isDouble ? $this->double_price_usd : $this->single_price_usd;
         }
