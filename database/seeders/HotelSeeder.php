@@ -9,8 +9,10 @@ class HotelSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('hotel_room_types')->delete();
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('hotel_room_types')->truncate();
         DB::table('hotels')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         // USD rate is pulled from app config (env USD_TO_UGX_RATE, default 3700).
         // To change the rate: update USD_TO_UGX_RATE in .env and re-run this seeder.
