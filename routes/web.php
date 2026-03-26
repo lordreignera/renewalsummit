@@ -4,6 +4,9 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\HotelController as AdminHotel;
 use App\Http\Controllers\Admin\RegistrationController as AdminRegistration;
 use App\Http\Controllers\Admin\TestimonialVideoController as AdminTestimonialVideo;
+use App\Http\Controllers\Admin\UserController as AdminUser;
+use App\Http\Controllers\Admin\RoleController as AdminRole;
+use App\Http\Controllers\Admin\PermissionController as AdminPermission;
 // use App\Http\Controllers\DonationController; // DISABLED: awaiting PayPal approval
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\QrImageController;
@@ -93,46 +96,73 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     ->name('admin.')
     ->group(function () {
 
+        // ── Dashboard (all roles) ──────────────────────────────────
         Route::get('/', [AdminDashboard::class, 'index'])->name('dashboard');
-        Route::prefix('hotels')->name('hotels.')->group(function () {
-            Route::get('/', [AdminHotel::class, 'index'])->name('index');
-            Route::get('/create', [AdminHotel::class, 'create'])->name('create');
-            Route::post('/create', [AdminHotel::class, 'store'])->name('store');
-            Route::get('/{hotel}/edit', [AdminHotel::class, 'edit'])->name('edit');
-            Route::put('/{hotel}', [AdminHotel::class, 'update'])->name('update');
-            Route::delete('/{hotel}', [AdminHotel::class, 'destroy'])->name('destroy');
-        });
 
-        // Registrations CRUD & actions
+        // ── Registrations (all roles can view; only super_admin can create/manage) ──
         Route::prefix('registrations')->name('registrations.')->group(function () {
-            // Manual registration (admin)
-            Route::get('/create',               [AdminRegistration::class, 'create'])->name('create');
-            Route::post('/create',              [AdminRegistration::class, 'store'])->name('store');
-            Route::get('/{registration}/payment', [AdminRegistration::class, 'payment'])->name('payment');
+            Route::get('/',               [AdminRegistration::class, 'index'])->name('index');
+            Route::get('/{registration}', [AdminRegistration::class, 'show'])->name('show');
 
-            Route::get('/',                      [AdminRegistration::class, 'index'])->name('index');
-            Route::get('/export',                [AdminRegistration::class, 'export'])->name('export');
-            Route::get('/{registration}',        [AdminRegistration::class, 'show'])->name('show');
-            Route::post('/{registration}/resend-qr',    [AdminRegistration::class, 'resendQr'])->name('resend-qr');
+            // finance + super_admin only
+            Route::get('/export', [AdminRegistration::class, 'export'])
+                ->middleware('role:super_admin,finance')
+                ->name('export');
+
+            // super_admin + registrar: create registrations & send payment prompts
+            Route::middleware('role:super_admin,registrar')->group(function () {
+                Route::get('/create',                 [AdminRegistration::class, 'create'])->name('create');
+                Route::post('/create',                [AdminRegistration::class, 'store'])->name('store');
+                Route::get('/{registration}/payment', [AdminRegistration::class, 'payment'])->name('payment');
+            });
+
+            // super_admin only
+            Route::middleware('role:super_admin')->group(function () {
+                Route::post('/{registration}/resend-qr', [AdminRegistration::class, 'resendQr'])->name('resend-qr');
+            });
         });
 
-        Route::prefix('testimonials')->name('testimonials.')->group(function () {
-            Route::get('/',         [AdminTestimonialVideo::class, 'index'])->name('index');
-            Route::get('/create',   [AdminTestimonialVideo::class, 'create'])->name('create');
-            Route::post('/',        [AdminTestimonialVideo::class, 'store'])->name('store');
-            Route::get('/{video}/review', [AdminTestimonialVideo::class, 'review'])->name('review');
-            Route::post('/{video}/viewed', [AdminTestimonialVideo::class, 'markViewed'])->name('viewed');
-            Route::post('/{video}/approve', [AdminTestimonialVideo::class, 'approve'])->name('approve');
-            Route::post('/{video}/reject', [AdminTestimonialVideo::class, 'reject'])->name('reject');
-            Route::delete('/{video}', [AdminTestimonialVideo::class, 'destroy'])->name('destroy');
+        // ── Check-in (all roles) ───────────────────────────────────
+        Route::get('/checkin',                         [AdminRegistration::class, 'checkInPage'])->name('checkin');
+        Route::get('/checkin/{token}',                 [AdminRegistration::class, 'checkIn'])->name('checkin.process');
+        Route::post('/checkin/{registration}/confirm', [AdminRegistration::class, 'checkInById'])->name('checkin.confirm');
+
+        // ── Super Admin only ───────────────────────────────────────
+        Route::middleware('role:super_admin')->group(function () {
+
+            Route::prefix('hotels')->name('hotels.')->group(function () {
+                Route::get('/',              [AdminHotel::class, 'index'])->name('index');
+                Route::get('/create',        [AdminHotel::class, 'create'])->name('create');
+                Route::post('/create',       [AdminHotel::class, 'store'])->name('store');
+                Route::get('/{hotel}/edit',  [AdminHotel::class, 'edit'])->name('edit');
+                Route::put('/{hotel}',       [AdminHotel::class, 'update'])->name('update');
+                Route::delete('/{hotel}',    [AdminHotel::class, 'destroy'])->name('destroy');
+            });
+
+            Route::prefix('testimonials')->name('testimonials.')->group(function () {
+                Route::get('/',                    [AdminTestimonialVideo::class, 'index'])->name('index');
+                Route::get('/create',              [AdminTestimonialVideo::class, 'create'])->name('create');
+                Route::post('/',                   [AdminTestimonialVideo::class, 'store'])->name('store');
+                Route::get('/{video}/review',      [AdminTestimonialVideo::class, 'review'])->name('review');
+                Route::post('/{video}/viewed',     [AdminTestimonialVideo::class, 'markViewed'])->name('viewed');
+                Route::post('/{video}/approve',    [AdminTestimonialVideo::class, 'approve'])->name('approve');
+                Route::post('/{video}/reject',     [AdminTestimonialVideo::class, 'reject'])->name('reject');
+                Route::delete('/{video}',          [AdminTestimonialVideo::class, 'destroy'])->name('destroy');
+            });
+
+            Route::prefix('users')->name('users.')->group(function () {
+                Route::get('/',            [AdminUser::class, 'index'])->name('index');
+                Route::get('/create',      [AdminUser::class, 'create'])->name('create');
+                Route::post('/',           [AdminUser::class, 'store'])->name('store');
+                Route::get('/{user}/edit', [AdminUser::class, 'edit'])->name('edit');
+                Route::put('/{user}',      [AdminUser::class, 'update'])->name('update');
+                Route::delete('/{user}',   [AdminUser::class, 'destroy'])->name('destroy');
+            });
+
+            Route::resource('roles',       AdminRole::class)->except(['show']);
+            Route::resource('permissions', AdminPermission::class)->except(['show']);
         });
 
-        // Check-in
-        Route::get('/checkin',                              [AdminRegistration::class, 'checkInPage'])->name('checkin');
-        Route::get('/checkin/{token}',                      [AdminRegistration::class, 'checkIn'])->name('checkin.process');
-        Route::post('/checkin/{registration}/confirm',      [AdminRegistration::class, 'checkInById'])->name('checkin.confirm');
-
-        // Redirect old /dashboard to admin dashboard
         Route::get('/jetstream-dashboard', fn() => redirect()->route('admin.dashboard'));
     });
 

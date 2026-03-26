@@ -13,11 +13,6 @@
         ['FCC Members',      $stats['fcc'],           '✝️',  'bg-purple-50', 'text-purple-700'],
         ['International',    $stats['international'], '🌍', 'bg-indigo-50', 'text-indigo-700'],
         ['Local Leaders',   $stats['local'],         '🇺🇬', 'bg-orange-50', 'text-orange-700'],
-        ['Registration Revenue',    number_format($stats['registration_revenue']),   '💰', 'bg-emerald-50', 'text-emerald-700'],
-        ['Accommodation Revenue',    number_format($stats['accommodation_revenue']),   '🏨', 'bg-cyan-50', 'text-cyan-700'],
-        ['Accommodation Bookings', $stats['accommodation_bookings'], '🛏️', 'bg-teal-50', 'text-teal-700'],
-        ['Accommodation Pending', $stats['accommodation_pending'], '📌', 'bg-amber-50', 'text-amber-700'],
-        ['Donations (UGX)',  number_format($stats['donations']), '🙏', 'bg-pink-50',    'text-pink-700'],
     ] as [$label, $value, $icon, $bg, $text])
     <div class="{{ $bg }} rounded-2xl p-5">
         <div class="text-3xl mb-1">{{ $icon }}</div>
@@ -25,6 +20,22 @@
         <div class="text-xs text-gray-500 font-medium mt-0.5">{{ $label }}</div>
     </div>
     @endforeach
+
+    @if(auth()->user()->hasRole('super_admin', 'finance'))
+    @foreach([
+        ['Registration Revenue',   number_format($stats['registration_revenue']),  '💰', 'bg-emerald-50', 'text-emerald-700'],
+        ['Accommodation Revenue',  number_format($stats['accommodation_revenue']),  '🏨', 'bg-cyan-50',    'text-cyan-700'],
+        ['Accommodation Bookings', $stats['accommodation_bookings'],                '🛏️', 'bg-teal-50',   'text-teal-700'],
+        ['Accommodation Pending',  $stats['accommodation_pending'],                 '📌', 'bg-amber-50',   'text-amber-700'],
+        ['Donations (UGX)',        number_format($stats['donations']),              '🙏', 'bg-pink-50',    'text-pink-700'],
+    ] as [$label, $value, $icon, $bg, $text])
+    <div class="{{ $bg }} rounded-2xl p-5">
+        <div class="text-3xl mb-1">{{ $icon }}</div>
+        <div class="text-2xl font-extrabold {{ $text }}">{{ $value }}</div>
+        <div class="text-xs text-gray-500 font-medium mt-0.5">{{ $label }}</div>
+    </div>
+    @endforeach
+    @endif
 </div>
 
 <div class="grid md:grid-cols-2 gap-6">
@@ -135,16 +146,27 @@
         <div class="text-3xl mb-2">📋</div>
         <div class="font-bold text-sm text-summit">All Registrations</div>
     </a>
+    @if(auth()->user()->hasRole('super_admin', 'finance'))
     <a href="{{ route('admin.registrations.export') }}"
        class="bg-white border-2 border-gray-200 rounded-2xl p-5 text-center hover:border-yellow-400 transition">
         <div class="text-3xl mb-2">📥</div>
         <div class="font-bold text-sm text-summit">Export CSV</div>
     </a>
+    @endif
+    @if(auth()->user()->isSuperAdmin())
     <a href="{{ route('admin.hotels.index') }}"
        class="bg-white border-2 border-gray-200 rounded-2xl p-5 text-center hover:border-yellow-400 transition">
         <div class="text-3xl mb-2">🏨</div>
         <div class="font-bold text-sm text-summit">Manage Hotels</div>
     </a>
+    @endif
+    @if(auth()->user()->hasRole('super_admin', 'registrar'))
+    <a href="{{ route('admin.registrations.create') }}"
+       class="bg-white border-2 border-gray-200 rounded-2xl p-5 text-center hover:border-yellow-400 transition">
+        <div class="text-3xl mb-2">✍️</div>
+        <div class="font-bold text-sm text-summit">Manual Registration</div>
+    </a>
+    @endif
     <a href="{{ route('register.start') }}" target="_blank"
        class="bg-white border-2 border-gray-200 rounded-2xl p-5 text-center hover:border-yellow-400 transition">
         <div class="text-3xl mb-2">📝</div>

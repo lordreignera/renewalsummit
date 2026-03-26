@@ -17,6 +17,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'payment/callback',
             'donation/callback',
         ]);
+
+        // Role-based access control
+        $middleware->alias([
+            'role' => \App\Http\Middleware\RequireRole::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

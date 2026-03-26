@@ -16,12 +16,14 @@ class AdminSeeder extends Seeder
                 'email'             => 'admin@renewalsummit.ug',
                 'password'          => Hash::make('Summit@2026!'),
                 'email_verified_at' => now(),
+                'role'              => 'super_admin',
             ],
             [
                 'name'              => 'Registration Desk',
                 'email'             => 'desk@renewalsummit.ug',
                 'password'          => Hash::make('Desk@2026!'),
                 'email_verified_at' => now(),
+                'role'              => 'registrar',
             ],
         ];
 
@@ -31,10 +33,10 @@ class AdminSeeder extends Seeder
 
         $this->command->info('✅ Admin users seeded');
         $this->command->table(
-            ['Name', 'Email', 'Default Password'],
+            ['Name', 'Email', 'Default Password', 'Role'],
             [
-                ['Summit Admin',      'admin@renewalsummit.ug', 'Summit@2026!'],
-                ['Registration Desk', 'desk@renewalsummit.ug',  'Desk@2026!'],
+                ['Summit Admin',      'admin@renewalsummit.ug', 'Summit@2026!',  'super_admin'],
+                ['Registration Desk', 'desk@renewalsummit.ug',  'Desk@2026!',   'registrar'],
             ]
         );
         $this->command->warn('⚠  Change default passwords before going live!');

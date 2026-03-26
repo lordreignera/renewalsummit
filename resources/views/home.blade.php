@@ -664,26 +664,10 @@
                     'img' => 'Brad_Thomas.jpeg', 'bio' => null,
                 ],
                 [
-                    'name' => 'Ps. Eric Geiger', 'role' => 'Plenary Speaker',
-                    'church' => 'Mariners Church', 'country' => 'USA',
-                    'img' => 'Pr. Eric Geiger.jpeg', 'bio' => null,
-                ],
-                [
-                    'name' => 'Ps. Bradley Goode', 'role' => 'Plenary Speaker',
-                    'church' => 'Good News Church', 'country' => 'USA',
-                    'img' => 'Bradley_Goode.jpeg',
-                    'bio' => 'Rev. Bradley Goode is the pastor at Good News Church in Santa Rosa Beach, Florida. He previously led Dauphin Way United Methodist Church in Alabama for 5 years and Saint James UMC for 10 years, and has served churches in Detroit, Honolulu, and Vail. He holds a Master of Divinity and is a devoted husband and father — including having adopted their daughter Amelia from Uganda.',
-                ],
-                [
                     'name' => 'Ps. Jose Zayas', 'role' => 'Plenary Speaker',
                     'church' => '26 West Church', 'country' => 'USA',
                     'img' => 'Jose_Zayas.webp',
                     'bio' => 'Pastor Jose Zayas is the Lead Pastor of 26 West Church in Portland, Oregon. He is active in global missions, speaking at festivals, conferences, and outreaches across the USA, Europe, Asia, and Africa. He is the author of "Airborn" — a book on getting your faith off the ground. He is also a devoted father and husband.',
-                ],
-                [
-                    'name' => 'Ps. Jason Uptmore', 'role' => 'Plenary Speaker',
-                    'church' => 'Wayside Chapel', 'country' => 'USA',
-                    'img' => 'Jason_Uptmore.jpeg', 'bio' => null,
                 ],
                 [
                     'name' => 'Ps. Bryant Lee', 'role' => 'Plenary Speaker',
@@ -701,15 +685,16 @@
                     'img' => 'Mark_Strong.jpeg', 'bio' => null,
                 ],
                 [
-                    'name' => 'Ps. Julius Rwotlonyo', 'role' => 'Plenary Speaker',
-                    'church' => 'Watoto Church', 'country' => 'Uganda',
-                    'img' => 'Julius_Rwotlonyo.jpeg', 'bio' => null,
-                ],
-                [
                     'name' => 'Ps. Curtis Bronzan', 'role' => 'Plenary Speaker',
                     'church' => 'FPC Houston', 'country' => 'USA',
                     'img' => 'Curtis_Bronzan.jpeg',
                     'bio' => 'Pastor Curtis Bronzan began ministry in 2003, serving in various pastoral roles before being appointed Senior Pastor &amp; Head of Staff at First Presbyterian Church of Houston in November 2022. He holds several degrees and is currently pursuing a Doctorate in Ministry. He is married to Cassie and they have two children.',
+                ],
+                [
+                    'name' => 'Dr. Augustine Longa', 'role' => 'Plenary Speaker',
+                    'church' => 'Central Africa Missions Outreach', 'country' => 'Côte d\'Ivoire',
+                    'img' => 'Dr. Augustine Longa.jpg.jpeg', 'badge' => null,
+                    'bio' => 'Dr. Augustin Longa is the founder of Central Africa Missions Outreach and Director of West Africa Missionary Movements. Holding a Doctorate in Missiology, he specialises in indigenous leadership among Muslim communities, having served in Chad, Nigeria, and Cameroon. He is based in Abidjan, Côte d\'Ivoire, with his wife and three children.',
                 ],
             ];
             @endphp
@@ -779,12 +764,6 @@
                     'name' => 'Tony Bowick', 'role' => 'Breakout Speaker',
                     'church' => 'Rocky Peak', 'country' => 'USA',
                     'img' => 'images/Pr. Tony Bowick.jpg.jpeg', 'bio' => null,
-                ],
-                [
-                    'name' => 'Dr. Augustine Longa', 'role' => 'Breakout Speaker',
-                    'church' => 'Central Africa Missions Outreach', 'country' => 'Côte d\'Ivoire',
-                    'img' => 'images/Dr. Augustine Longa.jpg.jpeg',
-                    'bio' => 'Dr. Augustin Longa is the founder of Central Africa Missions Outreach and Director of West Africa Missionary Movements. Holding a Doctorate in Missiology, he specialises in indigenous leadership among Muslim communities, having served in Chad, Nigeria, and Cameroon. He is based in Abidjan, Côte d\'Ivoire, with his wife and three children.',
                 ],
                 [
                     'name' => 'Bp. Christopher Mukwavi', 'role' => 'Breakout Speaker',
@@ -944,9 +923,6 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse(($hotels ?? collect()) as $hotel)
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
-                <div class="h-36 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center border-b border-gray-100">
-                    <span class="text-5xl" aria-hidden="true">🏨</span>
-                </div>
                 <div class="p-6 flex-1">
                     <h3 class="font-extrabold text-summit text-lg leading-tight mb-1">{{ $hotel->name }}</h3>
                     <p class="text-sm text-gray-500 leading-relaxed mb-3">{{ $hotel->description ?: 'Recommended accommodation near the summit venue.' }}</p>

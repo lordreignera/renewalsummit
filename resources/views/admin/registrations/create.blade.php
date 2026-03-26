@@ -32,7 +32,6 @@
         @csrf
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            @php $currentAff = old('affiliation'); @endphp
             @php $currentDesig = old('designation'); @endphp
 
             <div>
@@ -45,16 +44,58 @@
                 </select>
             </div>
 
+            <div class="md:col-span-2">
+                <label class="text-sm font-bold">Full name</label>
+                <input name="full_name" value="{{ old('full_name') }}" required
+                       class="w-full border rounded-xl px-3 py-2 mt-1 text-sm">
+            </div>
+
             <div>
-                <label class="text-sm font-bold">2. Are you an FCC member? <span class="text-red-500">*</span></label>
-                <select name="affiliation" id="affiliation" required class="w-full border rounded-xl px-3 py-2 mt-1 text-sm bg-white">
-                    <option value="">- Select -</option>
-                    <option value="fcc" {{ $currentAff === 'fcc' ? 'selected' : '' }}>Yes - I am an FCC member</option>
-                    <option value="other" {{ $currentAff === 'other' ? 'selected' : '' }}>No - I am not an FCC member</option>
+                <label class="text-sm font-bold">Designation</label>
+                <select name="designation" id="designation"
+                        required
+                        class="w-full border rounded-xl px-3 py-2 mt-1 text-sm bg-white">
+                    <option value="">- Select designation -</option>
+                    <option value="fcc_regional_leader" {{ $currentDesig === 'fcc_regional_leader' ? 'selected' : '' }}>FCC Regional Leader</option>
+                    <option value="senior_pastor" {{ $currentDesig === 'senior_pastor' ? 'selected' : '' }}>Senior Pastor</option>
+                    <option value="church_leader" {{ $currentDesig === 'church_leader' ? 'selected' : '' }}>Church Leader</option>
+                    <option value="corporate" {{ $currentDesig === 'corporate' ? 'selected' : '' }}>Corporate / Organisation</option>
                 </select>
             </div>
 
-            <div id="fcc-fields" class="md:col-span-2 {{ $currentAff === 'fcc' ? '' : 'hidden' }} bg-yellow-50 border border-yellow-200 rounded-xl p-5 space-y-4">
+            <div id="designation-specify-wrap" class="{{ old('designation') === 'church_leader' ? '' : 'hidden' }}">
+                <label class="text-sm font-bold">Specify church role</label>
+                <input name="designation_specify" value="{{ old('designation_specify') }}"
+                       placeholder="Please specify..."
+                       class="w-full border rounded-xl px-3 py-2 mt-1 text-sm">
+            </div>
+
+            {{-- Organisation / Church / Ministry --}}
+            @php $currentOrg = old('organization'); @endphp
+            <div class="md:col-span-2">
+                <label class="text-sm font-bold">Church / Ministry / Organisation <span class="text-red-500">*</span></label>
+                <select name="organization" id="organization" required
+                        class="w-full border rounded-xl px-3 py-2 mt-1 text-sm bg-white">
+                    <option value="">— Select organisation —</option>
+                    <option value="NFBAC"              {{ $currentOrg === 'NFBAC'              ? 'selected' : '' }}>NFBAC</option>
+                    <option value="PAG"                {{ $currentOrg === 'PAG'                ? 'selected' : '' }}>PAG</option>
+                    <option value="FCC"                {{ $currentOrg === 'FCC'                ? 'selected' : '' }}>FCC (Fellowship of Christian Churches)</option>
+                    <option value="Compassion"         {{ $currentOrg === 'Compassion'         ? 'selected' : '' }}>Compassion</option>
+                    <option value="Full Gospel Church" {{ $currentOrg === 'Full Gospel Church' ? 'selected' : '' }}>Full Gospel Church</option>
+                    <option value="other"              {{ $currentOrg === 'other'              ? 'selected' : '' }}>Other</option>
+                </select>
+            </div>
+
+            {{-- Other organisation free-text --}}
+            <div id="org-other-wrap" class="md:col-span-2 {{ $currentOrg === 'other' ? '' : 'hidden' }}">
+                <label class="text-sm font-bold">Specify organisation</label>
+                <input name="organization_other" value="{{ old('organization_other') }}"
+                       placeholder="Please specify…"
+                       class="w-full border rounded-xl px-3 py-2 mt-1 text-sm">
+            </div>
+
+            {{-- FCC details --}}
+            <div id="fcc-fields" class="md:col-span-2 {{ $currentOrg === 'FCC' ? '' : 'hidden' }} bg-yellow-50 border border-yellow-200 rounded-xl p-5 space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
                         <label class="text-sm font-bold">Region</label>
@@ -83,29 +124,27 @@
                 </div>
             </div>
 
+            {{-- Group Attendance --}}
             <div class="md:col-span-2">
-                <label class="text-sm font-bold">Full name</label>
-                <input name="full_name" value="{{ old('full_name') }}" required
-                       class="w-full border rounded-xl px-3 py-2 mt-1 text-sm">
+                <label class="text-sm font-bold">Attending as part of a group? <span class="text-red-500">*</span></label>
+                <div class="flex gap-6 mt-2">
+                    <label class="flex items-center gap-2 text-sm cursor-pointer">
+                        <input type="radio" name="is_group" value="1"
+                               {{ old('is_group') == '1' ? 'checked' : '' }}
+                               class="accent-yellow-500"> Yes
+                    </label>
+                    <label class="flex items-center gap-2 text-sm cursor-pointer">
+                        <input type="radio" name="is_group" value="0"
+                               {{ old('is_group', '0') == '0' ? 'checked' : '' }}
+                               class="accent-yellow-500"> No
+                    </label>
+                </div>
             </div>
 
-            <div>
-                <label class="text-sm font-bold">Designation</label>
-                <select name="designation" id="designation"
-                        required
-                        class="w-full border rounded-xl px-3 py-2 mt-1 text-sm bg-white">
-                    <option value="">- Select designation -</option>
-                    <option value="fcc_regional_leader" {{ $currentDesig === 'fcc_regional_leader' ? 'selected' : '' }}>FCC Regional Leader</option>
-                    <option value="senior_pastor" {{ $currentDesig === 'senior_pastor' ? 'selected' : '' }}>Senior Pastor</option>
-                    <option value="church_leader" {{ $currentDesig === 'church_leader' ? 'selected' : '' }}>Church Leader</option>
-                    <option value="corporate" {{ $currentDesig === 'corporate' ? 'selected' : '' }}>Corporate / Organisation</option>
-                </select>
-            </div>
-
-            <div id="designation-specify-wrap" class="{{ old('designation') === 'church_leader' ? '' : 'hidden' }}">
-                <label class="text-sm font-bold">Specify church role</label>
-                <input name="designation_specify" value="{{ old('designation_specify') }}"
-                       placeholder="Please specify..."
+            <div id="group-name-wrap" class="md:col-span-2 {{ old('is_group') == '1' ? '' : 'hidden' }}">
+                <label class="text-sm font-bold">Group / Team Name</label>
+                <input name="group_name" value="{{ old('group_name') }}"
+                       placeholder="Enter group or team name…"
                        class="w-full border rounded-xl px-3 py-2 mt-1 text-sm">
             </div>
 
@@ -258,39 +297,38 @@
 @push('scripts')
 <script>
     (function () {
-        const designation = document.getElementById('designation');
-        const specifyWrap = document.getElementById('designation-specify-wrap');
-        const affiliation = document.getElementById('affiliation');
-        const fccFields = document.getElementById('fcc-fields');
+        const designation  = document.getElementById('designation');
+        const specifyWrap  = document.getElementById('designation-specify-wrap');
+        const orgSel       = document.getElementById('organization');
+        const fccFields    = document.getElementById('fcc-fields');
+        const orgOtherWrap = document.getElementById('org-other-wrap');
+        const groupNameWrap = document.getElementById('group-name-wrap');
 
-        if (!designation || !specifyWrap) {
-            return;
-        }
+        if (!designation || !specifyWrap) return;
 
         function syncDesignationSpecify() {
-            if (designation.value === 'church_leader') {
-                specifyWrap.classList.remove('hidden');
-                return;
-            }
-
-            specifyWrap.classList.add('hidden');
+            specifyWrap.classList.toggle('hidden', designation.value !== 'church_leader');
         }
-
         designation.addEventListener('change', syncDesignationSpecify);
         syncDesignationSpecify();
 
-        if (affiliation && fccFields) {
-            function syncFccFields() {
-                if (affiliation.value === 'fcc') {
-                    fccFields.classList.remove('hidden');
-                    return;
-                }
-
-                fccFields.classList.add('hidden');
+        if (orgSel) {
+            function syncOrg() {
+                fccFields.classList.toggle('hidden', orgSel.value !== 'FCC');
+                orgOtherWrap.classList.toggle('hidden', orgSel.value !== 'other');
             }
+            orgSel.addEventListener('change', syncOrg);
+            syncOrg();
+        }
 
-            affiliation.addEventListener('change', syncFccFields);
-            syncFccFields();
+        const groupRadios = document.querySelectorAll('input[name="is_group"]');
+        if (groupRadios.length && groupNameWrap) {
+            function syncGroup() {
+                const yes = document.querySelector('input[name="is_group"][value="1"]');
+                groupNameWrap.classList.toggle('hidden', !(yes && yes.checked));
+            }
+            groupRadios.forEach(r => r.addEventListener('change', syncGroup));
+            syncGroup();
         }
     })();
 </script>

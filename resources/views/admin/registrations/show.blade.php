@@ -213,16 +213,30 @@
         </div>
         @endif
 
+        {{-- Process Payment (unpaid / pending) --}}
+        @if(!$registration->isPaid() && !$registration->isCheckedIn() && auth()->user()->hasRole('super_admin', 'registrar'))
+        <div class="bg-white rounded-2xl shadow-sm p-6 space-y-3">
+            <h3 class="font-bold text-summit mb-2">Process Payment</h3>
+            <p class="text-xs text-gray-500">Send a mobile money prompt or complete card payment on behalf of this attendee.</p>
+            <a href="{{ route('admin.registrations.payment', $registration) }}"
+               class="block text-center bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-xl text-sm transition">
+                💳 Send Payment Prompt
+            </a>
+        </div>
+        @endif
+
         {{-- Actions --}}
         @if($registration->isPaid() || $registration->isCheckedIn())
         <div class="bg-white rounded-2xl shadow-sm p-6 space-y-3">
             <h3 class="font-bold text-summit mb-2">Actions</h3>
+            @if(auth()->user()->isSuperAdmin())
             <form method="POST" action="{{ route('admin.registrations.resend-qr', $registration) }}">
                 @csrf
                 <button class="w-full bg-gold hover:bg-yellow-600 text-white font-bold py-2 rounded-xl text-sm transition">
                     📧 Resend QR Email
                 </button>
             </form>
+            @endif
             <a href="{{ route('register.accommodation', ['reference' => $registration->reference, 'token' => $registration->qr_token]) }}"
                target="_blank"
                class="block text-center bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-xl text-sm transition">

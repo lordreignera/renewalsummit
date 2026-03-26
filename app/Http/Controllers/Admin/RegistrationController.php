@@ -143,11 +143,14 @@ class RegistrationController extends Controller
             'address'                 => 'nullable|string|max:500',
             'country_type'            => 'required|in:local,africa,international',
             'nationality'             => 'nullable|string|max:191',
-            'affiliation'             => 'required|in:fcc,other',
-            'fcc_region'              => 'nullable|required_if:affiliation,fcc|string|max:191',
-            'fcc_regional_leader'     => 'nullable|required_if:affiliation,fcc|string|max:191',
-            'fcc_church'              => 'nullable|required_if:affiliation,fcc|string|max:191',
+            'organization'            => 'required|in:NFBAC,PAG,FCC,Compassion,Full Gospel Church,other',
+            'organization_other'      => 'required_if:organization,other|nullable|string|max:191',
+            'fcc_region'              => 'nullable|required_if:organization,FCC|string|max:191',
+            'fcc_regional_leader'     => 'nullable|required_if:organization,FCC|string|max:191',
+            'fcc_church'              => 'nullable|required_if:organization,FCC|string|max:191',
             'fcc_pastor'              => 'nullable|string|max:191',
+            'is_group'                => 'nullable|boolean',
+            'group_name'              => 'required_if:is_group,1|nullable|string|max:191',
             'designation'             => 'nullable|string|max:191',
             'designation_specify'     => 'nullable|required_if:designation,church_leader|string|max:191',
 
@@ -169,12 +172,15 @@ class RegistrationController extends Controller
         // Normalize booleans
         $data['accommodation_required'] = (bool) ($data['accommodation_required'] ?? false);
         $data['sms_opt_in'] = (bool) ($data['sms_opt_in'] ?? false);
+        $data['is_group']   = (bool) ($data['is_group'] ?? false);
+        // Derive affiliation from organisation selection
+        $data['affiliation'] = ($data['organization'] === 'FCC') ? 'fcc' : 'other';
 
         // Registration fee is paid first (same tiers as public step 1).
         $feeTiers = [
             'local'         => ['amount' => (int) env('SUMMIT_FEE_LOCAL', 150000), 'currency' => 'UGX'],
             'africa'        => ['amount' => (int) env('SUMMIT_FEE_AFRICA', 50), 'currency' => 'USD'],
-            'international' => ['amount' => (int) env('SUMMIT_FEE_INTERNATIONAL', 100), 'currency' => 'USD'],
+            'international' => ['amount' => (int) env('SUMMIT_FEE_INTERNATIONAL', 150), 'currency' => 'USD'],
         ];
         $tier = $feeTiers[$data['country_type']];
 

@@ -327,38 +327,48 @@
 
     function stopCamera() {
         if (scanner) {
-            scanner.stop().then(function() {
-                scanner = null;
-                document.getElementById('camera-area').classList.add('hidden');
-            }).catch(console.error);
+            try {
+                scanner.stop().then(function() {
+                    scanner = null;
+                    const area = document.getElementById('camera-area');
+                    if (area) area.classList.add('hidden');
+                }).catch(() => { scanner = null; });
+            } catch (e) { scanner = null; }
         }
     }
 
-    // Manual "Go" submit
-    document.getElementById('scanner-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const raw = document.getElementById('scanner-input').value.trim();
-        if (raw) {
-            const lookup = extractLookupValue(raw);
-            window.location.href = '{{ url('/admin/checkin') }}/' + encodeURIComponent(lookup);
-        }
-    });
+    // Manual "Go" submit (top-level scanner form — guard in case element is absent)
+    const _scannerForm  = document.getElementById('scanner-form');
+    const _scannerInput = document.getElementById('scanner-input');
 
-    // Auto-submit when a scanner device fires input quickly (USB barcode/QR scanners)
-    let scanTimer;
-    document.getElementById('scanner-input').addEventListener('input', function() {
-        clearTimeout(scanTimer);
-        const val = this.value;
-        scanTimer = setTimeout(function() {
-            const raw = val.trim();
+    if (_scannerForm) {
+        _scannerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const raw = _scannerInput ? _scannerInput.value.trim() : '';
             if (raw) {
                 const lookup = extractLookupValue(raw);
                 window.location.href = '{{ url('/admin/checkin') }}/' + encodeURIComponent(lookup);
             }
-        }, 80);
-    });
+        });
+    }
 
-    document.getElementById('scanner-input').focus();
+    // Auto-submit when a scanner device fires input quickly (USB barcode/QR scanners)
+    let scanTimer;
+    if (_scannerInput) {
+        _scannerInput.addEventListener('input', function() {
+            clearTimeout(scanTimer);
+            const val = this.value;
+            scanTimer = setTimeout(function() {
+                const raw = val.trim();
+                if (raw) {
+                    const lookup = extractLookupValue(raw);
+                    window.location.href = '{{ url('/admin/checkin') }}/' + encodeURIComponent(lookup);
+                }
+            }, 80);
+        });
+
+        _scannerInput.focus();
+    }
 
     /* ══════════════════════════════════════════
        ATTENDEE MODAL + QR VERIFICATION
@@ -525,7 +535,7 @@
 
     function stopModalCamera() {
         if (modalScanner) {
-            modalScanner.stop().catch(() => {});
+            try { modalScanner.stop().catch(() => {}); } catch (e) { /* scanner never started */ }
             modalScanner = null;
         }
     }

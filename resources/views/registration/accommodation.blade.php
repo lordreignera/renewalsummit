@@ -142,8 +142,15 @@
                 </div>
 
                 <div id="acc-mm-fields">
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Mobile Money Number</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">
+                        Mobile Money Number <span class="text-red-500">*</span>
+                    </label>
                     <input type="tel" name="phone_number" value="{{ old('phone_number', $reg->phone) }}" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm" placeholder="e.g. 0772123456">
+                    <p class="text-xs text-gray-500 mt-1">
+                        Pre-filled from your registration number.
+                        <span class="font-semibold text-gray-700">You can change this to any other mobile money number</span>
+                        — the pay prompt will be sent to whichever number you enter here.
+                    </p>
                     <div class="bg-amber-50 border border-amber-300 rounded-xl px-4 py-3 mt-3 text-sm text-amber-800 flex gap-3 items-start">
                         <span class="text-xl leading-none flex-shrink-0">📲</span>
                         <div>

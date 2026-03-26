@@ -113,6 +113,15 @@
                class="sb-link {{ request()->routeIs('admin.checkin*') ? 'active' : '' }}">
                 <span class="icon">📲</span> Check-In Scanner
             </a>
+
+            @if(auth()->user()->hasRole('super_admin', 'finance'))
+            <a href="{{ route('admin.registrations.export', request()->query()) }}"
+               class="sb-link">
+                <span class="icon">📥</span> Export CSV
+            </a>
+            @endif
+
+            @if(auth()->user()->isSuperAdmin())
             <a href="{{ route('admin.testimonials.index') }}"
                class="sb-link {{ request()->routeIs('admin.testimonials.*') ? 'active' : '' }}">
                 <span class="icon">🎥</span> Video Testimonials
@@ -124,15 +133,36 @@
 
             <hr class="sb-divider">
 
+            <a href="{{ route('admin.users.index') }}"
+               class="sb-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                <span class="icon">👥</span> Admin Users
+            </a>
+
+            <a href="{{ route('admin.roles.index') }}"
+               class="sb-link {{ request()->routeIs('admin.roles.*', 'admin.permissions.*') ? 'active' : '' }}">
+                <span class="icon">🔑</span> Roles &amp; Permissions
+            </a>
+            @endif
+
+            <hr class="sb-divider">
+
             <a href="{{ route('home') }}" target="_blank" class="sb-link">
                 <span class="icon">🌐</span> Public Site ↗
             </a>
-           
         </nav>
 
         {{-- Footer --}}
         <div class="sb-foot">
             <div class="sb-user">{{ auth()->user()->name }}</div>
+            <div style="font-size:11px;margin-bottom:8px;">
+                @php
+                    $roleColors = ['super_admin'=>'#dc2626','finance'=>'#16a34a','registrar'=>'#2563eb'];
+                    $roleColor  = $roleColors[auth()->user()->role] ?? '#6b7280';
+                @endphp
+                <span style="background:{{ $roleColor }};color:#fff;padding:2px 8px;border-radius:99px;font-weight:700;">
+                    {{ auth()->user()->roleDisplayName() }}
+                </span>
+            </div>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="sb-logout">Sign Out →</button>

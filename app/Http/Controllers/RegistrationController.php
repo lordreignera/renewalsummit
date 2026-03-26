@@ -88,12 +88,17 @@ class RegistrationController extends Controller
             'address'              => 'nullable|string|max:500',
             'country_type'         => 'required|in:local,africa,international',
             'nationality'          => 'nullable|string|max:100',
-            // FCC membership (captured here as question 2)
-            'affiliation'          => 'required|in:fcc,other',
-            'fcc_region'           => 'required_if:affiliation,fcc|nullable|string|max:200',
-            'fcc_regional_leader'  => 'required_if:affiliation,fcc|nullable|string|max:200',
-            'fcc_church'           => 'required_if:affiliation,fcc|nullable|string|max:200',
+            // Organisation / Church / Ministry
+            'organization'         => 'required|in:NFBAC,PAG,FCC,Compassion,Full Gospel Church,other',
+            'organization_other'   => 'required_if:organization,other|nullable|string|max:200',
+            // FCC details — only required when organisation = FCC
+            'fcc_region'           => 'required_if:organization,FCC|nullable|string|max:200',
+            'fcc_regional_leader'  => 'required_if:organization,FCC|nullable|string|max:200',
+            'fcc_church'           => 'required_if:organization,FCC|nullable|string|max:200',
             'fcc_pastor'           => 'nullable|string|max:200',
+            // Group attendance
+            'is_group'             => 'nullable|boolean',
+            'group_name'           => 'required_if:is_group,1|nullable|string|max:200',
             // Emergency & Medical
             'emergency_contact_name'  => 'nullable|string|max:191',
             'emergency_contact_phone' => 'nullable|string|max:50',
@@ -103,11 +108,11 @@ class RegistrationController extends Controller
             'special_needs'           => 'nullable|string|max:1000',
         ]);
 
-        // Fee tiers: local=UGX 150k, africa=$50, international=$100
+        // Fee tiers: local=UGX 150k, africa=$50, international=$150
         $feeTiers = [
             'local'         => ['amount' => (int) env('SUMMIT_FEE_LOCAL',         150000), 'currency' => 'UGX'],
             'africa'        => ['amount' => (int) env('SUMMIT_FEE_AFRICA',         50),     'currency' => 'USD'],
-            'international' => ['amount' => (int) env('SUMMIT_FEE_INTERNATIONAL', 100),    'currency' => 'USD'],
+            'international' => ['amount' => (int) env('SUMMIT_FEE_INTERNATIONAL', 150),    'currency' => 'USD'],
         ];
         $tier     = $feeTiers[$data['country_type']];
         $baseFee  = $tier['amount'];
@@ -134,6 +139,10 @@ class RegistrationController extends Controller
                 return back()->with('error', 'A registration with this phone number already exists. Use "Resume" to continue.');
             }
         }
+
+        // Derive affiliation from organisation selection
+        $data['affiliation'] = ($data['organization'] === 'FCC') ? 'fcc' : 'other';
+        $data['is_group']    = (bool) ($data['is_group'] ?? false);
 
         $reg = Registration::updateOrCreate(
             ['id' => $regId],

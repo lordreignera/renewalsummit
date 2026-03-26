@@ -121,14 +121,18 @@
         <strong>{{ $registrations->total() }}</strong> registrations
     </p>
     <div class="flex items-center gap-2">
+        @if(auth()->user()->hasRole('super_admin', 'registrar'))
           <a href="{{ route('admin.registrations.create') }}"
               class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-4 py-2 rounded-xl transition">
             + Manual Registration
         </a>
+        @endif
+        @if(auth()->user()->hasRole('super_admin', 'finance'))
         <a href="{{ route('admin.registrations.export', request()->query()) }}"
            class="bg-green-600 hover:bg-green-700 text-white text-sm font-bold px-4 py-2 rounded-xl transition">
             Export CSV
         </a>
+        @endif
     </div>
 </div>
 

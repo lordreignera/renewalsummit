@@ -44,52 +44,6 @@
                 </div>
             </div>
 
-            {{-- FCC Membership – SECOND question --}}
-            @php $currentAff = old('affiliation', $reg->affiliation ?? ''); @endphp
-            <div class="mb-7">
-                <label for="affiliation" class="block text-sm font-semibold text-gray-700 mb-1">
-                    2. Are you an FCC (Fellowship of Christian Churches) member? <span class="text-red-500">*</span>
-                </label>
-                <select name="affiliation" id="affiliation" required
-                        class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm bg-white focus:ring-2 focus:ring-yellow-400 outline-none transition">
-                    <option value="" disabled {{ $currentAff === '' ? 'selected' : '' }}>— Select —</option>
-                    <option value="fcc"   {{ $currentAff === 'fcc'   ? 'selected' : '' }}>Yes — I am an FCC member</option>
-                    <option value="other" {{ $currentAff === 'other' ? 'selected' : '' }}>No — I am not an FCC member</option>
-                </select>
-
-                {{-- FCC fields (shown when Yes is selected) --}}
-                <div id="fcc-fields" class="mt-4 {{ $currentAff === 'fcc' ? '' : 'hidden' }}
-                                              bg-yellow-50 border border-yellow-200 rounded-xl p-5 space-y-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Region <span class="text-red-500">*</span></label>
-                        <input type="text" name="fcc_region" value="{{ old('fcc_region', $reg->fcc_region ?? '') }}"
-                               placeholder="e.g. East Africa Region"
-                               class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">FCC Regional Leader <span class="text-red-500">*</span></label>
-                        <input type="text" name="fcc_regional_leader" value="{{ old('fcc_regional_leader', $reg->fcc_regional_leader ?? '') }}"
-                               placeholder="Name of your FCC regional leader"
-                               class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Church Name <span class="text-red-500">*</span></label>
-                        <input type="text" name="fcc_church" value="{{ old('fcc_church', $reg->fcc_church ?? '') }}"
-                               placeholder="e.g. Gaba Community Church"
-                               class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Local Pastor Name</label>
-                        <input type="text" name="fcc_pastor" value="{{ old('fcc_pastor', $reg->fcc_pastor ?? '') }}"
-                               placeholder="e.g. Pastor James Katarikawe"
-                               class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition">
-                    </div>
-                </div>
-            </div>
-
             <hr class="border-gray-100 mb-6">
 
             {{-- Full Name --}}
@@ -120,6 +74,87 @@
                     <input type="text" name="designation_specify"
                            value="{{ old('designation_specify', $reg->designation_specify ?? '') }}"
                            placeholder="Please specify your role..."
+                           class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition">
+                </div>
+            </div>
+
+            {{-- Organisation / Church / Ministry --}}
+            @php $currentOrg = old('organization', $reg->organization ?? ''); @endphp
+            <div class="mb-5">
+                <label for="organization" class="block text-sm font-semibold text-gray-700 mb-1">
+                    Church / Ministry / Organisation <span class="text-red-500">*</span>
+                </label>
+                <select name="organization" id="organization" required
+                        class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm bg-white focus:ring-2 focus:ring-yellow-400 outline-none transition">
+                    <option value="" disabled {{ $currentOrg === '' ? 'selected' : '' }}>— Select your organisation —</option>
+                    <option value="NFBAC"              {{ $currentOrg === 'NFBAC'              ? 'selected' : '' }}>NFBAC</option>
+                    <option value="PAG"                {{ $currentOrg === 'PAG'                ? 'selected' : '' }}>PAG</option>
+                    <option value="FCC"                {{ $currentOrg === 'FCC'                ? 'selected' : '' }}>FCC (Fellowship of Christian Churches)</option>
+                    <option value="Compassion"         {{ $currentOrg === 'Compassion'         ? 'selected' : '' }}>Compassion</option>
+                    <option value="Full Gospel Church" {{ $currentOrg === 'Full Gospel Church' ? 'selected' : '' }}>Full Gospel Church</option>
+                    <option value="other"              {{ $currentOrg === 'other'              ? 'selected' : '' }}>Other</option>
+                </select>
+
+                {{-- Other — free-text input --}}
+                <div id="org-other-wrap" class="mt-3 {{ $currentOrg === 'other' ? '' : 'hidden' }}">
+                    <input type="text" name="organization_other"
+                           value="{{ old('organization_other', $reg->organization_other ?? '') }}"
+                           placeholder="Please specify your organisation…"
+                           class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition">
+                </div>
+
+                {{-- FCC details (shown when FCC is selected) --}}
+                <div id="fcc-fields" class="mt-4 {{ $currentOrg === 'FCC' ? '' : 'hidden' }}
+                                              bg-yellow-50 border border-yellow-200 rounded-xl p-5 space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Region <span class="text-red-500">*</span></label>
+                        <input type="text" name="fcc_region" value="{{ old('fcc_region', $reg->fcc_region ?? '') }}"
+                               placeholder="e.g. East Africa Region"
+                               class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">FCC Regional Leader <span class="text-red-500">*</span></label>
+                        <input type="text" name="fcc_regional_leader" value="{{ old('fcc_regional_leader', $reg->fcc_regional_leader ?? '') }}"
+                               placeholder="Name of your FCC regional leader"
+                               class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Church Name <span class="text-red-500">*</span></label>
+                        <input type="text" name="fcc_church" value="{{ old('fcc_church', $reg->fcc_church ?? '') }}"
+                               placeholder="e.g. Gaba Community Church"
+                               class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Local Pastor Name</label>
+                        <input type="text" name="fcc_pastor" value="{{ old('fcc_pastor', $reg->fcc_pastor ?? '') }}"
+                               placeholder="e.g. Pastor James Katarikawe"
+                               class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition">
+                    </div>
+                </div>
+            </div>
+
+            {{-- Group Attendance --}}
+            @php $currentIsGroup = old('is_group', $reg->is_group ?? false); @endphp
+            <div class="mb-7">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    Are you attending as part of a group? <span class="text-red-500">*</span>
+                </label>
+                <div class="flex gap-6">
+                    <label class="flex items-center gap-2 text-sm cursor-pointer">
+                        <input type="radio" name="is_group" value="1"
+                               {{ $currentIsGroup ? 'checked' : '' }}
+                               class="accent-yellow-500"> Yes
+                    </label>
+                    <label class="flex items-center gap-2 text-sm cursor-pointer">
+                        <input type="radio" name="is_group" value="0"
+                               {{ !$currentIsGroup ? 'checked' : '' }}
+                               class="accent-yellow-500"> No
+                    </label>
+                </div>
+                <div id="group-name-wrap" class="mt-3 {{ $currentIsGroup ? '' : 'hidden' }}">
+                    <input type="text" name="group_name"
+                           value="{{ old('group_name', $reg->group_name ?? '') }}"
+                           placeholder="Enter your group or team name…"
                            class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition">
                 </div>
             </div>
@@ -301,7 +336,7 @@
         const fees = {
             'local':         '🇺🇬 UGX 150,000',
             'africa':        '🌍 $50 USD',
-            'international': '✈️ $100 USD',
+            'international': '✈️ $150 USD',
         };
         const sel   = document.getElementById('country_type');
         const badge = document.getElementById('fee-badge');
@@ -321,10 +356,32 @@
         updateFee(); // run on page load for pre-selected values
     })();
 
-    // FCC membership toggle
-    document.getElementById('affiliation').addEventListener('change', function () {
-        document.getElementById('fcc-fields').classList.toggle('hidden', this.value !== 'fcc');
-    });
+    // Organisation / Church select toggles (FCC details + Other free-text)
+    (function () {
+        const orgSel       = document.getElementById('organization');
+        const fccFields    = document.getElementById('fcc-fields');
+        const orgOtherWrap = document.getElementById('org-other-wrap');
+        if (!orgSel) return;
+        function syncOrg() {
+            fccFields.classList.toggle('hidden', orgSel.value !== 'FCC');
+            orgOtherWrap.classList.toggle('hidden', orgSel.value !== 'other');
+        }
+        orgSel.addEventListener('change', syncOrg);
+        syncOrg();
+    })();
+
+    // Group attendance toggle
+    (function () {
+        const groupRadios  = document.querySelectorAll('input[name="is_group"]');
+        const groupWrap    = document.getElementById('group-name-wrap');
+        if (!groupRadios.length || !groupWrap) return;
+        function syncGroup() {
+            const yes = document.querySelector('input[name="is_group"][value="1"]');
+            groupWrap.classList.toggle('hidden', !(yes && yes.checked));
+        }
+        groupRadios.forEach(r => r.addEventListener('change', syncGroup));
+        syncGroup();
+    })();
 
     // Toggle designation_specify field for Church Leader
     document.getElementById('designation').addEventListener('change', function () {

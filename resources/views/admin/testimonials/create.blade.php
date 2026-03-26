@@ -8,7 +8,7 @@
 
         <p class="text-sm text-gray-500 mb-6">
             Videos uploaded here are <strong>immediately published</strong> on the landing page.
-            Accepted formats: MP4, MOV, WEBM &mdash; up to 100 MB.
+            Accepted formats: MP4, MOV, WEBM &mdash; up to 200 MB.
         </p>
 
         @if($errors->any())
@@ -49,7 +49,7 @@
                 <label class="block text-sm font-bold text-summit mb-1">Video File <span class="text-red-500">*</span></label>
                 <input type="file" name="video" required accept="video/mp4,video/quicktime,video/webm"
                        class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                <p class="text-xs text-gray-400 mt-1">MP4, MOV, or WEBM &mdash; max 100 MB.</p>
+                <p class="text-xs text-gray-400 mt-1">MP4, MOV, or WEBM &mdash; max 200 MB.</p>
             </div>
 
             <div class="flex gap-3 pt-2">

@@ -170,7 +170,7 @@
                 <div style="color:rgba(255,255,255,.75);font-size:.92rem;margin-bottom:.6rem;">
                     RSVP: <a href="mailto:renewalsummit@africarenewal.org" style="color:#D4A017;text-decoration:none;">renewalsummit@africarenewal.org</a>
                     &nbsp;&middot;&nbsp;
-                    Phone: <a href="tel:+256705631980" style="color:#D4A017;text-decoration:none;">+256705631980</a>
+                    Phone: <a href="tel:+256772120855" style="color:#D4A017;text-decoration:none;">+256772120855</a>
                 </div>
                 <p style="color:rgba(255,255,255,.35);font-size:.8rem;">
                     © {{ date('Y') }} Renewal Summit 2026 – Ggaba Community Church, Uganda.
