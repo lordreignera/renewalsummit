@@ -122,10 +122,6 @@
             @endif
 
             @if(auth()->user()->isSuperAdmin())
-            <a href="{{ route('admin.testimonials.index') }}"
-               class="sb-link {{ request()->routeIs('admin.testimonials.*') ? 'active' : '' }}">
-                <span class="icon">🎥</span> Video Testimonials
-            </a>
             <a href="{{ route('admin.hotels.index') }}"
                class="sb-link {{ request()->routeIs('admin.hotels.*') ? 'active' : '' }}">
                 <span class="icon">🏨</span> Hotels & Rates

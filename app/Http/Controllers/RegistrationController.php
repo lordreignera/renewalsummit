@@ -200,68 +200,23 @@ class RegistrationController extends Controller
         if (! $reg) return redirect()->route('register.start');
 
         $data = $request->validate([
-            'payment_method' => 'required|in:mobile_money,visa',
-            // Mobile Money
-            'phone_number'   => 'required_if:payment_method,mobile_money|nullable|string|max:20',
-            // VISA card fields (demo — format checked only, no real charge)
-            'card_name'      => 'required_if:payment_method,visa|nullable|string|max:100',
-            'card_number'    => ['required_if:payment_method,visa', 'nullable', 'string',
-                                 'regex:/^\d{4}\s?\d{4}\s?\d{4}\s?\d{4}$/'],
-            'card_expiry'    => ['required_if:payment_method,visa', 'nullable',
-                                 'regex:/^(0[1-9]|1[0-2])\/\d{2}$/'],
-            'card_cvc'       => 'required_if:payment_method,visa|nullable|digits_between:3,4',
-        ], [
-            'card_number.regex'  => 'Please enter a valid 16-digit card number.',
-            'card_expiry.regex'  => 'Expiry must be in MM/YY format.',
+            'payment_method' => 'required|in:mobile_money',
+            'phone_number'   => 'required|string|max:20',
         ]);
 
         // ── MOBILE MONEY ──────────────────────────────────────────────────
-        if ($data['payment_method'] === 'mobile_money') {
-            $result = $this->swapp->initiateMobileMoney($reg, $data['phone_number']);
+        $result = $this->swapp->initiateMobileMoney($reg, $data['phone_number']);
 
-            if (! $result['success']) {
-                return back()->withInput()
-                    ->with('error', $result['message'] ?? 'Payment initiation failed. Please try again.');
-            }
-
-            // Store SwApp request ID in session so pending page can reference it
-            session(['swapp_request_id' => $result['request_id']]);
-
-            // Redirect to pending page — user approves on their phone
-            // The /payment/callback route handles marking the registration paid
-            return redirect()->route('register.pending', $reg->reference);
+        if (! $result['success']) {
+            return back()->withInput()
+                ->with('error', $result['message'] ?? 'Payment initiation failed. Please try again.');
         }
 
-        // ── VISA / CARD ────────────────────────────────────────────────────
-        // Card gateway not yet integrated. Mark paid immediately for now.
-        $reg->update([
-            'status'       => 'paid',
-            'current_step' => 3,
-        ]);
+        // Store SwApp request ID in session so pending page can reference it
+        session(['swapp_request_id' => $result['request_id']]);
 
-        // Generate QR code
-        try {
-            $qrPath = app(QrCodeService::class)->generateForRegistration($reg);
-            $reg->update(['qr_code_path' => $qrPath]);
-            $reg->refresh();
-        } catch (\Throwable $e) {
-            Log::error('QR generation failed', ['error' => $e->getMessage(), 'reg' => $reg->id]);
-        }
-
-        // Send confirmation email
-        if ($reg->email) {
-            try {
-                RegistrationConfirmationMail::dispatchToRegistration($reg);
-            } catch (\Throwable $e) {
-                Log::error('Confirmation email failed', ['error' => $e->getMessage(), 'reg' => $reg->id]);
-            }
-        }
-
-        session()->forget('registration_id');
-        session(['completed_ref' => $reg->reference]);
-
-        return redirect()->route('register.complete')
-            ->with('success', 'Payment confirmed! You will receive a confirmation email shortly.');
+        // Redirect to pending page — user approves on their phone
+        return redirect()->route('register.pending', $reg->reference);
     }
 
     /* ─────────────────────────────────────────────────────────────
@@ -418,12 +373,8 @@ class RegistrationController extends Controller
             'accommodation_nights' => 'nullable|integer|min:1|max:14',
             'accommodation_currency' => 'nullable|in:USD,UGX',
             'accommodation_fee' => 'nullable|integer|min:0',
-            'payment_method' => 'nullable|in:mobile_money,visa',
+            'payment_method' => 'nullable|in:mobile_money',
             'phone_number' => 'nullable|string|max:20',
-            'card_name' => 'nullable|string|max:100',
-            'card_number' => 'nullable|string|max:25',
-            'card_expiry' => 'nullable|string|max:5',
-            'card_cvc' => 'nullable|string|max:4',
         ]);
 
         $hotel = Hotel::with('roomTypes')->findOrFail((int) $data['accommodation_hotel_id']);
@@ -462,49 +413,28 @@ class RegistrationController extends Controller
         }
 
         $paymentMethod = $request->validate([
-            'payment_method' => 'required|in:mobile_money,visa',
-            'phone_number' => 'required_if:payment_method,mobile_money|nullable|string|max:20',
-            'card_name' => 'required_if:payment_method,visa|nullable|string|max:100',
-            'card_number' => ['required_if:payment_method,visa', 'nullable', 'string', 'regex:/^\d{4}\s?\d{4}\s?\d{4}\s?\d{4}$/'],
-            'card_expiry' => ['required_if:payment_method,visa', 'nullable', 'regex:/^(0[1-9]|1[0-2])\/\d{2}$/'],
-            'card_cvc' => 'required_if:payment_method,visa|nullable|digits_between:3,4',
+            'payment_method' => 'required|in:mobile_money',
+            'phone_number' => 'required|string|max:20',
         ]);
 
         $update['accommodation_payment_status'] = 'pending';
         $reg->update($update);
 
-        if ($paymentMethod['payment_method'] === 'mobile_money') {
-            $result = $this->swapp->initiateMobileMoneyForAmount(
-                registration: $reg,
-                amount: $estimatedTotal,
-                currency: $currency,
-                phone: $paymentMethod['phone_number'],
-                context: 'accommodation',
-            );
+        $result = $this->swapp->initiateMobileMoneyForAmount(
+            registration: $reg,
+            amount: $estimatedTotal,
+            currency: $currency,
+            phone: $paymentMethod['phone_number'],
+            context: 'accommodation',
+        );
 
-            if (! $result['success']) {
-                return back()->withInput()
-                    ->with('error', $result['message'] ?? 'Accommodation payment initiation failed.');
-            }
-
-            return redirect()->route('register.accommodation.pending', ['reference' => $reg->reference, 'token' => $reg->qr_token])
-                ->with('info', 'Accommodation payment prompt sent. Approve on your phone to complete.');
+        if (! $result['success']) {
+            return back()->withInput()
+                ->with('error', $result['message'] ?? 'Accommodation payment initiation failed.');
         }
 
-        Payment::create([
-            'registration_id' => $reg->id,
-            'payment_context' => 'accommodation',
-            'payment_method' => 'visa',
-            'amount' => $estimatedTotal,
-            'currency' => $currency,
-            'status' => 'success',
-            'paid_at' => now(),
-        ]);
-
-        $reg->update(['accommodation_payment_status' => 'paid']);
-
-        return redirect()->route('register.complete', ['ref' => $reg->reference])
-            ->with('success', 'Accommodation payment completed and booking recorded.');
+        return redirect()->route('register.accommodation.pending', ['reference' => $reg->reference, 'token' => $reg->qr_token])
+            ->with('info', 'Accommodation payment prompt sent. Approve on your phone to complete.');
     }
 
     /* ─────────────────────────────────────────────────────────────

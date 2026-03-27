@@ -126,48 +126,55 @@
             <div id="pay-now-fields" class="hidden bg-green-50 border border-green-200 rounded-xl p-4 space-y-4">
                 <h3 class="font-bold text-green-800">Pay Accommodation Now</h3>
 
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Payment Method</label>
-                    @php $pmOld = old('payment_method', 'mobile_money'); @endphp
-                    <div class="grid grid-cols-2 gap-3">
-                        <label class="border rounded-xl p-3 cursor-pointer bg-white">
-                            <input type="radio" name="payment_method" value="mobile_money" class="mr-2" {{ $pmOld === 'mobile_money' ? 'checked' : '' }}>
-                            Mobile Money
-                        </label>
-                        <label class="border rounded-xl p-3 cursor-pointer bg-white">
-                            <input type="radio" name="payment_method" value="visa" class="mr-2" {{ $pmOld === 'visa' ? 'checked' : '' }}>
-                            VISA / Card
-                        </label>
-                    </div>
-                </div>
+                @if($reg->country_type !== 'local')
 
-                <div id="acc-mm-fields">
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">
-                        Mobile Money Number <span class="text-red-500">*</span>
-                    </label>
-                    <input type="tel" name="phone_number" value="{{ old('phone_number', $reg->phone) }}" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm" placeholder="e.g. 0772123456">
-                    <p class="text-xs text-gray-500 mt-1">
-                        Pre-filled from your registration number.
-                        <span class="font-semibold text-gray-700">You can change this to any other mobile money number</span>
-                        — the pay prompt will be sent to whichever number you enter here.
-                    </p>
-                    <div class="bg-amber-50 border border-amber-300 rounded-xl px-4 py-3 mt-3 text-sm text-amber-800 flex gap-3 items-start">
-                        <span class="text-xl leading-none flex-shrink-0">📲</span>
-                        <div>
-                            <span class="font-bold">You will receive a USSD prompt</span> on your phone from
-                            <strong>Swapp Payment Systems</strong>. When it appears, enter your
-                            <strong>mobile money PIN</strong> to complete the payment.
-                            <span class="block text-amber-700 text-xs mt-1">Do not close the prompt — it will disappear automatically once payment is confirmed.</span>
+                    {{-- Contact us — non-Uganda delegates --}}
+                    <div class="bg-amber-50 border-2 border-amber-300 rounded-xl px-5 py-6 text-center">
+                        <div class="text-4xl mb-3">📞</div>
+                        <h3 class="text-lg font-extrabold text-amber-800 mb-2">Online Payment Coming Soon</h3>
+                        <p class="text-sm text-amber-700 mb-4">
+                            International and Rest-of-Africa card payments are not yet available online.
+                            Please contact us directly to complete your accommodation payment.
+                        </p>
+                        <div class="space-y-3">
+                            <a href="tel:+256772120855"
+                               class="flex items-center justify-center gap-2 bg-white border-2 border-amber-400 hover:bg-amber-100 text-amber-900 font-bold rounded-xl px-5 py-3 transition text-sm">
+                                📱 +256 772 120 855
+                            </a>
+                            <a href="mailto:renewalsummit@africarenewal.org"
+                               class="flex items-center justify-center gap-2 bg-white border-2 border-amber-400 hover:bg-amber-100 text-amber-900 font-bold rounded-xl px-5 py-3 transition text-sm break-all">
+                                ✉️ renewalsummit@africarenewal.org
+                            </a>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-4">Our team will guide you through payment and confirm your accommodation.</p>
+                    </div>
+
+                @else
+
+                    {{-- Uganda delegates: Mobile Money only --}}
+                    <input type="hidden" name="payment_method" value="mobile_money">
+                    <div id="acc-mm-fields">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">
+                            Mobile Money Number <span class="text-red-500">*</span>
+                        </label>
+                        <input type="tel" name="phone_number" value="{{ old('phone_number', $reg->phone) }}" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm" placeholder="e.g. 0772123456">
+                        <p class="text-xs text-gray-500 mt-1">
+                            Pre-filled from your registration number.
+                            <span class="font-semibold text-gray-700">You can change this to any other mobile money number</span>
+                            — the pay prompt will be sent to whichever number you enter here.
+                        </p>
+                        <div class="bg-amber-50 border border-amber-300 rounded-xl px-4 py-3 mt-3 text-sm text-amber-800 flex gap-3 items-start">
+                            <span class="text-xl leading-none flex-shrink-0">📲</span>
+                            <div>
+                                <span class="font-bold">You will receive a USSD prompt</span> on your phone from
+                                <strong>Swapp Payment Systems</strong>. When it appears, enter your
+                                <strong>mobile money PIN</strong> to complete the payment.
+                                <span class="block text-amber-700 text-xs mt-1">Do not close the prompt — it will disappear automatically once payment is confirmed.</span>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div id="acc-visa-fields" class="hidden grid grid-cols-2 gap-3">
-                    <input type="text" name="card_name" value="{{ old('card_name', $reg->full_name) }}" placeholder="Cardholder Name" class="border border-gray-300 rounded-xl px-4 py-3 text-sm col-span-2">
-                    <input type="text" name="card_number" value="{{ old('card_number') }}" placeholder="Card Number" class="border border-gray-300 rounded-xl px-4 py-3 text-sm col-span-2">
-                    <input type="text" name="card_expiry" value="{{ old('card_expiry') }}" placeholder="MM/YY" class="border border-gray-300 rounded-xl px-4 py-3 text-sm">
-                    <input type="text" name="card_cvc" value="{{ old('card_cvc') }}" placeholder="CVC" class="border border-gray-300 rounded-xl px-4 py-3 text-sm">
-                </div>
+                @endif
             </div>
 
             <div class="flex gap-3">
@@ -255,28 +262,17 @@
         roomTypeWrap.classList.toggle('hidden', isSelfBook);
     }
 
-    function togglePayMethod() {
-        var pm   = document.querySelector('[name="payment_method"]:checked');
-        var visa = pm && pm.value === 'visa';
-        document.getElementById('acc-mm-fields').classList.toggle('hidden', visa);
-        document.getElementById('acc-visa-fields').classList.toggle('hidden', !visa);
-    }
-
     hotel.addEventListener('change', function () { populateRoomTypes(); compute(); });
     [room, nights, currency].forEach(function (el) {
         el.addEventListener('change', compute);
         el.addEventListener('input', compute);
     });
     modeInputs.forEach(function (el) { el.addEventListener('change', togglePayNow); });
-    document.querySelectorAll('[name="payment_method"]').forEach(function (el) {
-        el.addEventListener('change', togglePayMethod);
-    });
 
     // Initialise on page load.
     populateRoomTypes();
     compute();
     togglePayNow();
-    togglePayMethod();
 
 })();
 </script>

@@ -42,7 +42,6 @@
                     <a href="{{ route('home') }}#about"    style="color:#1a2a4a;" onmouseover="this.style.color='#D4A017'" onmouseout="this.style.color='#1a2a4a'">About</a>
                     <a href="{{ route('home') }}#gallery"  style="color:#1a2a4a;" onmouseover="this.style.color='#D4A017'" onmouseout="this.style.color='#1a2a4a'">Gallery</a>
                     <a href="{{ route('home') }}#speakers" style="color:#1a2a4a;" onmouseover="this.style.color='#D4A017'" onmouseout="this.style.color='#1a2a4a'">Speakers</a>
-                    <a href="{{ route('home') }}#testimonies" style="color:#1a2a4a;" onmouseover="this.style.color='#D4A017'" onmouseout="this.style.color='#1a2a4a'">Watch Videos</a>
                     <a href="{{ route('home') }}#contact"  style="color:#1a2a4a;" onmouseover="this.style.color='#D4A017'" onmouseout="this.style.color='#1a2a4a'">Contact</a>
                     <a href="{{ route('home') }}#accommodation" style="color:#1a2a4a;" onmouseover="this.style.color='#D4A017'" onmouseout="this.style.color='#1a2a4a'">Accommodation</a>
                     {{-- DISABLED: awaiting PayPal approval --}}
@@ -65,7 +64,6 @@
             <a href="{{ route('home') }}#about"    style="display:block; color:#1a2a4a; padding:0.5rem 0; font-weight:600;">About</a>
             <a href="{{ route('home') }}#gallery"  style="display:block; color:#1a2a4a; padding:0.5rem 0; font-weight:600;">Gallery</a>
             <a href="{{ route('home') }}#speakers" style="display:block; color:#1a2a4a; padding:0.5rem 0; font-weight:600;">Speakers</a>
-            <a href="{{ route('home') }}#testimonies" style="display:block; color:#1a2a4a; padding:0.5rem 0; font-weight:600;">Watch Videos</a>
             <a href="{{ route('home') }}#contact"  style="display:block; color:#1a2a4a; padding:0.5rem 0; font-weight:600;">Contact</a>
             <a href="{{ route('home') }}#accommodation" style="display:block; color:#1a2a4a; padding:0.5rem 0; font-weight:600;">Accommodation</a>
             {{-- DISABLED: awaiting PayPal approval --}}

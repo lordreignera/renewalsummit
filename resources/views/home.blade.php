@@ -554,7 +554,7 @@
 </script>
 @endpush
 
-{{-- ── WHY SHOULD YOU JOIN US? / VIDEO TESTIMONIES ───────────────── --}}
+<!-- {{-- ── WHY SHOULD YOU JOIN US? / VIDEO TESTIMONIES ───────────────── --}}
 <section id="testimonies" class="py-20 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -592,7 +592,7 @@
 
         {{-- Videos are uploaded via the admin dashboard and appear above once published --}}
     </div>
-</section>
+</section> -->
 
 {{-- ── SCHEDULE ──────────────────────────────────────────────────── --}}
 <section class="py-20 bg-gray-50">

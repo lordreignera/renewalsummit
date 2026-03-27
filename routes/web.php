@@ -3,7 +3,7 @@
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\HotelController as AdminHotel;
 use App\Http\Controllers\Admin\RegistrationController as AdminRegistration;
-use App\Http\Controllers\Admin\TestimonialVideoController as AdminTestimonialVideo;
+// use App\Http\Controllers\Admin\TestimonialVideoController as AdminTestimonialVideo; // DISABLED: testimonial videos paused
 use App\Http\Controllers\Admin\UserController as AdminUser;
 use App\Http\Controllers\Admin\RoleController as AdminRole;
 use App\Http\Controllers\Admin\PermissionController as AdminPermission;
@@ -11,27 +11,29 @@ use App\Http\Controllers\Admin\PermissionController as AdminPermission;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\QrImageController;
 use App\Http\Controllers\RegistrationController;
-use App\Http\Controllers\TestimonialVideoController;
+// use App\Http\Controllers\TestimonialVideoController; // DISABLED: testimonial videos paused
 use Illuminate\Support\Facades\Route;
 
 /* ─────────────────────────────────────────────────────────────
  | Public – Landing Page
  |────────────────────────────────────────────────────────────*/
 Route::get('/', function () {
-    $approvedVideos = \App\Models\TestimonialVideo::where('status', 'approved')
-        ->latest('approved_at')
-        ->take(8)
-        ->get();
+    // DISABLED: testimonial videos paused
+    // $approvedVideos = \App\Models\TestimonialVideo::where('status', 'approved')
+    //     ->latest('approved_at')
+    //     ->take(8)
+    //     ->get();
 
     $hotels = \App\Models\Hotel::where('is_active', true)
         ->orderBy('sort_order')
         ->orderBy('name')
         ->get();
 
-    return view('home', compact('approvedVideos', 'hotels'));
+    return view('home', compact('hotels'));
 })->name('home');
 
-Route::get('/testimonials/videos/{video}/stream', [TestimonialVideoController::class, 'stream'])->name('testimonials.stream');
+// DISABLED: testimonial videos paused
+// Route::get('/testimonials/videos/{video}/stream', [TestimonialVideoController::class, 'stream'])->name('testimonials.stream');
 
 /* ─────────────────────────────────────────────────────────────
  | QR Code Image (proxy – works for both local & R2 storage)
@@ -139,16 +141,17 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
                 Route::delete('/{hotel}',    [AdminHotel::class, 'destroy'])->name('destroy');
             });
 
-            Route::prefix('testimonials')->name('testimonials.')->group(function () {
-                Route::get('/',                    [AdminTestimonialVideo::class, 'index'])->name('index');
-                Route::get('/create',              [AdminTestimonialVideo::class, 'create'])->name('create');
-                Route::post('/',                   [AdminTestimonialVideo::class, 'store'])->name('store');
-                Route::get('/{video}/review',      [AdminTestimonialVideo::class, 'review'])->name('review');
-                Route::post('/{video}/viewed',     [AdminTestimonialVideo::class, 'markViewed'])->name('viewed');
-                Route::post('/{video}/approve',    [AdminTestimonialVideo::class, 'approve'])->name('approve');
-                Route::post('/{video}/reject',     [AdminTestimonialVideo::class, 'reject'])->name('reject');
-                Route::delete('/{video}',          [AdminTestimonialVideo::class, 'destroy'])->name('destroy');
-            });
+            // DISABLED: testimonial videos paused
+            // Route::prefix('testimonials')->name('testimonials.')->group(function () {
+            //     Route::get('/',                    [AdminTestimonialVideo::class, 'index'])->name('index');
+            //     Route::get('/create',              [AdminTestimonialVideo::class, 'create'])->name('create');
+            //     Route::post('/',                   [AdminTestimonialVideo::class, 'store'])->name('store');
+            //     Route::get('/{video}/review',      [AdminTestimonialVideo::class, 'review'])->name('review');
+            //     Route::post('/{video}/viewed',     [AdminTestimonialVideo::class, 'markViewed'])->name('viewed');
+            //     Route::post('/{video}/approve',    [AdminTestimonialVideo::class, 'approve'])->name('approve');
+            //     Route::post('/{video}/reject',     [AdminTestimonialVideo::class, 'reject'])->name('reject');
+            //     Route::delete('/{video}',          [AdminTestimonialVideo::class, 'destroy'])->name('destroy');
+            // });
 
             Route::prefix('users')->name('users.')->group(function () {
                 Route::get('/',            [AdminUser::class, 'index'])->name('index');

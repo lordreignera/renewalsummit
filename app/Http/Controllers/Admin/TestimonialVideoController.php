@@ -22,9 +22,9 @@ class TestimonialVideoController extends Controller
             'name'    => 'required|string|max:191',
             'country' => 'required|string|max:120',
             'message' => 'nullable|string|max:500',
-            'video'   => 'required|file|mimetypes:video/mp4,video/quicktime,video/webm|max:204800',
+            'video'   => 'required|file|mimetypes:video/mp4,video/quicktime,video/webm|max:102400',
         ], [
-            'video.max'       => 'Video must be 200 MB or less.',
+            'video.max'       => 'Video must be 100 MB or less.',
             'video.mimetypes' => 'Please upload an MP4, MOV, or WEBM video.',
         ]);
 
