@@ -104,7 +104,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         // ── Registrations (all roles can view; only super_admin can create/manage) ──
         Route::prefix('registrations')->name('registrations.')->group(function () {
             Route::get('/',               [AdminRegistration::class, 'index'])->name('index');
-            Route::get('/{registration}', [AdminRegistration::class, 'show'])->name('show');
 
             // finance + super_admin only
             Route::get('/export', [AdminRegistration::class, 'export'])
@@ -122,6 +121,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
             Route::middleware('role:super_admin')->group(function () {
                 Route::post('/{registration}/resend-qr', [AdminRegistration::class, 'resendQr'])->name('resend-qr');
             });
+
+            // Wildcard MUST be last to avoid swallowing /export and /create
+            Route::get('/{registration}', [AdminRegistration::class, 'show'])->name('show');
         });
 
         // ── Check-in (all roles) ───────────────────────────────────
