@@ -153,15 +153,27 @@
                                     'csrf'        => csrf_token(),
                                 ], JSON_HEX_APOS | JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
                             @endphp
-                            @if($att->status === 'checked_in')
-                                <span style="background:#e0f2fe;color:#0369a1;padding:6px 14px;border-radius:8px;font-size:11px;font-weight:700;white-space:nowrap;">✓ Checked In</span>
-                            @else
-                                <button onclick="openModal(JSON.parse(this.dataset.att))"
-                                        data-att='{!! $attJson !!}'
-                                        style="background:#16a34a;color:#fff;padding:6px 16px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;white-space:nowrap;">
-                                    📲 Check In
-                                </button>
-                            @endif
+                            <div style="display:flex;flex-direction:column;gap:5px;align-items:center;">
+                                @if($att->status === 'checked_in')
+                                    <span style="background:#e0f2fe;color:#0369a1;padding:6px 14px;border-radius:8px;font-size:11px;font-weight:700;white-space:nowrap;">✓ Checked In</span>
+                                @else
+                                    <button onclick="openModal(JSON.parse(this.dataset.att))"
+                                            data-att='{!! $attJson !!}'
+                                            style="background:#16a34a;color:#fff;padding:6px 16px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;white-space:nowrap;">
+                                        📲 Check In
+                                    </button>
+                                @endif
+                                @if($att->email)
+                                    <form method="POST" action="{{ route('admin.checkin.resend-email', $att->id) }}"
+                                          onsubmit="return confirm('Resend confirmation email to {{ addslashes($att->email) }}?')">
+                                        @csrf
+                                        <button type="submit"
+                                                style="background:#f5c518;color:#1a2a4a;padding:5px 14px;border-radius:8px;font-size:11px;font-weight:700;border:none;cursor:pointer;white-space:nowrap;">
+                                            📧 Resend Email
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                     @endforeach

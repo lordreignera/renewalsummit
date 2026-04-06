@@ -95,8 +95,8 @@
 
         <div class="section-title">Your Entry QR Code</div>
         <div class="qr-box">
-            @if($qrBase64 ?? null)
-                <img src="{{ $qrBase64 }}" alt="Your QR Code" style="max-width:220px; width:100%; border:4px solid #D4A017; border-radius:8px; display:block; margin:0 auto;">
+            @if($qrImageUrl ?? null)
+                <img src="{{ $qrImageUrl }}" alt="Your QR Code" style="max-width:220px; width:100%; border:4px solid #D4A017; border-radius:8px; display:block; margin:0 auto;">
                 <p style="margin-top:12px; font-size:13px; color:#555;">
                     <strong>Your QR code image is shown above and also attached to this email.</strong><br>
                     Present it at the venue gate on the day of the event.

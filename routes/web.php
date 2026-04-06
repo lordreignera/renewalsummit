@@ -127,9 +127,10 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         });
 
         // ── Check-in (all roles) ───────────────────────────────────
-        Route::get('/checkin',                         [AdminRegistration::class, 'checkInPage'])->name('checkin');
-        Route::get('/checkin/{token}',                 [AdminRegistration::class, 'checkIn'])->name('checkin.process');
-        Route::post('/checkin/{registration}/confirm', [AdminRegistration::class, 'checkInById'])->name('checkin.confirm');
+        Route::get('/checkin',                              [AdminRegistration::class, 'checkInPage'])->name('checkin');
+        Route::get('/checkin/{token}',                      [AdminRegistration::class, 'checkIn'])->name('checkin.process');
+        Route::post('/checkin/{registration}/confirm',      [AdminRegistration::class, 'checkInById'])->name('checkin.confirm');
+        Route::post('/checkin/{registration}/resend-email', [AdminRegistration::class, 'resendEmailFromCheckin'])->name('checkin.resend-email');
 
         // ── Super Admin only ───────────────────────────────────────
         Route::middleware('role:super_admin')->group(function () {

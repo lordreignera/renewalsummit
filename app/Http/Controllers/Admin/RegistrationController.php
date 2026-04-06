@@ -340,6 +340,24 @@ class RegistrationController extends Controller
     }
 
     /**
+     * Resend confirmation email from the check-in page (all check-in roles).
+     */
+    public function resendEmailFromCheckin(Registration $registration): RedirectResponse
+    {
+        if (! $registration->isPaid() && ! $registration->isCheckedIn()) {
+            return back()->with('error', '❌ Cannot resend — registration has not been paid.');
+        }
+
+        if (! $registration->email) {
+            return back()->with('error', '❌ This registration has no email address on record.');
+        }
+
+        \App\Mail\RegistrationConfirmationMail::dispatchToRegistration($registration);
+
+        return back()->with('success', "✅ Confirmation email resent to {$registration->email} for {$registration->full_name}.");
+    }
+
+    /**
      * Export as CSV.
      */
     public function export(Request $request)

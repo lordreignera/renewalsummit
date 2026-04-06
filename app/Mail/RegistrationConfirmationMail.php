@@ -33,17 +33,15 @@ class RegistrationConfirmationMail extends Mailable
 
     public function content(): Content
     {
-        // Fetch QR image from storage and embed as base64 so it renders in all email clients
-        $qrBase64 = null;
+        // Generate a 7-day signed URL for the QR image so Resend can embed it
+        // directly in the HTML body without breaking the email structure.
+        $qrImageUrl = null;
         if ($this->registration->qr_code_path) {
             try {
-                $disk  = config('filesystems.qr_disk', 'r2');
-                $bytes = Storage::disk($disk)->get($this->registration->qr_code_path);
-                if ($bytes) {
-                    $qrBase64 = 'data:image/png;base64,' . base64_encode($bytes);
-                }
+                $disk = config('filesystems.qr_disk', 'r2');
+                $qrImageUrl = Storage::disk($disk)->url($this->registration->qr_code_path);
             } catch (\Exception $e) {
-                // silently fall back to no inline image
+                // silently fall back — attachment will still be included
             }
         }
 
@@ -55,7 +53,7 @@ class RegistrationConfirmationMail extends Mailable
                 'qrUrl'        => $this->registration->qr_code_path
                     ? route('qr.show', ['reference' => $this->registration->reference])
                     : null,
-                'qrBase64'     => $qrBase64,
+                'qrImageUrl'   => $qrImageUrl,
             ],
         );
     }
