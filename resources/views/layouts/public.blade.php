@@ -153,7 +153,7 @@
                             <img src="{{ asset('images/gabba_log.jpeg') }}" alt="Gaba Community Church" style="width:100%;height:100%;object-fit:contain;">
                         </div>
                         <div style="background:#fff;border-radius:1rem;padding:.7rem;width:100px;height:100px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(0,0,0,.5);">
-                            <img src="{{ asset('images/fellowship_log.jpeg') }}" alt="Fellowship of Christian Churches" style="width:100%;height:100%;object-fit:contain;">
+                            <img src="{{ asset('images/fellowship_log.jpeg') }}" alt="Fellowship of Community Churches" style="width:100%;height:100%;object-fit:contain;">
                         </div>
                         <div style="background:#fff;border-radius:1rem;padding:.7rem;width:100px;height:100px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(0,0,0,.5);">
                             <img src="{{ asset('images/maranatha_log.jpeg') }}" alt="Maranatha Schools" style="width:100%;height:100%;object-fit:contain;">

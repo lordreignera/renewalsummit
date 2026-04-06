@@ -89,7 +89,7 @@
                     <option value="" disabled {{ $currentOrg === '' ? 'selected' : '' }}>— Select your organisation —</option>
                     <option value="NFBAC"              {{ $currentOrg === 'NFBAC'              ? 'selected' : '' }}>NFBAC</option>
                     <option value="PAG"                {{ $currentOrg === 'PAG'                ? 'selected' : '' }}>PAG</option>
-                    <option value="FCC"                {{ $currentOrg === 'FCC'                ? 'selected' : '' }}>FCC (Fellowship of Christian Churches)</option>
+                    <option value="FCC"                {{ $currentOrg === 'FCC'                ? 'selected' : '' }}>FCC (Fellowship of Community Churches)</option>
                     <option value="Compassion"         {{ $currentOrg === 'Compassion'         ? 'selected' : '' }}>Compassion</option>
                     <option value="Full Gospel Church" {{ $currentOrg === 'Full Gospel Church' ? 'selected' : '' }}>Full Gospel Church</option>
                     <option value="other"              {{ $currentOrg === 'other'              ? 'selected' : '' }}>Other</option>
