@@ -23,6 +23,20 @@
         .text-summit  { color: #1a1a2e; }
         .bg-summit    { background-color: #1a1a2e; }
         .hover\:bg-gold-dark:hover { background-color: #b8880f; }
+        .public-nav-brand img { height: clamp(44px, 8vw, 56px); width: auto; object-fit: contain; }
+        .public-footer-shell { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 3.5rem 1rem 0; }
+        .public-footer-logo { height: clamp(96px, 26vw, 160px); width: auto; object-fit: contain; display: inline-block; filter: drop-shadow(0 0 36px rgba(255,255,255,.9)) drop-shadow(0 0 16px rgba(212,160,23,.75)) drop-shadow(0 6px 28px rgba(0,0,0,.9)); }
+        .public-footer-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-bottom: 3rem; text-align: left; }
+        .public-footer-support { display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; justify-content: center; }
+        .public-footer-support-item { background: #fff; border-radius: 1rem; padding: .7rem; width: 84px; height: 84px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 18px rgba(0,0,0,.5); }
+        .public-footer-meta { color: rgba(255,255,255,.75); font-size: .92rem; margin-bottom: .6rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .35rem .6rem; }
+
+        @media (min-width: 768px) {
+            .public-footer-shell { padding: 4.5rem 1.5rem 0; }
+            .public-footer-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3rem; }
+            .public-footer-support { justify-content: flex-start; }
+            .public-footer-support-item { width: 100px; height: 100px; }
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased">
@@ -34,9 +48,8 @@
     <nav style="background:#ffffff; box-shadow:0 2px 8px rgba(0,0,0,0.10); position:sticky; top:0; z-index:50;">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between" style="height:68px;">
-                <a href="{{ route('home') }}" class="flex items-center">
-                    <img src="{{ asset('images/summit26.png') }}" alt="Renewal Summit 2026"
-                         style="height:56px; width:auto; object-fit:contain;">
+                <a href="{{ route('home') }}" class="flex items-center public-nav-brand">
+                    <img src="{{ asset('images/summit26.png') }}" alt="Renewal Summit 2026">
                 </a>
                 <div class="hidden md:flex items-center" style="gap:1.5rem; font-size:0.9rem; font-weight:600;">
                     <a href="{{ route('home') }}#about"    style="color:#1a2a4a;" onmouseover="this.style.color='#D4A017'" onmouseout="this.style.color='#1a2a4a'">About</a>
@@ -95,13 +108,11 @@
         {{-- Dark overlay matching hero style --}}
         <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(10,22,52,.82) 0%, rgba(10,22,52,.88) 60%, rgba(10,22,52,.97) 100%);z-index:1;"></div>
 
-        <div style="position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:4.5rem 1.5rem 0;">
+        <div class="public-footer-shell">
 
             {{-- Logo centred with glow --}}
             <div style="text-align:center;margin-bottom:2.8rem;">
-                <img src="{{ asset('images/summit26.png') }}" alt="Renewal Summit 2026"
-                     style="height:160px;width:auto;object-fit:contain;display:inline-block;
-                            filter:drop-shadow(0 0 36px rgba(255,255,255,.9)) drop-shadow(0 0 16px rgba(212,160,23,.75)) drop-shadow(0 6px 28px rgba(0,0,0,.9));">
+                <img src="{{ asset('images/summit26.png') }}" alt="Renewal Summit 2026" class="public-footer-logo">
             </div>
 
             {{-- Tagline --}}
@@ -111,7 +122,7 @@
             </p>
 
             {{-- Three columns --}}
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:3rem;margin-bottom:3.5rem;">
+            <div class="public-footer-grid">
 
                 <div>
                     <h4 style="color:#D4A017;font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.22em;margin-bottom:1.2rem;">Event Details</h4>
@@ -148,14 +159,14 @@
 
                 <div>
                     <h4 style="color:#D4A017;font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.22em;margin-bottom:1.2rem;">Hosted &amp; Supported By</h4>
-                    <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;">
-                        <div style="background:#fff;border-radius:1rem;padding:.7rem;width:100px;height:100px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(0,0,0,.5);">
+                    <div class="public-footer-support">
+                        <div class="public-footer-support-item">
                             <img src="{{ asset('images/gabba_log.jpeg') }}" alt="Gaba Community Church" style="width:100%;height:100%;object-fit:contain;">
                         </div>
-                        <div style="background:#fff;border-radius:1rem;padding:.7rem;width:100px;height:100px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(0,0,0,.5);">
+                        <div class="public-footer-support-item">
                             <img src="{{ asset('images/fellowship_log.jpeg') }}" alt="Fellowship of Community Churches" style="width:100%;height:100%;object-fit:contain;">
                         </div>
-                        <div style="background:#fff;border-radius:1rem;padding:.7rem;width:100px;height:100px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(0,0,0,.5);">
+                        <div class="public-footer-support-item">
                             <img src="{{ asset('images/maranatha_log.jpeg') }}" alt="Maranatha Schools" style="width:100%;height:100%;object-fit:contain;">
                         </div>
                     </div>
@@ -165,10 +176,12 @@
 
             {{-- Bottom bar --}}
             <div style="border-top:1px solid rgba(255,255,255,.12);padding:1.4rem 0;text-align:center;">
-                <div style="color:rgba(255,255,255,.75);font-size:.92rem;margin-bottom:.6rem;">
-                    RSVP: <a href="mailto:renewalsummit@africarenewal.org" style="color:#D4A017;text-decoration:none;">renewalsummit@africarenewal.org</a>
-                    &nbsp;&middot;&nbsp;
-                    Phone: <a href="tel:+256772120855" style="color:#D4A017;text-decoration:none;">+256772120855</a>
+                <div class="public-footer-meta">
+                    <span>RSVP:</span>
+                    <a href="mailto:renewalsummit@africarenewal.org" style="color:#D4A017;text-decoration:none;">renewalsummit@africarenewal.org</a>
+                    <span aria-hidden="true">&middot;</span>
+                    <span>Phone:</span>
+                    <a href="tel:+256772120855" style="color:#D4A017;text-decoration:none;">+256772120855</a>
                 </div>
                 <p style="color:rgba(255,255,255,.35);font-size:.8rem;">
                     © {{ date('Y') }} Renewal Summit 2026 – Ggaba Community Church, Uganda.

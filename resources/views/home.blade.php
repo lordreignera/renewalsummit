@@ -18,6 +18,29 @@
 .hero-cta-secondary{ display:inline-flex;align-items:center;gap:.7rem;background:transparent;color:#fff;font-weight:700;padding:1.1rem 2.8rem;border-radius:50px;text-decoration:none;font-size:1.15rem;border:2px solid rgba(255,255,255,.5);transition:background .2s,border-color .2s,transform .2s; }
 .hero-cta-secondary:hover{ background:rgba(255,255,255,.12);border-color:#D4A017;transform:translateY(-2px); }
 .hero-dot{ height:4px;border-radius:2px;border:none;cursor:pointer;transition:width .4s,background .4s;padding:0; }
+.hero-shell { position:relative;z-index:2;max-width:820px;margin:0 auto;padding:6rem 1.5rem 7rem; }
+.hero-logo { height:300px;width:auto;object-fit:contain;display:inline-block;filter:drop-shadow(0 0 40px rgba(255,255,255,.95)) drop-shadow(0 0 20px rgba(212,160,23,.8)) drop-shadow(0 8px 32px rgba(0,0,0,.9)); }
+
+@media (max-width: 640px) {
+    #hero-section { min-height: auto; }
+    .hero-shell { padding: 5.25rem 1rem 6.5rem; }
+    .hero-kicker { gap: .6rem; margin-bottom: 1.5rem; }
+    .hero-kicker-line { width: 34px !important; }
+    .hero-kicker-text { font-size: .72rem !important; letter-spacing: .18em !important; }
+    .hero-logo { height: min(48vw, 180px); }
+    .hero-theme-pill { padding: .7rem 1rem !important; gap: .55rem !important; border-radius: 1.25rem !important; flex-wrap: wrap; justify-content: center; }
+    .hero-theme-label { font-size: .72rem !important; letter-spacing: .12em !important; }
+    .hero-theme-value { font-size: 1rem !important; }
+    .hero-description { font-size: 1rem !important; line-height: 1.65 !important; margin-bottom: 2rem !important; }
+    .hero-cta-primary { width: 100%; justify-content: center; padding: 1rem 1.4rem; font-size: 1rem; }
+    .hero-meta { gap: .9rem !important; flex-direction: column; }
+    .hero-meta-item { font-size: .95rem !important; justify-content: center; }
+    .hero-meta-separator { display: none; }
+}
+
+@media (min-width: 641px) and (max-width: 900px) {
+    .hero-logo { height: 220px; }
+}
 </style>
 
 <section id="hero-section" style="position:relative;min-height:100vh;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;">
@@ -34,33 +57,31 @@
     <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(10,22,52,.72) 0%, rgba(10,22,52,.30) 35%, rgba(10,22,52,.30) 65%, rgba(10,22,52,.80) 100%);z-index:1;"></div>
 
     {{-- Main content --}}
-    <div style="position:relative;z-index:2;max-width:820px;margin:0 auto;padding:6rem 1.5rem 7rem;">
+    <div class="hero-shell">
 
         {{-- Label with decorative lines --}}
-        <div class="hero-fadeup-1" style="display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:2.4rem;">
-            <div style="height:1px;width:70px;background:linear-gradient(to right,transparent,#D4A017);"></div>
-            <span style="color:#D4A017;font-size:1rem;font-weight:700;letter-spacing:.28em;text-transform:uppercase;">International Conference</span>
-            <div style="height:1px;width:70px;background:linear-gradient(to left,transparent,#D4A017);"></div>
+        <div class="hero-fadeup-1 hero-kicker" style="display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:2.4rem;">
+            <div class="hero-kicker-line" style="height:1px;width:70px;background:linear-gradient(to right,transparent,#D4A017);"></div>
+            <span class="hero-kicker-text" style="color:#D4A017;font-size:1rem;font-weight:700;letter-spacing:.28em;text-transform:uppercase;">International Conference</span>
+            <div class="hero-kicker-line" style="height:1px;width:70px;background:linear-gradient(to left,transparent,#D4A017);"></div>
         </div>
 
         {{-- Logo – glow filter instead of white box --}}
         <div class="hero-fadeup-2" style="margin-bottom:2.2rem;">
-            <img src="{{ asset('images/summit26.png') }}" alt="Renewal Summit 2026"
-                 style="height:300px;width:auto;object-fit:contain;display:inline-block;
-                        filter:drop-shadow(0 0 40px rgba(255,255,255,.95)) drop-shadow(0 0 20px rgba(212,160,23,.8)) drop-shadow(0 8px 32px rgba(0,0,0,.9));">
+            <img src="{{ asset('images/summit26.png') }}" alt="Renewal Summit 2026" class="hero-logo">
         </div>
 
         {{-- Theme pill --}}
         <div class="hero-fadeup-3" style="margin-bottom:2rem;">
-            <span style="display:inline-flex;align-items:center;gap:.9rem;background:rgba(212,160,23,.22);border:1.5px solid rgba(212,160,23,.65);border-radius:100px;padding:.65rem 2rem;">
-                <span style="color:#D4A017;font-weight:800;font-size:.95rem;text-transform:uppercase;letter-spacing:.15em;">Theme</span>
+            <span class="hero-theme-pill" style="display:inline-flex;align-items:center;gap:.9rem;background:rgba(212,160,23,.22);border:1.5px solid rgba(212,160,23,.65);border-radius:100px;padding:.65rem 2rem;">
+                <span class="hero-theme-label" style="color:#D4A017;font-weight:800;font-size:.95rem;text-transform:uppercase;letter-spacing:.15em;">Theme</span>
                 <span style="width:1px;height:18px;background:rgba(212,160,23,.5);display:inline-block;"></span>
-                <span style="color:#fff;font-weight:800;font-size:1.25rem;">Healthy Church</span>
+                <span class="hero-theme-value" style="color:#fff;font-weight:800;font-size:1.25rem;">Healthy Church</span>
             </span>
         </div>
 
         {{-- Description --}}
-        <p class="hero-fadeup-4" style="color:rgba(255,255,255,.88);font-size:1.2rem;line-height:1.8;max-width:640px;margin:0 auto 2.8rem;">
+        <p class="hero-fadeup-4 hero-description" style="color:rgba(255,255,255,.88);font-size:1.2rem;line-height:1.8;max-width:640px;margin:0 auto 2.8rem;">
             A global gathering for pastors &amp; leaders to examine the spiritual, relational and missional
             markers of a healthy church.&nbsp;
             <strong style="color:#fff;">1,500+ leaders from 30+ nations.</strong>
@@ -81,13 +102,13 @@
         </div>
 
         {{-- Date & venue --}}
-        <div class="hero-fadeup-5" style="display:flex;gap:1.8rem;justify-content:center;flex-wrap:wrap;">
-            <span style="display:flex;align-items:center;gap:.6rem;color:rgba(255,255,255,.85);font-size:1.05rem;font-weight:600;">
+        <div class="hero-fadeup-5 hero-meta" style="display:flex;gap:1.8rem;justify-content:center;flex-wrap:wrap;">
+            <span class="hero-meta-item" style="display:flex;align-items:center;gap:.6rem;color:rgba(255,255,255,.85);font-size:1.05rem;font-weight:600;">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                 August 17th–21st, 2026
             </span>
-            <span style="color:rgba(255,255,255,.35);">|</span>
-            <span style="display:flex;align-items:center;gap:.6rem;color:rgba(255,255,255,.85);font-size:1.05rem;font-weight:600;">
+            <span class="hero-meta-separator" style="color:rgba(255,255,255,.35);">|</span>
+            <span class="hero-meta-item" style="display:flex;align-items:center;gap:.6rem;color:rgba(255,255,255,.85);font-size:1.05rem;font-weight:600;">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                 Ggaba Community Church, Uganda
             </span>

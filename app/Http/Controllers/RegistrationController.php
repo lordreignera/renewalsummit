@@ -108,9 +108,9 @@ class RegistrationController extends Controller
             'special_needs'           => 'nullable|string|max:1000',
         ]);
 
-        // Fee tiers: local=UGX 150k, africa=$50, international=$150
+        // Fee tiers: local=UGX 50k, africa=$50, international=$150
         $feeTiers = [
-            'local'         => ['amount' => (int) env('SUMMIT_FEE_LOCAL',         150000), 'currency' => 'UGX'],
+            'local'         => ['amount' => (int) env('SUMMIT_FEE_LOCAL',          50000), 'currency' => 'UGX'],
             'africa'        => ['amount' => (int) env('SUMMIT_FEE_AFRICA',         50),     'currency' => 'USD'],
             'international' => ['amount' => (int) env('SUMMIT_FEE_INTERNATIONAL', 150),    'currency' => 'USD'],
         ];

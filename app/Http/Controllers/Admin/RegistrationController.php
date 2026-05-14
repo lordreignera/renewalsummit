@@ -178,7 +178,7 @@ class RegistrationController extends Controller
 
         // Registration fee is paid first (same tiers as public step 1).
         $feeTiers = [
-            'local'         => ['amount' => (int) env('SUMMIT_FEE_LOCAL', 150000), 'currency' => 'UGX'],
+            'local'         => ['amount' => (int) env('SUMMIT_FEE_LOCAL',  50000), 'currency' => 'UGX'],
             'africa'        => ['amount' => (int) env('SUMMIT_FEE_AFRICA', 50), 'currency' => 'USD'],
             'international' => ['amount' => (int) env('SUMMIT_FEE_INTERNATIONAL', 150), 'currency' => 'USD'],
         ];

@@ -334,7 +334,7 @@
     // Live fee badge for country type dropdown
     (function () {
         const fees = {
-            'local':         '🇺🇬 UGX 150,000',
+            'local':         '🇺🇬 UGX 50,000',
             'africa':        '🌍 $50 USD',
             'international': '✈️ $150 USD',
         };
