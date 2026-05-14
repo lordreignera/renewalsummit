@@ -705,12 +705,12 @@
                     'church' => 'Life Change Church', 'country' => 'USA',
                     'img' => 'Mark_Strong.jpeg', 'bio' => null,
                 ],
-                [
+                /* [
                     'name' => 'Ps. Curtis Bronzan', 'role' => 'Plenary Speaker',
                     'church' => 'FPC Houston', 'country' => 'USA',
                     'img' => 'Curtis_Bronzan.jpeg',
                     'bio' => 'Pastor Curtis Bronzan began ministry in 2003, serving in various pastoral roles before being appointed Senior Pastor &amp; Head of Staff at First Presbyterian Church of Houston in November 2022. He holds several degrees and is currently pursuing a Doctorate in Ministry. He is married to Cassie and they have two children.',
-                ],
+                ], */
                 [
                     'name' => 'Dr. Augustine Longa', 'role' => 'Plenary Speaker',
                     'church' => 'Central Africa Missions Outreach', 'country' => 'Côte d\'Ivoire',
