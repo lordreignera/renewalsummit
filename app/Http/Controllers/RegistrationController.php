@@ -216,31 +216,56 @@ class RegistrationController extends Controller
         session(['swapp_request_id' => $result['request_id']]);
 
         // Redirect to pending page — user approves on their phone
-        return redirect()->route('register.pending', $reg->reference);
+        return redirect()->route('register.pending', [
+            'reference' => $reg->reference,
+            'token'     => $reg->qr_token,
+        ]);
     }
 
     /* ─────────────────────────────────────────────────────────────
      | Pending / Complete pages
      |────────────────────────────────────────────────────────────*/
 
-    public function pending(string $reference): View
+    public function pendingLegacy(Request $request, string $reference): RedirectResponse
     {
-        $reg = Registration::where('reference', $reference)->firstOrFail();
+        $reg = Registration::where('reference', $reference)
+            ->whereKey($request->session()->get('registration_id'))
+            ->firstOrFail();
+
+        return redirect()->route('register.pending', [
+            'reference' => $reg->reference,
+            'token' => $reg->qr_token,
+        ]);
+    }
+
+    public function pending(string $reference, string $token): View
+    {
+        $reg = Registration::where('reference', $reference)
+            ->where('qr_token', $token)
+            ->firstOrFail();
         return view('registration.pending', compact('reg'));
     }
 
     public function complete(Request $request): View|RedirectResponse
     {
         $reference = session('completed_ref') ?? $request->query('ref');
+        $token = $request->query('token');
 
         if (! $reference) {
             return redirect()->route('register.start')
                 ->with('info', 'Registration already completed or session expired.');
         }
 
-        $reg = Registration::where('reference', $reference)
-            ->where('status', 'paid')
-            ->first();
+        $query = Registration::where('reference', $reference)
+            ->where('status', 'paid');
+
+        if ($token) {
+            $query->where('qr_token', $token);
+        } else {
+            $query->whereKey($request->session()->get('registration_id'));
+        }
+
+        $reg = $query->first();
 
         if (! $reg) {
             return redirect()->route('register.start')
@@ -248,7 +273,10 @@ class RegistrationController extends Controller
         }
 
         $qrUrl = $reg->qr_code_path
-            ? route('qr.show', ['reference' => $reg->reference])
+            ? route('qr.show', [
+                'reference' => $reg->reference,
+                'token'     => $reg->qr_token,
+            ])
             : null;
 
         return view('registration.complete', compact('reg', 'qrUrl'));
@@ -289,7 +317,10 @@ class RegistrationController extends Controller
         }
 
         if ($reg->accommodation_payment_status === 'paid') {
-            return redirect()->route('register.complete', ['ref' => $reg->reference])
+            return redirect()->route('register.complete', [
+                'ref' => $reg->reference,
+                'token' => $reg->qr_token,
+            ])
                 ->with('success', 'Accommodation payment already confirmed.');
         }
 
@@ -316,7 +347,10 @@ class RegistrationController extends Controller
         }
 
         if ($reg->accommodation_payment_status === 'paid') {
-            return redirect()->route('register.complete', ['ref' => $reg->reference])
+            return redirect()->route('register.complete', [
+                'ref' => $reg->reference,
+                'token' => $reg->qr_token,
+            ])
                 ->with('success', 'Accommodation payment already confirmed.');
         }
 
@@ -400,7 +434,10 @@ class RegistrationController extends Controller
             $update['accommodation_payment_status'] = 'not_required';
             $reg->update($update);
 
-            return redirect()->route('register.complete', ['ref' => $reg->reference])
+            return redirect()->route('register.complete', [
+                'ref' => $reg->reference,
+                'token' => $reg->qr_token,
+            ])
                 ->with('success', 'Accommodation preference saved. We can now track where you will stay.');
         }
 
@@ -408,7 +445,10 @@ class RegistrationController extends Controller
             $update['accommodation_payment_status'] = 'pending';
             $reg->update($update);
 
-            return redirect()->route('register.complete', ['ref' => $reg->reference])
+            return redirect()->route('register.complete', [
+                'ref' => $reg->reference,
+                'token' => $reg->qr_token,
+            ])
                 ->with('info', 'Accommodation request saved. You selected pay later.');
         }
 

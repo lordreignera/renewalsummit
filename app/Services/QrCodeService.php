@@ -39,13 +39,7 @@ class QrCodeService
         $qrData = implode("\n", [
             '=== RENEWAL SUMMIT 2026 ===',
             'Ref: '         . $registration->reference,
-            'Name: '        . $registration->full_name,
-            'Designation: ' . $desigLabel,
-            'Type: '        . $typeLabel,
-            'Affiliation: ' . strtoupper($registration->affiliation ?? ''),
-            'Status: '      . strtoupper($registration->status ?? ''),
-            'Fee Paid: '    . $registration->formattedTotal,
-            'Phone: '       . $registration->phone,
+            'Verify: '      . route('register.verify', ['token' => $registration->qr_token]),
         ]);
 
         $qrCode = new QrCode(
@@ -79,7 +73,10 @@ class QrCodeService
             return null;
         }
 
-        return route('qr.show', ['reference' => $registration->reference]);
+        return route('qr.show', [
+            'reference' => $registration->reference,
+            'token'     => $registration->qr_token,
+        ]);
     }
 
     /**
@@ -101,7 +98,10 @@ class QrCodeService
             // Send SMS confirmation to all registrants with a phone number
             if ($registration->phone) {
                 $sms = new AfricaIsTalkingSmsService();
-                $qrUrl = route('qr.show', ['reference' => $registration->reference]);
+                $qrUrl = route('qr.show', [
+                    'reference' => $registration->reference,
+                    'token'     => $registration->qr_token,
+                ]);
                 $sms->sendRegistrationConfirmation(
                     $registration->phone,
                     $registration->full_name,

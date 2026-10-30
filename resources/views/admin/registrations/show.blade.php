@@ -205,7 +205,7 @@
         @if($registration->qr_code_path)
         <div class="bg-white rounded-2xl shadow-sm p-6 text-center">
             <h3 class="font-bold text-summit mb-3">QR Code</h3>
-            <img src="{{ route('qr.show', ['reference' => $registration->reference]) }}"
+            <img src="{{ route('qr.show', ['reference' => $registration->reference, 'token' => $registration->qr_token]) }}"
                  alt="QR" class="w-40 h-40 mx-auto border-4 border-yellow-400 rounded-xl">
             @if($registration->qr_sent_at)
             <p class="text-xs text-gray-400 mt-2">Sent: {{ $registration->qr_sent_at->format('d M Y H:i') }}</p>

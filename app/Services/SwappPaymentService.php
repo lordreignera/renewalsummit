@@ -187,7 +187,10 @@ class SwappPaymentService
 
             $data = $response->json();
 
-            Log::info('SwApp collection response', ['data' => $data, 'status' => $response->status()]);
+            Log::info('SwApp collection response', [
+                'status' => $response->status(),
+                'transaction_id' => $data['TransactionId'] ?? $data['transaction_id'] ?? null,
+            ]);
 
             $payment->update([
                 'swapp_response'       => $data,
@@ -240,6 +243,10 @@ class SwappPaymentService
 
             $data = $response->json();
 
+            if (! $response->successful() || ! is_array($data)) {
+                return ['status' => 'pending', 'message' => 'Status verification unavailable', 'raw' => []];
+            }
+
             // SwApp nests the real status inside payment.status (e.g. "SUCCESSFUL").
             // The top-level status is just an HTTP-like code (200), not a payment status.
             $paymentStatus = $data['payment']['status']
@@ -263,12 +270,69 @@ class SwappPaymentService
      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
     /**
+     * Confirm an incoming notification against SwApp's authenticated status
+     * endpoint. The callback's status is untrusted and is never used to mark
+     * a payment successful.
+     */
+    public function handleVerifiedCallback(array $payload): ?array
+    {
+        $requestId = $payload['RequestId'] ?? $payload['requestId'] ?? $payload['request_id']
+            ?? $payload['payment']['requestId'] ?? null;
+        $txId = $payload['TransactionId'] ?? $payload['transaction_id']
+            ?? $payload['payment']['txnid'] ?? null;
+
+        if ((! is_string($requestId) && ! is_int($requestId)) || $requestId === '') {
+            $requestId = null;
+        }
+        if ((! is_string($txId) && ! is_int($txId)) || $txId === '') {
+            $txId = null;
+        }
+
+        if ($requestId === null && $txId === null) {
+            Log::warning('SwApp callback ignored: missing payment identifier');
+            return null;
+        }
+
+        $payment = $requestId !== null
+            ? Payment::where('swapp_reference', (string) $requestId)->first()
+            : Payment::where('swapp_transaction_id', (string) $txId)->first();
+
+        if (! $payment || ! $payment->swapp_reference) {
+            Log::warning('SwApp callback ignored: payment not found');
+            return null;
+        }
+
+        if ($txId !== null && $payment->swapp_transaction_id !== null
+            && (string) $txId !== (string) $payment->swapp_transaction_id) {
+            Log::warning('SwApp callback ignored: transaction identifier mismatch', [
+                'payment_id' => $payment->id,
+            ]);
+            return null;
+        }
+
+        if ($payment->isSuccessful()) {
+            return ['payment' => $payment, 'status_changed' => false];
+        }
+
+        $verified = $this->checkStatus($payment->swapp_reference);
+
+        if (! in_array($verified['status'], ['success', 'failed', 'cancelled'], true)) {
+            return ['payment' => $payment, 'status_changed' => false];
+        }
+
+        return $this->handleCallback([
+            'RequestId' => $payment->swapp_reference,
+            'Status' => $verified['status'],
+            'message' => $verified['message'],
+            'provider_response' => $verified['raw'],
+        ]);
+    }
+
+    /**
      * Handle the SwApp webhook callback (POST from SwApp server).
      */
-    public function handleCallback(array $payload): bool
+    public function handleCallback(array $payload): ?array
     {
-        Log::info('SwApp callback received', $payload);
-
         $requestId = $payload['RequestId'] ?? $payload['request_id'] ?? null;
         $txId      = $payload['TransactionId'] ?? $payload['transaction_id'] ?? null;
         // SwApp may nest the status inside payload.payment.status
@@ -276,16 +340,46 @@ class SwappPaymentService
             $payload['payment']['status'] ?? $payload['Status'] ?? $payload['status'] ?? ''
         );
 
-        $payment = Payment::where('swapp_reference', $requestId)
-            ->orWhere('swapp_transaction_id', $txId)
-            ->first();
+        if (! $requestId && ! $txId) {
+            Log::warning('SwApp callback rejected: missing payment identifier');
+            return null;
+        }
+
+        $paymentQuery = Payment::query();
+        if ($requestId) {
+            $paymentQuery->where('swapp_reference', $requestId);
+        }
+        if ($txId) {
+            $paymentQuery = $requestId
+                ? $paymentQuery->orWhere('swapp_transaction_id', $txId)
+                : $paymentQuery->where('swapp_transaction_id', $txId);
+        }
+        $payment = $paymentQuery->first();
 
         if (! $payment) {
-            Log::warning('SwApp callback: payment not found', $payload);
-            return false;
+            Log::warning('SwApp callback: payment not found', [
+                'request_id' => $requestId,
+                'transaction_id' => $txId,
+            ]);
+            return null;
         }
 
         $mapped = $this->mapStatus($status);
+
+        if ($status === '') {
+            Log::warning('SwApp callback rejected: missing status', [
+                'payment_id' => $payment->id,
+            ]);
+            return null;
+        }
+
+        // A successful payment is terminal. Do not let a later retry or a
+        // malformed status move it back to pending/failed.
+        if ($payment->isSuccessful() && $mapped !== 'success') {
+            return ['payment' => $payment, 'status_changed' => false];
+        }
+
+        $statusChanged = $payment->status !== $mapped;
 
         $payment->update([
             'status'          => $mapped,
@@ -304,7 +398,7 @@ class SwappPaymentService
             }
         }
 
-        return true;
+        return ['payment' => $payment->fresh(), 'status_changed' => $statusChanged];
     }
 
     /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -368,15 +462,14 @@ class SwappPaymentService
     }
 
     /**
-     * Return an Http client instance.
-     * On local environments WAMP's PHP may not trust SwApp's SSL certificate,
-     * so we disable peer verification — safe for local testing only.
+     * Return an Http client instance. TLS certificate verification is enabled
+     * by default and may only be disabled explicitly for local troubleshooting.
      */
     private function http(): \Illuminate\Http\Client\PendingRequest
     {
-        // SwApp's SSL cert does not cover www.swapp.co.ug (missing SAN),
-        // so we must disable peer verification for all SwApp API calls.
-        return \Illuminate\Support\Facades\Http::withOptions(['verify' => false]);
+        return \Illuminate\Support\Facades\Http::withOptions([
+            'verify' => (bool) config('services.swapp.ssl_verify', true),
+        ]);
     }
 
     private function normalisePhone(string $phone): string

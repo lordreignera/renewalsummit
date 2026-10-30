@@ -117,7 +117,7 @@
                         ];
                         $origin = $originMap[$att->country_type] ?? ['label' => ucfirst($att->country_type ?? '—'), 'bg' => '#f3f4f6', 'color' => '#374151'];
                         $desig  = $att->designation . ($att->designation_specify ? " – {$att->designation_specify}" : '');
-                        $qrUrl  = $att->qr_code_path ? route('qr.show', ['reference' => $att->reference]) : null;
+                        $qrUrl  = $att->qr_code_path ? route('qr.show', ['reference' => $att->reference, 'token' => $att->qr_token]) : null;
                     @endphp
                     <tr style="border-bottom:1px solid #f1f5f9;{{ $loop->even ? 'background:#fafafa;' : '' }}" class="hover:bg-blue-50">
                         <td style="padding:10px 12px;color:#94a3b8;">{{ $attendees->firstItem() + $loop->index }}</td>

@@ -62,7 +62,7 @@
 @push('scripts')
 <script>
     const statusUrl = '{{ route('payment.accommodation.status', ['reference' => $reg->reference, 'token' => $reg->qr_token]) }}';
-    const completeUrl = '{{ route('register.complete') }}?ref={{ $reg->reference }}';
+    const completeUrl = '{{ route('register.complete') }}?ref={{ urlencode($reg->reference) }}&token={{ urlencode($reg->qr_token) }}';
 
     let attempts = 0;
     const maxAttempts = 50;

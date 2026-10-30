@@ -22,15 +22,14 @@ class RegistrationTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_registration_screen_cannot_be_rendered_if_support_is_disabled(): void
+    public function test_event_registration_remains_available_when_account_registration_is_disabled(): void
     {
         if (Features::enabled(Features::registration())) {
             $this->markTestSkipped('Registration support is enabled.');
         }
 
-        $response = $this->get('/register');
-
-        $response->assertStatus(404);
+        $this->get('/register')->assertOk();
+        $this->post('/register')->assertStatus(405);
     }
 
     public function test_new_users_can_register(): void

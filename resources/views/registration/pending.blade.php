@@ -44,8 +44,8 @@
 @push('scripts')
 <script>
     const reference = '{{ $reg->reference }}';
-    const statusUrl = '{{ route('payment.status', $reg->reference) }}';
-    const completeUrl = '{{ route('register.complete') }}?ref=' + reference;
+    const statusUrl = '{{ route('payment.status', ['reference' => $reg->reference, 'token' => $reg->qr_token]) }}';
+    const completeUrl = '{{ route('register.complete') }}?ref=' + encodeURIComponent(reference) + '&token={{ urlencode($reg->qr_token) }}';
 
     let attempts = 0;
     const maxAttempts = 40; // ~2 minutes

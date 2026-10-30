@@ -18,12 +18,13 @@ class AfricaIsTalkingSmsService
 {
     protected string $username;
     protected string $apiKey;
-    protected string $baseUrl = 'https://api.sandbox.africastalking.com'; // Switch to https://api.africastalking.com for production
+    protected string $baseUrl;
 
     public function __construct()
     {
         $this->username = config('services.africaistalking.username', env('AFRICAISTALKING_USERNAME', ''));
         $this->apiKey   = config('services.africaistalking.api_key', env('AFRICAISTALKING_API_KEY', ''));
+        $this->baseUrl  = rtrim((string) config('services.africaistalking.base_url'), '/');
     }
 
     /**
@@ -110,7 +111,9 @@ class AfricaIsTalkingSmsService
     {
         // Keep message short — Uganda carriers filter longer messages from unregistered senders
         $firstName = explode(' ', trim($name))[0];
-        $message   = "Hi {$firstName}, RS2026 reg confirmed. Ref: {$reference}. Check email for QR code.";
+        $message = $qrUrl
+            ? "RS2026 pass {$reference}: {$qrUrl}"
+            : "Hi {$firstName}, RS2026 reg confirmed. Ref: {$reference}. Check email for QR code.";
 
         return $this->send($phoneNumber, $message);
     }

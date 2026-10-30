@@ -178,7 +178,7 @@
             </div>
 
             <div class="flex gap-3">
-                <a href="{{ route('register.complete', ['ref' => $reg->reference]) }}" class="border border-gray-300 text-gray-700 font-bold py-3 px-5 rounded-xl">Back</a>
+                <a href="{{ route('register.complete', ['ref' => $reg->reference, 'token' => $reg->qr_token]) }}" class="border border-gray-300 text-gray-700 font-bold py-3 px-5 rounded-xl">Back</a>
                 <button type="submit" class="bg-summit hover:bg-blue-900 text-white font-bold py-3 px-6 rounded-xl">Save Accommodation Plan</button>
             </div>
         </form>

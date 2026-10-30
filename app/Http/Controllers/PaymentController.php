@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Payment;
 use App\Models\Registration;
 use App\Services\QrCodeService;
 use App\Services\SwappPaymentService;
@@ -23,34 +22,22 @@ class PaymentController extends Controller
      */
     public function callback(Request $request): JsonResponse
     {
-        Log::info('Swapp Callback', $request->all());
-
         $payload = $request->all();
 
-        // Signature verification (uncomment when you have SWAPP_SECRET_KEY)
-        // if (! $this->verifySignature($request)) {
-        //     return response()->json(['error' => 'Invalid signature'], 401);
-        // }
+        // Treat the callback as a notification. Confirm the transaction with
+        // SwApp using our existing API credentials before changing any status.
+        $result = $this->swapp->handleVerifiedCallback($payload);
 
-        $handled = $this->swapp->handleCallback($payload);
+        if ($result && $result['status_changed'] && $result['payment']->isSuccessful()) {
+            $payment = $result['payment']->load('registration');
+            $reg = $payment->registration;
 
-        if ($handled) {
-            // If payment succeeded, generate QR and send confirmation email
-            $transId = $payload['transaction_id'] ?? $payload['reference'] ?? null;
-            $payment = Payment::where('swapp_transaction_id', $transId)
-                ->orWhere('swapp_reference', $transId)
-                ->with('registration')
-                ->first();
+            if ($payment->payment_context === 'registration' && $reg && $reg->email) {
+                $this->qrService->generateAndDispatch($reg);
+            }
 
-            if ($payment && $payment->isSuccessful()) {
-                $reg = $payment->registration;
-                if ($payment->payment_context === 'registration' && $reg && $reg->email) {
-                    $this->qrService->generateAndDispatch($reg);
-                }
-
-                if ($payment->payment_context === 'accommodation' && $reg) {
-                    $reg->update(['accommodation_payment_status' => 'paid']);
-                }
+            if ($payment->payment_context === 'accommodation' && $reg) {
+                $reg->update(['accommodation_payment_status' => 'paid']);
             }
         }
 
@@ -62,7 +49,13 @@ class PaymentController extends Controller
      */
     public function donationCallback(Request $request): JsonResponse
     {
-        Log::info('Swapp Donation Callback', $request->all());
+        if (! $this->verifySignature($request)) {
+            Log::warning('SwApp donation callback rejected: invalid signature', [
+                'ip' => $request->ip(),
+            ]);
+
+            return response()->json(['error' => 'Invalid signature'], 401);
+        }
 
         $payload = $request->all();
         $status  = strtolower($payload['status'] ?? '');
@@ -87,9 +80,19 @@ class PaymentController extends Controller
      * On localhost the SwApp callback URL is unreachable, so this method
      * actively polls SwApp's /getstatus and self-completes the payment.
      */
-    public function status(string $reference): JsonResponse
+    public function statusLegacy(Request $request, string $reference): JsonResponse
     {
         $reg = Registration::where('reference', $reference)
+            ->whereKey($request->session()->get('registration_id'))
+            ->firstOrFail();
+
+        return $this->status($reg->reference, $reg->qr_token);
+    }
+
+    public function status(string $reference, string $token): JsonResponse
+    {
+        $reg = Registration::where('reference', $reference)
+            ->where('qr_token', $token)
             ->with('payments')
             ->firstOrFail();
 
@@ -105,7 +108,7 @@ class PaymentController extends Controller
                 try {
                     $swappStatus = $this->swapp->checkStatus($payment->swapp_reference);
 
-                    if ($swappStatus['status'] === 'success') {
+                    if ($swappStatus['status'] === 'success' && $payment->status !== 'success') {
                         $payment->update(['status' => 'success', 'paid_at' => now()]);
                         $reg->update(['status' => 'paid']);
                         $reg->refresh();
@@ -177,9 +180,14 @@ class PaymentController extends Controller
      */
     private function verifySignature(Request $request): bool
     {
-        $secret    = config('services.swapp.secret_key', env('SWAPP_SECRET_KEY'));
+        $secret    = (string) config('services.swapp.callback_secret', '');
         $signature = $request->header('X-Swapp-Signature');
+
+        if ($secret === '' || ! is_string($signature) || $signature === '') {
+            return false;
+        }
+
         $expected  = hash_hmac('sha256', $request->getContent(), $secret);
-        return hash_equals($expected, $signature ?? '');
+        return hash_equals($expected, trim($signature));
     }
 }

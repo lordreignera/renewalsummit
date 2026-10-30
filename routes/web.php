@@ -38,14 +38,16 @@ Route::get('/', function () {
 /* ─────────────────────────────────────────────────────────────
  | QR Code Image (proxy – works for both local & R2 storage)
  |────────────────────────────────────────────────────────────*/
-Route::get('/qr/{reference}', [QrImageController::class, 'show'])->name('qr.show');
+Route::get('/qr/{reference}/{token}', [QrImageController::class, 'show'])->name('qr.show');
 
 /* ─────────────────────────────────────────────────────────────
  | Registration Flow (multi-step)
  |────────────────────────────────────────────────────────────*/
 Route::prefix('register')->name('register.')->group(function () {
     Route::get('/',         [RegistrationController::class, 'start'])->name('start');
-    Route::post('/resume',  [RegistrationController::class, 'resume'])->name('resume');
+    Route::post('/resume',  [RegistrationController::class, 'resume'])
+        ->middleware('throttle:5,1')
+        ->name('resume');
 
     // Step dynamic routing
     Route::get('/step/1',   [RegistrationController::class, 'step1'])->name('step1');
@@ -61,7 +63,8 @@ Route::prefix('register')->name('register.')->group(function () {
     })->where('step', '[1-3]')->name('step');
 });
 
-Route::get('/registration/pending/{reference}', [RegistrationController::class, 'pending'])->name('register.pending');
+Route::get('/registration/pending/{reference}/{token}', [RegistrationController::class, 'pending'])->name('register.pending');
+Route::get('/registration/pending/{reference}', [RegistrationController::class, 'pendingLegacy']);
 Route::get('/registration/complete',            [RegistrationController::class, 'complete'])->name('register.complete');
 Route::get('/registration/{reference}/{token}/accommodation', [RegistrationController::class, 'accommodation'])->name('register.accommodation');
 Route::post('/registration/{reference}/{token}/accommodation', [RegistrationController::class, 'saveAccommodation'])->name('register.accommodation.save');
@@ -80,7 +83,11 @@ Route::post('/payment/callback',  [PaymentController::class, 'callback'])->name(
 // Route::post('/donation/callback', [PaymentController::class, 'donationCallback'])->name('donation.callback'); // DISABLED: awaiting PayPal approval
 
 // Polling endpoint (AJAX)
-Route::get('/payment/status/{reference}', [PaymentController::class, 'status'])->name('payment.status');
+Route::get('/payment/status/{reference}/{token}', [PaymentController::class, 'status'])
+    ->middleware('throttle:30,1')
+    ->name('payment.status');
+Route::get('/payment/status/{reference}', [PaymentController::class, 'statusLegacy'])
+    ->middleware('throttle:30,1');
 Route::get('/payment/accommodation-status/{reference}/{token}', [PaymentController::class, 'accommodationStatus'])->name('payment.accommodation.status');
 
 /* ─────────────────────────────────────────────────────────────

@@ -144,7 +144,8 @@ return [
     */
 
     'features' => [
-        Features::registration(),
+        // Admin accounts are created by a super administrator. Do not expose
+        // public account registration on this application.
         Features::resetPasswords(),
         // Features::emailVerification(),
         Features::updateProfileInformation(),

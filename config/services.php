@@ -36,18 +36,24 @@ return [
     ],
 
     'swapp' => [
-        'base_url'     => env('SWAPP_BASE_URL', 'https://swapp.co.ug/api/mm'),
-        'client_id'    => env('SWAPP_CLIENT_ID'),
-        'api_key'      => env('SWAPP_API_KEY'),
-        'api_secret'   => env('SWAPP_API_SECRET'),
-        'callback_url' => env('SWAPP_CALLBACK_URL'),
-        'return_url'   => env('SWAPP_RETURN_URL'),
+        'base_url'        => env('SWAPP_BASE_URL', 'https://swapp.co.ug/api/mm'),
+        'client_id'       => env('SWAPP_CLIENT_ID'),
+        'api_key'         => env('SWAPP_API_KEY'),
+        'api_secret'      => env('SWAPP_API_SECRET'),
+        'callback_secret' => env('SWAPP_CALLBACK_SECRET'),
+        'ssl_verify'      => (bool) env('SWAPP_SSL_VERIFY', true),
+        'callback_url'    => env('SWAPP_CALLBACK_URL'),
+        'return_url'      => env('SWAPP_RETURN_URL'),
     ],
 
     'africaistalking' => [
         'username'  => env('AFRICAISTALKING_USERNAME'),
         'api_key'   => env('AFRICAISTALKING_API_KEY'),
         'sender_id' => env('AFRICAISTALKING_SENDER_ID', ''),
+        'base_url'  => env('AFRICAISTALKING_BASE_URL',
+            env('APP_ENV') === 'production'
+                ? 'https://api.africastalking.com'
+                : 'https://api.sandbox.africastalking.com'),
     ],
 
 ];

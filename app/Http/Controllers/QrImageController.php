@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Registration;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 
@@ -13,9 +14,15 @@ class QrImageController extends Controller
      * so it works both locally and in production without the bucket needing
      * to be publicly accessible.
      */
-    public function show(string $reference): Response
+    public function show(string $reference, string $token): Response
     {
-        $path = "qrcodes/{$reference}.png";
+        $registration = Registration::query()
+            ->where('reference', $reference)
+            ->where('qr_token', $token)
+            ->whereNotNull('qr_code_path')
+            ->firstOrFail();
+
+        $path = $registration->qr_code_path;
         $disk = config('filesystems.qr_disk', 'r2');
 
         if (! Storage::disk($disk)->exists($path)) {
